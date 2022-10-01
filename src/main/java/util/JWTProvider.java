@@ -4,20 +4,16 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
-import javax.servlet.ServletRequest;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.net.http.HttpRequest;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 
 public class JWTProvider {
     private static JWTProvider instance = null;
     private static final String secretKey = "cash_register";
-    private static final int accessTokenExpiration = 900_000;
-    private static final int refreshTokenExpiration = 86_400_000;
+    public static final int accessTokenExpirationInSec = 900;
+    public static final int refreshTokenExpirationInSec = 86_400;
 
     private JWTProvider() {
     }
@@ -28,19 +24,19 @@ public class JWTProvider {
         return instance;
     }
 
-    public String generateJwtToken(String role, String tokenName) {
-        int tokenExpiration;
+    public String generateJwtToken(RoleName role, String tokenName) {
+        int tokenExpirationInSec;
 
         if (tokenName.equals("accessToken"))
-            tokenExpiration = accessTokenExpiration;
+            tokenExpirationInSec = accessTokenExpirationInSec;
         else if (tokenName.equals("refreshToken"))
-            tokenExpiration = refreshTokenExpiration;
+            tokenExpirationInSec = refreshTokenExpirationInSec;
         else return null;
 
         String token = Jwts.builder()
-                .setSubject(role)
+                .setSubject(role.toString())
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(new Date().getTime() + tokenExpiration))
+                .setExpiration(new Date(new Date().getTime() + tokenExpirationInSec * 1000))
                 .signWith(SignatureAlgorithm.HS512, secretKey)
                 .compact();
         System.out.println(token);
@@ -81,10 +77,11 @@ public class JWTProvider {
         return result;
     }
 
-    public void setTokenCookie(String token, String tokenName, HttpServletResponse response) {
+    public void setTokenCookie(String token, String tokenName, int maxAge, HttpServletResponse response) {
         Cookie cookie = new Cookie(tokenName, token);
         cookie.setPath("/");
         cookie.setHttpOnly(true);
+        cookie.setMaxAge(maxAge);
         response.addCookie(cookie);
     }
 

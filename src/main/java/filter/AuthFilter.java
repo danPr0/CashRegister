@@ -20,6 +20,9 @@ public class AuthFilter implements Filter {
         String accessToken = jwtProvider.resolveToken(httpRequest, "accessToken");
         if (jwtProvider.validateToken(accessToken))
             httpResponse.sendRedirect("/");
-        else chain.doFilter(request, response);
+        else {
+            httpRequest.getServletContext().setAttribute("username", "");
+            chain.doFilter(request, response);
+        }
     }
 }

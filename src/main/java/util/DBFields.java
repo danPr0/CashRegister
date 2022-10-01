@@ -8,6 +8,9 @@ public class DBFields {
     public static final String USER_SECOND_NAME = "second_name";
     public static final String USER_ROLE_ID = "role_id";
 
+    public static final String KEY_USER_ID = "user_id";
+    public static final String KEY_KEY = "secret_key";
+
     public static final String ROLE_ID = "id";
     public static final String ROLE_NAME = "name";
 

@@ -12,15 +12,13 @@ import static util.DBFields.*;
 
 public class RoleRepository implements RoleDAO {
     private static RoleRepository instance = null;
+    private final ConnectionFactory connectionFactory = ConnectionFactory.getInstance();
+    private final Logger logger = LogManager.getLogger(RoleRepository.class);
 
     private static final String GET_ROLE_BY_ID_QUERY = "SELECT * FROM roles WHERE %s = ?".formatted(ROLE_ID);
     private static final String GET_ROLE_BY_NAME_QUERY = "SELECT * FROM roles WHERE %s = ?".formatted(ROLE_NAME);
 
-    private final Logger logger = LogManager.getLogger(RoleRepository.class);
-
-    private RoleRepository() {
-        super();
-    }
+    private RoleRepository() {}
 
     public static RoleRepository getInstance() {
         if (instance == null)
@@ -28,17 +26,14 @@ public class RoleRepository implements RoleDAO {
         return instance;
     }
 
-    private Connection getConnection() {
-        return ConnectionFactory.getInstance().getConnection();
-    }
-
     @Override
     public Role getRoleById(int id) {
         Role result = null;
 
-        try (PreparedStatement statement = getConnection().prepareStatement(GET_ROLE_BY_ID_QUERY)) {
-            statement.setInt(1, id);
-            try (ResultSet resultSet = statement.executeQuery()) {
+        try (Connection con = connectionFactory.getConnection();
+             PreparedStatement ps = con.prepareStatement(GET_ROLE_BY_ID_QUERY)) {
+            ps.setInt(1, id);
+            try (ResultSet resultSet = ps.executeQuery()) {
                 if (resultSet.next()) {
                     result = new Role(resultSet.getInt(ROLE_ID), resultSet.getString(ROLE_NAME));
                     logger.info("Role with id = " + id + " was successfully retrieved");
@@ -55,9 +50,10 @@ public class RoleRepository implements RoleDAO {
     public Role getRoleByName(String name) {
         Role result = null;
 
-        try (PreparedStatement statement = getConnection().prepareStatement(GET_ROLE_BY_NAME_QUERY)) {
-            statement.setString(1, name);
-            try (ResultSet resultSet = statement.executeQuery()) {
+        try (Connection con = connectionFactory.getConnection();
+             PreparedStatement ps = con.prepareStatement(GET_ROLE_BY_NAME_QUERY)) {
+            ps.setString(1, name);
+            try (ResultSet resultSet = ps.executeQuery()) {
                 if (resultSet.next()) {
                     result = new Role(resultSet.getInt(ROLE_ID), resultSet.getString(ROLE_NAME));
                     logger.info("Role " + name + " was successfully retrieved");

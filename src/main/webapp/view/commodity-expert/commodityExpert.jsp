@@ -14,7 +14,7 @@
     <a href="<c:url value="/commodity-expert/add-product"/>">Add product</a><br/>
     <a href="<c:url value="/commodity-expert/update-product"/>">Update product</a>
 
-    <jsp:include page="/view/menu/languageInterface.jsp"/>
+    <jsp:include page="/view/menu/menu.jsp"/>
 
 </fmt:bundle>
 </body>

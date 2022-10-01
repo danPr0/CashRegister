@@ -4,4 +4,20 @@
 
 <web-app>
   <display-name>Archetype Created Web Application</display-name>
+<!--  <filter>-->
+<!--    <filter-name>ResponseOverrideFilter</filter-name>-->
+<!--    <filter-class>org.displaytag.filter.ResponseOverrideFilter</filter-class>-->
+<!--  </filter>-->
+<!--  <filter-mapping>-->
+<!--    <filter-name>ResponseOverrideFilter</filter-name>-->
+<!--    <url-pattern>*.do</url-pattern>-->
+<!--  </filter-mapping>-->
+<!--  <filter-mapping>-->
+<!--    <filter-name>ResponseOverrideFilter</filter-name>-->
+<!--    <url-pattern>*.jsp</url-pattern>-->
+<!--  </filter-mapping>-->
+  <filter-mapping>
+    <filter-name>main</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
 </web-app>

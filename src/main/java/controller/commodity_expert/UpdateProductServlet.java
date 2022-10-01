@@ -17,32 +17,39 @@ public class UpdateProductServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String productId = req.getParameter("productId");
         String productName = req.getParameter("productName");
 
-        if (productName != null) {
-            Product product = productService.getProduct(productName);
-            if (product == null)
-                req.setAttribute("error", "No such product");
-            else {
-                req.setAttribute("product", product);
-            }
+        Product product;
+        if (productId != null)
+            product = productService.getProductById(Integer.parseInt(productId));
+        else try {
+            product = productService.getProductByName(productName);
+        } catch (NumberFormatException e) {
+            product = null;
         }
 
+        if (product == null)
+            req.setAttribute("error", "No such product");
+        else req.setAttribute("product", product);
         req.getRequestDispatcher("/view/commodity-expert/updateProduct.jsp").forward(req, resp);
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String productId = request.getParameter("productId");
         String productName = request.getParameter("productName");
         String quantity = request.getParameter("newQuantity");
         String price = request.getParameter("newPrice");
 
         boolean result;
         try {
-            System.out.println(quantity);
-            result = productService.updateProduct(productName, Integer.parseInt(quantity), Double.parseDouble(price));
+            if (productId != null) {
+                result = productService.updateProductById(Integer.parseInt(productId), Integer.parseInt(quantity), Double.parseDouble(price));
+            }
+            else result = productService.updateProductByName(productName, Integer.parseInt(quantity), Double.parseDouble(price));
         }
-        catch (NumberFormatException | NullPointerException e) {
+        catch (NullPointerException | NumberFormatException ignored) {
             result = false;
         }
 

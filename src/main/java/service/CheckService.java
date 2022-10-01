@@ -6,6 +6,9 @@ import dao_impl.CheckRepository;
 import dao_impl.ProductRepository;
 
 import java.util.List;
+import java.util.Objects;
+
+import static util.DBFields.*;
 
 public class CheckService {
     private static CheckService instance = null;
@@ -156,8 +159,14 @@ public class CheckService {
         return checkRepository.getAll();
     }
 
-    public List<CheckElement> getPerPage(int nOfPage, int total) {
-        return checkRepository.getLimit(total * (nOfPage - 1), total);
+    public List<CheckElement> getPerPage(int nOfPage, int total, String sortBy) {
+        if (Objects.equals(sortBy, "productId"))
+            sortBy = CHECK_PRODUCT_ID;
+        else if (Objects.equals(sortBy, "quantity"))
+            sortBy = CHECK_PRODUCT_QUANTITY;
+        else sortBy = CHECK_ID;
+
+        return checkRepository.getLimit(total * (nOfPage - 1), total, sortBy);
     }
 
     public int getNumberOfRows() {

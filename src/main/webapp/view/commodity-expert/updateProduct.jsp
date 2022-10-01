@@ -12,18 +12,26 @@
 <body>
 <fmt:bundle basename="messages">
     <form action="<c:url value="/commodity-expert/update-product"/>" method="get">
-        <label>
-            <input type="text" name="productName" minlength="2" maxlength="30"
-                   placeholder="<fmt:message key="placeHolder.productName"/>"/>
-        </label>Which product you'd like to update?<br/>
+        <c:choose>
+            <c:when test="${sessionScope.searchType == 'id'}">
+                <jsp:include page="../util/productIdInput.jsp"/>
+                <a type="button" href="?formType=name">Find product by name</a>
+            </c:when>
+            <c:otherwise>
+                <jsp:include page="../util/productNameInput.jsp"/>
+                <a type="button" href="?formType=id">Find product by id</a>
+            </c:otherwise>
+        </c:choose>
         <input type="submit" value="Find"/>
     </form>
+
+    <p>${requestScope.error}</p>
 
     <c:if test="${requestScope.product != null}">
         <p>Name : ${requestScope.product.name}    Quantity : ${requestScope.product.quantity}    Price : ${requestScope.product.price}</p>
         <form action="<c:url value="/commodity-expert/update-product?productName=${requestScope.product.name}"/>" method="post">
             <label>
-                <input type="text" name="newQuantity" required pattern="[0-9]+"
+                <input type="text" name="newQuantity" required pattern="[0-9]+" min="1" max="10000"
                        placeholder="<fmt:message key="placeHolder.productQuantity"/>"/>
             </label><fmt:message key="label.productQuantity"/><br/>
             <label>
@@ -32,20 +40,12 @@
             </label><fmt:message key="label.productPrice"/><br/>
             <input type="submit" value="Update product"/>
         </form>
-
     </c:if>
 
-    <c:if test="${error != null}">
-        <p>${error}</p>
-    </c:if>
+    <p>${param.error}</p>
+    <p>${param.success}</p>
 
-    <c:if test="${param.success == 'true'}">
-        <p>Product ${param.productName} was successfully updated!</p>
-    </c:if>
-
-    <a href="<c:url value="/commodity-expert"/>">Back to main</a>
-
-    <jsp:include page="/view/menu/languageInterface.jsp"/>
+    <jsp:include page="/view/menu/menu.jsp"/>
 
 </fmt:bundle>
 

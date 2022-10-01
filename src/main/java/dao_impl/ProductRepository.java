@@ -12,6 +12,8 @@ import static util.DBFields.*;
 
 public class ProductRepository implements ProductDAO {
     private static ProductRepository instance = null;
+    private final ConnectionFactory connectionFactory = ConnectionFactory.getInstance();
+    private final Logger logger = LogManager.getLogger(ProductRepository.class);
 
     private static final String GET_PRODUCT_BY_NAME_QUERY = "SELECT * FROM products WHERE %s = ?".formatted(PRODUCT_NAME);
     private static final String GET_PRODUCT_BY_ID_QUERY = "SELECT * FROM products WHERE %s = ?".formatted(PRODUCT_ID);
@@ -21,11 +23,7 @@ public class ProductRepository implements ProductDAO {
             .formatted(PRODUCT_QUANTITY, PRODUCT_PRICE, PRODUCT_NAME);
     private static final String DELETE_PRODUCT_QUERY = "DELETE FROM products WHERE %s = ?".formatted(PRODUCT_ID);
 
-    private final Logger logger = LogManager.getLogger(ProductRepository.class);
-
-    private ProductRepository() {
-        super();
-    }
+    private ProductRepository() {}
 
     public static ProductRepository getInstance() {
         if (instance == null)
@@ -33,15 +31,12 @@ public class ProductRepository implements ProductDAO {
         return instance;
     }
 
-    private Connection getConnection() {
-        return ConnectionFactory.getInstance().getConnection();
-    }
-
     @Override
     public Product getProductByName(String name) {
         Product result = null;
 
-        try (PreparedStatement ps = getConnection().prepareStatement(GET_PRODUCT_BY_NAME_QUERY)) {
+        try (Connection con = connectionFactory.getConnection();
+             PreparedStatement ps = con.prepareStatement(GET_PRODUCT_BY_NAME_QUERY)) {
             ps.setString(1, name);
             try (ResultSet resultSet = ps.executeQuery()) {
                 if (resultSet.next()) {
@@ -61,7 +56,8 @@ public class ProductRepository implements ProductDAO {
     public Product getProductById(int id) {
         Product result = null;
 
-        try (PreparedStatement ps = getConnection().prepareStatement(GET_PRODUCT_BY_ID_QUERY)) {
+        try (Connection con = connectionFactory.getConnection();
+             PreparedStatement ps = con.prepareStatement(GET_PRODUCT_BY_ID_QUERY)) {
             ps.setInt(1, id);
             try (ResultSet resultSet = ps.executeQuery()) {
                 if (resultSet.next()) {
@@ -81,7 +77,8 @@ public class ProductRepository implements ProductDAO {
     public boolean insertProduct(Product product) {
         boolean result = true;
 
-        try (PreparedStatement ps = getConnection().prepareStatement(INSERT_PRODUCT_QUERY)) {
+        try (Connection con = connectionFactory.getConnection();
+             PreparedStatement ps = con.prepareStatement(INSERT_PRODUCT_QUERY)) {
             ps.setString(1, product.getName());
             ps.setInt(2, product.getQuantity());
             ps.setDouble(3, product.getPrice());
@@ -99,7 +96,8 @@ public class ProductRepository implements ProductDAO {
     public boolean updateProduct(Product product) {
         boolean result = true;
 
-        try (PreparedStatement ps = getConnection().prepareStatement(UPDATE_PRODUCT_QUERY)) {
+        try (Connection con = connectionFactory.getConnection();
+             PreparedStatement ps = con.prepareStatement(UPDATE_PRODUCT_QUERY)) {
             ps.setInt(1, product.getQuantity());
             ps.setDouble(2, product.getPrice());
             ps.setString(3, product.getName());
@@ -117,7 +115,8 @@ public class ProductRepository implements ProductDAO {
     public boolean deleteProduct(int id) {
         boolean result = true;
 
-        try (PreparedStatement ps = getConnection().prepareStatement(DELETE_PRODUCT_QUERY)) {
+        try (Connection con = connectionFactory.getConnection();
+             PreparedStatement ps = con.prepareStatement(DELETE_PRODUCT_QUERY)) {
             ps.setInt(1, id);
             ps.execute();
             logger.info("Product with id = " + id + " was successfully added");

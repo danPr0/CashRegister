@@ -12,12 +12,9 @@
 <body>
 <fmt:bundle basename="messages">
     <form action="<c:url value="/commodity-expert/add-product"/>" method="post">
+        <jsp:include page="../util/productNameInput.jsp"/>
         <label>
-            <input type="text" name="productName" minlength="2" maxlength="30"
-                   placeholder="<fmt:message key="placeHolder.productName"/>"/>
-        </label><fmt:message key="label.productName"/><br/>
-        <label>
-            <input type="text" name="quantity" required pattern="[0-9]+"
+            <input type="text" name="quantity"  required pattern="[0-9]+" min="1" max="10000"
                    placeholder="<fmt:message key="placeHolder.productQuantity"/>"/>
         </label><fmt:message key="label.productQuantity"/><br/>
         <label>
@@ -27,17 +24,10 @@
         <input type="submit" value="<fmt:message key="button.add"/>"/>
     </form>
 
-    <c:if test="${param.error != null}">
-        <p>${param.error}</p>
-    </c:if>
+    <p>${param.error}</p>
+    <p>${param.success}</p>
 
-    <c:if test="${param.success == 'true'}">
-        <p>Product ${param.productName} was successfully added!</p>
-    </c:if>
-
-    <a href="<c:url value="/commodity-expert"/>">Back to main</a>
-
-    <jsp:include page="/view/menu/languageInterface.jsp"/>
+    <jsp:include page="/view/menu/menu.jsp"/>
 
 </fmt:bundle>
 

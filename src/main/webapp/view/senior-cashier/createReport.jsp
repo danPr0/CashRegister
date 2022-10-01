@@ -11,6 +11,9 @@
 </head>
 <body>
 <fmt:bundle basename="messages">
+    <a href="<c:url value="/senior-cashier/download-report?reportType=x&format=csv"/>" target="_blank">Csv</a><br/>
+    <a href="<c:url value="/senior-cashier/download-report?reportType=x&format=pdf"/>" target="_blank">Pdf</a><br/>
+    <a href="<c:url value="/senior-cashier/download-report?reportType=x&format=xls"/>" target="_blank">Xls</a><br/>
     <table>
         <tr>
             <th>Created by</th>
@@ -36,7 +39,7 @@
         <a href="<c:url value="/senior-cashier"/>">Back to main</a>
     </div>
 
-    <jsp:include page="../menu/languageInterface.jsp"/>
+    <jsp:include page="../menu/menu.jsp"/>
 </fmt:bundle>
 </body>
 </html>

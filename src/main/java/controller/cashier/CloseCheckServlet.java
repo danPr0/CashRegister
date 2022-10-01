@@ -8,6 +8,10 @@ import javax.servlet.http.*;
 import javax.servlet.annotation.*;
 import java.io.IOException;
 
+/**
+ * Class is designed to close the current check
+ */
+
 @WebServlet("/cashier/close-check")
 public class CloseCheckServlet extends HttpServlet {
     private final CheckService checkService = CheckService.getInstance();

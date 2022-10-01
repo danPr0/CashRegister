@@ -24,15 +24,21 @@
 
     <c:choose>
         <c:when test="${requestScope.reportSize == 0}">
-            <p>No checks were committed after last Z report</p>
+            <p>
+                No checks were committed after last Z report<br/>
+                You can download last Z report:
+            </p>
+            <a href="<c:url value="/senior-cashier/download-report?reportType=z&format=csv"/>" target="_blank">Csv</a><br/>
+            <a href="<c:url value="/senior-cashier/download-report?reportType=z&format=pdf"/>" target="_blank">Pdf</a><br/>
+            <a href="<c:url value="/senior-cashier/download-report?reportType=z&format=xls"/>" target="_blank">Xls</a><br/>
         </c:when>
         <c:otherwise>
             <a href="<c:url value="/senior-cashier/create-x-report"/>">Create X report</a><br/>
-            <a href="<c:url value="/senior-cashier/create-x-report"/>">Create Z report</a><br/>
+            <a href="<c:url value="/senior-cashier/create-z-report"/>">Create Z report</a><br/>
         </c:otherwise>
     </c:choose>
 
-    <jsp:include page="/view/menu/languageInterface.jsp"/>
+    <jsp:include page="/view/menu/menu.jsp"/>
 
 </fmt:bundle>
 </body>

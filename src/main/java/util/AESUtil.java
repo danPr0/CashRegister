@@ -7,11 +7,9 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 
 public class AESUtil {
-    public static final SecretKey secretKey = generateSecretKey();
-    public static final IvParameterSpec ivParameterSpec = generateIv();
-    public static final String algorithm = "AES/CBC/PKCS5Padding";
+    public static final String algorithm = "AES";
 
-    private static SecretKey generateSecretKey() {
+    public static SecretKey generateSecretKey() {
         SecretKey key = null;
         try {
             KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");

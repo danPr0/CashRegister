@@ -23,14 +23,31 @@ public class ProductService {
         return productRepository.insertProduct(new Product(0, productName, quantity, price));
     }
 
-    public boolean updateProduct(String productName, int quantity, double price) {
-        if (!Validator.validateProductName(productName) || quantity < 0 || price <= 0)
-            return false;
-
-        return productRepository.updateProduct(new Product(0, productName, quantity, price));
+    public Product getProductById(int id) {
+        return productRepository.getProductById(id);
     }
 
-    public Product getProduct(String name) {
+    public Product getProductByName(String name) {
         return productRepository.getProductByName(name);
+    }
+
+    public boolean updateProductById(int id, int quantity, double price) {
+        Product product = productRepository.getProductById(id);
+        return updateProduct(product, quantity, price);
+    }
+
+    public boolean updateProductByName(String name, int quantity, double price) {
+        Product product = productRepository.getProductByName(name);
+        return updateProduct(product, quantity, price);
+    }
+
+    public boolean updateProduct(Product product, int newQuantity, double newPrice) {
+        if (product == null || newQuantity < 0 || newPrice <= 0)
+            return false;
+
+        product.setQuantity(newQuantity);
+        product.setPrice(newPrice);
+
+        return productRepository.updateProduct(product);
     }
 }

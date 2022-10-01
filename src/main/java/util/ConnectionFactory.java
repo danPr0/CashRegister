@@ -13,13 +13,14 @@ public class ConnectionFactory {
     private static BasicDataSource dataSource = null;
 
     private ConnectionFactory() {
-        try {
-            Class.forName("com.mysql.jdbc.Driver");
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            Class.forName("com.mysql.jdbc.Driver");
+//        } catch (ClassNotFoundException e) {
+//            e.printStackTrace();
+//        }
 
         dataSource = new BasicDataSource();
+        dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
         dataSource.setUrl(getConnectionUrl());
 
 //        dataSource.setMinIdle(3);
@@ -50,9 +51,10 @@ public class ConnectionFactory {
         String connection_url = null;
 
         try {
-            properties.load(getClass().getClassLoader().getResourceAsStream("/application.properties"));
+            properties.load(getClass().getClassLoader().getResourceAsStream("application.properties"));
             connection_url = properties.getProperty("connection.url");
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             e.printStackTrace();
         }
 

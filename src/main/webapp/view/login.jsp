@@ -32,7 +32,7 @@
 
     <p>Don't have an account? <a href="<c:url value="/auth/signup"/>">Sign up!</a></p>
 
-    <jsp:include page="/view/menu/languageInterface.jsp"/>
+    <jsp:include page="/view/menu/menu.jsp"/>
 
 </fmt:bundle>
 </body>

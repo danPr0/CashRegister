@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.util.List;
 
 @WebServlet("/senior-cashier/create-x-report")
-public class GetXReportServlet extends HttpServlet {
+public class CreateXReportServlet extends HttpServlet {
     private final ReportService reportService = ReportService.getInstance();
 
     @Override

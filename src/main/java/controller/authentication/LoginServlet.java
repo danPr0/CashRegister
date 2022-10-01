@@ -1,19 +1,19 @@
 package controller.authentication;
 
 import entity.User;
-import dao_impl.UserRepository;
 import service.UserService;
 import util.JWTProvider;
-import util.RoleName;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.net.URL;
+
+/**
+ * Class is designed to process client authentication
+ */
 
 @WebServlet("/auth/login")
 public class LoginServlet extends HttpServlet {
@@ -26,20 +26,22 @@ public class LoginServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    public void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String username = req.getParameter("username");
         String password = req.getParameter("password");
 
         if (userService.authenticate(username, password)) {
             User user = userService.getUser(username);
-            req.getSession().setAttribute("username", username);
+            req.getServletContext().setAttribute("username", username);
 
 //            Cookie cookie = new Cookie("token", jwtProvider.generateJwtToken(user.getRole().getName().toString()));
 //            cookie.setPath("/");
 //            cookie.setHttpOnly(true);
 //            resp.addCookie(cookie);
-            jwtProvider.setTokenCookie(jwtProvider.generateJwtToken(user.getRole().getName().toString(), "accessToken"), "accessToken", resp);
-            jwtProvider.setTokenCookie(jwtProvider.generateJwtToken(user.getRole().getName().toString(), "refreshToken"), "refreshToken", resp);
+            jwtProvider.setTokenCookie(jwtProvider.generateJwtToken(user.getRole().getName(), "accessToken"),
+                    "accessToken", JWTProvider.accessTokenExpirationInSec, resp);
+            jwtProvider.setTokenCookie(jwtProvider.generateJwtToken(user.getRole().getName(), "refreshToken"),
+                    "refreshToken", JWTProvider.refreshTokenExpirationInSec, resp);
 
             resp.sendRedirect("/");
         }

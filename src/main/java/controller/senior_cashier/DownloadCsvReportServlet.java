@@ -21,7 +21,6 @@ public class DownloadCsvReportServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
         File file = new File(req.getServletContext().getRealPath("") + "/WEB-INF/reports/report.csv");
         FileWriter fileWriter = new FileWriter(file);
 
@@ -34,7 +33,6 @@ public class DownloadCsvReportServlet extends HttpServlet {
                     e.printStackTrace();
                 }
             }));
-
         }
 
 //        resp.setContentType("text/plain");

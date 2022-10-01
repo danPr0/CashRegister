@@ -1,5 +1,7 @@
 package filter;
 
+import dao_impl.UserRepository;
+import entity.User;
 import util.JWTProvider;
 import util.RoleName;
 
@@ -9,9 +11,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@WebFilter("/*")
+@WebFilter(value = "/*", filterName = "main")
 public class SessionLocateFilter implements Filter {
     private final JWTProvider jwtProvider = JWTProvider.getInstance();
+    private final UserRepository userRepository = UserRepository.getInstance();
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws ServletException, IOException {
@@ -22,13 +25,26 @@ public class SessionLocateFilter implements Filter {
             httpRequest.getSession().setAttribute("lang", httpRequest.getParameter("sessionLocale"));
         }
 
+        if (httpRequest.getParameter("searchType") != null) {
+            httpRequest.getSession().setAttribute("searchType", httpRequest.getParameter("searchType"));
+        }
+
         String accessToken = jwtProvider.resolveToken(httpRequest, "accessToken");
         String refreshToken = jwtProvider.resolveToken(httpRequest, "refreshToken");
+
         if (!jwtProvider.validateToken(accessToken) && jwtProvider.validateToken(refreshToken)) {
-            RoleName role = jwtProvider.getRole(refreshToken);
-            jwtProvider.setTokenCookie(jwtProvider.generateJwtToken(role.toString(), "accessToken"), "accessToken", httpResponse);
-            jwtProvider.setTokenCookie(jwtProvider.generateJwtToken(role.toString(), "refreshToken"), "refreshToken", httpResponse);
+            User user = userRepository.getUserByUsername(String.valueOf(request.getServletContext().getAttribute("username")));
+            if (user == null) {
+                chain.doFilter(request, response);
+                return;
+            }
+            RoleName role = user.getRole().getName();
+            jwtProvider.setTokenCookie(jwtProvider.generateJwtToken(role, "accessToken"),
+                    "accessToken", JWTProvider.accessTokenExpirationInSec,  httpResponse);
+            jwtProvider.setTokenCookie(jwtProvider.generateJwtToken(role, "refreshToken"),
+                    "refreshToken", JWTProvider.refreshTokenExpirationInSec, httpResponse);
+            httpResponse.sendRedirect(httpRequest.getRequestURI());
         }
-        chain.doFilter(request, response);
+        else chain.doFilter(request, response);
     }
 }

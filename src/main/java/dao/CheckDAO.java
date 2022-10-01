@@ -13,6 +13,6 @@ public interface CheckDAO {
     boolean deleteCheckElementById(int id);
     List<CheckElement> getAll();
     boolean deleteAll();
-    List<CheckElement> getLimit(int offset, int limit);
+    List<CheckElement> getLimit(int offset, int limit, String sortColumn);
     int getNumberOfRows();
 }

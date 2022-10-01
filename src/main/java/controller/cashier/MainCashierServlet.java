@@ -9,6 +9,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ * Class is responsible for cashier's main page
+ */
+
 @WebServlet("/cashier")
 public class MainCashierServlet extends HttpServlet {
     private final CheckService checkService = CheckService.getInstance();
