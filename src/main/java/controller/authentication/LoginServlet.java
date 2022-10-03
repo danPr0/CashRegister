@@ -22,7 +22,7 @@ public class LoginServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.getRequestDispatcher("/view/login.jsp").forward(req, resp);
+        req.getRequestDispatcher("/view/authentication/login.jsp").forward(req, resp);
     }
 
     @Override
@@ -32,7 +32,8 @@ public class LoginServlet extends HttpServlet {
 
         if (userService.authenticate(username, password)) {
             User user = userService.getUser(username);
-            req.getServletContext().setAttribute("username", username);
+//            req.getServletContext().setAttribute("username", username);
+            req.getSession().setAttribute("username", username);
 
 //            Cookie cookie = new Cookie("token", jwtProvider.generateJwtToken(user.getRole().getName().toString()));
 //            cookie.setPath("/");

@@ -1,28 +1,18 @@
-package entity;
+package dto;
 
 import java.sql.Timestamp;
 
-public class ReportElement {
-    private int id;
+public class ReportDTO {
     private String createdBy;
-    private Timestamp closed_at;
+    private String closed_at;
     private int items_quantity;
     private double total_price;
 
-    public ReportElement(int id, String createdBy, Timestamp closed_at, int items_quantity, double total_price) {
-        this.id = id;
+    public ReportDTO(String createdBy, String closed_at, int items_quantity, double total_price) {
         this.createdBy = createdBy;
         this.closed_at = closed_at;
         this.items_quantity = items_quantity;
         this.total_price = total_price;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getCreatedBy() {
@@ -33,11 +23,11 @@ public class ReportElement {
         this.createdBy = createdBy;
     }
 
-    public Timestamp getClosed_at() {
+    public String getClosed_at() {
         return closed_at;
     }
 
-    public void setClosed_at(Timestamp closed_at) {
+    public void setClosed_at(String closed_at) {
         this.closed_at = closed_at;
     }
 

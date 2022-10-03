@@ -17,49 +17,53 @@ public class UpdateProductServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String productId = req.getParameter("productId");
-        String productName = req.getParameter("productName");
+//        String productId = req.getParameter("productId");
+//        String productName = req.getParameter("productName");
+//
+//        Product product;
+//        if (productId != null)
+//            product = productService.getProductById(Integer.parseInt(productId));
+//        else try {
+//            product = productService.getProductByName(productName);
+//        } catch (NumberFormatException e) {
+//            product = null;
+//        }
 
-        Product product;
-        if (productId != null)
-            product = productService.getProductById(Integer.parseInt(productId));
-        else try {
-            product = productService.getProductByName(productName);
-        } catch (NumberFormatException e) {
-            product = null;
+        String product = req.getParameter("product");
+        if (product != null) {
+            Product productToUpdate;
+            try {
+                productToUpdate = productService.getProductById(Integer.parseInt(product));
+            } catch (NumberFormatException e1) {
+                productToUpdate = productService.getProductByName(product);
+            }
+
+            if (productToUpdate == null)
+                req.setAttribute("error", "No such product");
+            else req.setAttribute("product", productToUpdate);
         }
 
-        if (product == null)
-            req.setAttribute("error", "No such product");
-        else req.setAttribute("product", product);
         req.getRequestDispatcher("/view/commodity-expert/updateProduct.jsp").forward(req, resp);
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String productId = request.getParameter("productId");
-        String productName = request.getParameter("productName");
-        String quantity = request.getParameter("newQuantity");
-        String price = request.getParameter("newPrice");
+        String quantity = request.getParameter("quantity");
+        String price = request.getParameter("price");
 
         boolean result;
         try {
-            if (productId != null) {
-                result = productService.updateProductById(Integer.parseInt(productId), Integer.parseInt(quantity), Double.parseDouble(price));
-            }
-            else result = productService.updateProductByName(productName, Integer.parseInt(quantity), Double.parseDouble(price));
+            result = productService.updateProductById(Integer.parseInt(productId), Integer.parseInt(quantity), Double.parseDouble(price));
         }
-        catch (NullPointerException | NumberFormatException ignored) {
+        catch (NumberFormatException ignored) {
             result = false;
         }
 
-        String url = "/commodity-expert/update-product";
+        String url = "/commodity-expert/update-product?product=" + productId;
         if (!result)
-            url += "?error=Cannot update product. Please try again";
-        else {
-            url += "?success=" + "Product was successfully updated";
-            url += "&productName=" + productName;
-        }
+            url += "&error=Cannot update product. Please try again";
+        else url += "&success=" + "Product was successfully updated";
 
         response.sendRedirect(url);
     }

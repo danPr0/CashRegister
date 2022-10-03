@@ -18,19 +18,20 @@ public class CancelProductInCheckServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String productId = request.getParameter("productId");
-        String productName = request.getParameter("productName");
+        String product = request.getParameter("product");
         String quantity = request.getParameter("quantity");
 
         boolean result;
         try {
-            if (productId != null) {
-                result = checkService.cancelCheckElementById(Integer.parseInt(productId), Integer.parseInt(quantity));
-            }
-            else result = checkService.cancelCheckElementByName(productName, Integer.parseInt(quantity));
+            result = checkService.cancelCheckElementById(Integer.parseInt(product), Integer.parseInt(quantity));
         }
-        catch (NullPointerException | NumberFormatException ignored) {
-            result = false;
+        catch (NumberFormatException e1) {
+            try {
+                result = checkService.cancelCheckElementByName(product, Integer.parseInt(quantity));
+            }
+            catch (NumberFormatException e2) {
+                result = false;
+            }
         }
 
         String url = "/senior-cashier/cancel-product-in-check";

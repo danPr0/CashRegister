@@ -10,6 +10,8 @@ import javax.servlet.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 @WebFilter(value = "/*", filterName = "main")
 public class SessionLocateFilter implements Filter {
@@ -20,11 +22,11 @@ public class SessionLocateFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws ServletException, IOException {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
-        
+
+        httpRequest.setAttribute("username", httpRequest.getSession().getAttribute("username"));
         if (httpRequest.getParameter("sessionLocale") != null) {
             httpRequest.getSession().setAttribute("lang", httpRequest.getParameter("sessionLocale"));
         }
-
         if (httpRequest.getParameter("searchType") != null) {
             httpRequest.getSession().setAttribute("searchType", httpRequest.getParameter("searchType"));
         }
@@ -33,7 +35,7 @@ public class SessionLocateFilter implements Filter {
         String refreshToken = jwtProvider.resolveToken(httpRequest, "refreshToken");
 
         if (!jwtProvider.validateToken(accessToken) && jwtProvider.validateToken(refreshToken)) {
-            User user = userRepository.getUserByUsername(String.valueOf(request.getServletContext().getAttribute("username")));
+            User user = userRepository.getUserByUsername(String.valueOf(httpRequest.getSession().getAttribute("username")));
             if (user == null) {
                 chain.doFilter(request, response);
                 return;

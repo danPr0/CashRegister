@@ -1,7 +1,6 @@
 package controller.senior_cashier;
 
 import entity.ReportElement;
-import jxl.LabelCell;
 import jxl.Workbook;
 import jxl.write.Label;
 import jxl.write.Number;
@@ -74,7 +73,7 @@ public class DownloadXlsxReportServlet extends HttpServlet {
         report.forEach((r) -> {
             int index = report.indexOf(r);
             try {
-                sheet.addCell(new Label(0, index + 1, r.getUsername()));
+                sheet.addCell(new Label(0, index + 1, r.getCreatedBy()));
                 sheet.addCell(new Label(1, index + 1, r.getClosed_at().toString()));
                 sheet.addCell(new Number(2, index + 1, r.getItems_quantity()));
                 sheet.addCell(new Number(3, index + 1, r.getTotal_price()));

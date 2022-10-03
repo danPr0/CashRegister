@@ -22,7 +22,7 @@ public class SignupServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.getRequestDispatcher("/view/signup.jsp").forward(req, resp);
+        req.getRequestDispatcher("/view/authentication/signup.jsp").forward(req, resp);
     }
 
     @Override
@@ -36,7 +36,8 @@ public class SignupServlet extends HttpServlet {
         if (!password.equals(passwordConfirm))
             resp.sendRedirect("/auth/signup?error=Password mismatch");
         else if (userService.insertUser(username, password, firstName, secondName, RoleName.cashier)) {
-            req.getServletContext().setAttribute("username", username);
+//            req.getServletContext().setAttribute("username", username);
+            req.getSession().setAttribute("username", username);
 
 //            Cookie cookie = new Cookie("token", jwtProvider.generateJwtToken(RoleName.cashier.toString()));
 //            cookie.setHttpOnly(true);

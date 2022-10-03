@@ -21,7 +21,8 @@ public class AuthFilter implements Filter {
         if (jwtProvider.validateToken(accessToken))
             httpResponse.sendRedirect("/");
         else {
-            httpRequest.getServletContext().setAttribute("username", "");
+//            httpRequest.getServletContext().setAttribute("username", "");
+            httpRequest.getSession().removeAttribute("username");
             chain.doFilter(request, response);
         }
     }

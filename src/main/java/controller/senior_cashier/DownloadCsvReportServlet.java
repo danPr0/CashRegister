@@ -5,14 +5,12 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import service.ReportService;
 
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.util.ArrayList;
 import java.util.List;
 
 @WebServlet("/download-csv-report")
@@ -28,7 +26,7 @@ public class DownloadCsvReportServlet extends HttpServlet {
             List<ReportElement> report = reportService.getAll();
             report.forEach((r -> {
                 try {
-                    printer.printRecord(r.getUsername(), r.getClosed_at(), r.getItems_quantity(), r.getTotal_price());
+                    printer.printRecord(r.getCreatedBy(), r.getClosed_at(), r.getItems_quantity(), r.getTotal_price());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

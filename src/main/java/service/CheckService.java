@@ -24,11 +24,11 @@ public class CheckService {
         return instance;
     }
 
-//    public boolean specifyCheckByProductId(String productId, String quantity) {
+//    public boolean addToCheckByProductId(String productId, String quantity) {
 //        boolean result = false;
 //        try {
 //            Product product = productRepository.getProductById(Integer.parseInt(productId));
-//            result = specifyCheck(product, Integer.parseInt(quantity));
+//            result = addToCheck(product, Integer.parseInt(quantity));
 //        }
 //        catch (NullPointerException | NumberFormatException e) {
 //            e.printStackTrace();
@@ -37,12 +37,12 @@ public class CheckService {
 //        return result;
 //    }
 //
-//    public boolean specifyCheckByProductName(String productName, String quantity) {
+//    public boolean addToCheckByProductName(String productName, String quantity) {
 //        Product product = productRepository.getProductByName(productName);
 //        boolean result = false;
 //
 //        try {
-//            result = specifyCheck(product, Integer.parseInt(quantity));
+//            result = addToCheck(product, Integer.parseInt(quantity));
 //        }
 //        catch (NullPointerException | NumberFormatException e) {
 //            e.printStackTrace();
@@ -51,36 +51,53 @@ public class CheckService {
 //        return result;
 //    }
 
-    public boolean specifyCheckByProductId(int productId, int quantity) {
+    public boolean addToCheckByProductId(int productId, int quantity) {
         Product product = productRepository.getProductById(productId);
-        return specifyCheck(product, quantity);
+        return addToCheck(product, quantity);
     }
 
-    public boolean specifyCheckByProductName(String productName, int quantity) {
+    public boolean addToCheckByProductName(String productName, int quantity) {
         Product product = productRepository.getProductByName(productName);
-        return specifyCheck(product, quantity);
+        return addToCheck(product, quantity);
     }
 
-    public boolean specifyCheck(Product product, int quantity) {
-        if (product == null)
+    public boolean addToCheck(Product product, int quantity) {
+        if (product == null || quantity <= 0 || product.getQuantity() < quantity)
             return false;
 
         CheckElement checkElement = checkRepository.getCheckElementByProduct(product);
-        if (quantity < 0 || product.getQuantity() < quantity)
-            return false;
-
-        if (checkElement == null) {
-            product.setQuantity(product.getQuantity() - quantity);
-            productRepository.updateProduct(product);
+        product.setQuantity(product.getQuantity() - quantity);
+        productRepository.updateProduct(product);
+        if (checkElement == null)
             return checkRepository.insertCheckElement(new CheckElement(0, product, quantity));
-        }
         else {
-            product.setQuantity(product.getQuantity() + checkElement.getQuantity() - quantity);
-            checkElement.setQuantity(quantity);
-            productRepository.updateProduct(product);
+//            product.setQuantity(product.getQuantity() + checkElement.getQuantity() - quantity);
+            checkElement.setQuantity(checkElement.getQuantity() + quantity);
             return checkRepository.updateCheckElement(checkElement);
         }
     }
+
+//    public boolean addToCheckByProductId(int productId, int quantity) {
+//        Product product = productRepository.getProductById(productId);
+//        return addToCheck(product, quantity);
+//    }
+//
+//    public boolean addToCheckByProductName(String productName, int quantity) {
+//        Product product = productRepository.getProductByName(productName);
+//        return addToCheck(product, quantity);
+//    }
+//
+//    public boolean addToCheck(Product product, int quantity) {
+//        if (quantity <= 0 || product.getQuantity() < quantity)
+//            return false;
+//
+//        CheckElement checkElement = checkRepository.getCheckElementByProduct(product);
+//        if (checkElement == null) {
+//            product.setQuantity(product.getQuantity() - quantity);
+//            productRepository.updateProduct(product);
+//            return checkRepository.insertCheckElement(new CheckElement(0, product, quantity));
+//        }
+//    }
 
     public boolean updateCheck(String name, int newQuantity) {
         Product product = productRepository.getProductByName(name);
@@ -122,6 +139,7 @@ public class CheckService {
         Product product = productRepository.getProductByName(productName);
         return cancelCheckElement(product, quantity);
     }
+
     public boolean cancelCheckElement(Product product, int quantity) {
         if (product == null)
             return false;
@@ -132,9 +150,8 @@ public class CheckService {
 
         product.setQuantity(product.getQuantity() + quantity);
         productRepository.updateProduct(product);
-        if (checkElement.getQuantity() == quantity) {
+        if (checkElement.getQuantity() == quantity)
             return checkRepository.deleteCheckElementById(checkElement.getId());
-        }
         else {
             checkElement.setQuantity(checkElement.getQuantity() - quantity);
             return checkRepository.updateCheckElement(checkElement);

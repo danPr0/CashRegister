@@ -1,5 +1,6 @@
 package dao;
 
+import dto.ReportDTO;
 import entity.CheckElement;
 import entity.ReportElement;
 
@@ -10,5 +11,5 @@ public interface ReportDAO {
     List<ReportElement> getAll();
     boolean deleteAll();
     int getNumberOfRows();
-    List<ReportElement> getLimit(int offset, int limit);
+    List<ReportDTO> getLimit(int offset, int limit, String sortColumn);
 }

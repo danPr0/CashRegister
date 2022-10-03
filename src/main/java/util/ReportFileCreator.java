@@ -32,7 +32,7 @@ public class ReportFileCreator {
             List<ReportElement> report = reportService.getAll();
             report.forEach((r -> {
                 try {
-                    printer.printRecord(r.getUsername(), r.getClosed_at(), r.getItems_quantity(), r.getTotal_price());
+                    printer.printRecord(r.getCreatedBy(), r.getClosed_at(), r.getItems_quantity(), r.getTotal_price());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -56,7 +56,7 @@ public class ReportFileCreator {
         report.forEach((r) -> {
             int index = report.indexOf(r);
             try {
-                sheet.addCell(new Label(0, index + 1, r.getUsername()));
+                sheet.addCell(new Label(0, index + 1, r.getCreatedBy()));
                 sheet.addCell(new Label(1, index + 1, r.getClosed_at().toString()));
                 sheet.addCell(new jxl.write.Number(2, index + 1, r.getItems_quantity()));
                 sheet.addCell(new Number(3, index + 1, r.getTotal_price()));
@@ -106,7 +106,7 @@ public class ReportFileCreator {
         List<ReportElement> report = reportService.getAll();
         report.forEach((r) -> {
             PdfPCell header = new PdfPCell();
-            header.setPhrase(new Phrase(r.getUsername()));
+            header.setPhrase(new Phrase(r.getCreatedBy()));
             table.addCell(header);
             header.setPhrase(new Phrase(r.getClosed_at().toString()));
             table.addCell(header);

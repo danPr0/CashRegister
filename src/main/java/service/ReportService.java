@@ -1,15 +1,21 @@
 package service;
 
 import dao_impl.UserRepository;
+import dto.ReportDTO;
 import entity.CheckElement;
 import entity.ReportElement;
 import dao_impl.CheckRepository;
 import dao_impl.ReportRepository;
 import entity.User;
 
-import java.sql.Date;
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
+import java.util.Objects;
+
+import static util.DBFields.*;
 
 public class ReportService {
     private static ReportService instance = null;
@@ -39,11 +45,19 @@ public class ReportService {
             total_price += checkElement.getQuantity() * checkElement.getProduct().getPrice();
         }
 
-        return reportRepository.insertReportElement(new ReportElement(0, username, Date.valueOf(LocalDate.now()), items_quantity, total_price));
+        return reportRepository.insertReportElement(new ReportElement(0, username, Timestamp.from(Instant.now()), items_quantity, total_price));
     }
 
-    public List<ReportElement> getPerPage(int nOfPage, int total) {
-        return reportRepository.getLimit(total * (nOfPage - 1), total);
+    public List<ReportDTO> getPerPage(int nOfPage, int total, String sortParameter) {
+        String sortColumn = REPORT_ID;
+        if (Objects.equals(sortParameter, "createdBy"))
+            sortColumn = REPORT_CREATED_BY;
+        else if (Objects.equals(sortParameter, "quantity"))
+            sortColumn = REPORT_ITEMS_QUANTITY;
+        else if (Objects.equals(sortParameter, "price"))
+            sortColumn = REPORT_TOTAL_PRICE;
+
+        return reportRepository.getLimit(total * (nOfPage - 1), total, sortColumn);
     }
 
     public int getNumberOfRows() {

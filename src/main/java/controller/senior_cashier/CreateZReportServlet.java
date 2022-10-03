@@ -21,6 +21,6 @@ public class CreateZReportServlet extends HttpServlet {
         ReportFileCreator.createXls("z-report.xls", req.getServletContext());
 
         reportService.deleteAll();
-        resp.sendRedirect("/");
+        resp.sendRedirect("/senior-cashier");
     }
 }

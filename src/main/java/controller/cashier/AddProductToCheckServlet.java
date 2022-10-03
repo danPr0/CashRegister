@@ -60,9 +60,9 @@ public class AddProductToCheckServlet extends HttpServlet {
 //        boolean result;
 //        try {
 //            if (productId != null) {
-//                result = checkService.specifyCheckByProductId(Integer.parseInt(productId), Integer.parseInt(quantity));
+//                result = checkService.addToCheckByProductId(Integer.parseInt(productId), Integer.parseInt(quantity));
 //            }
-//            else result = checkService.specifyCheckByProductName(productName, Integer.parseInt(quantity));
+//            else result = checkService.addToCheckByProductName(productName, Integer.parseInt(quantity));
 //        }
 //        catch (NullPointerException | NumberFormatException ignored) {
 //            result = false;
@@ -72,11 +72,11 @@ public class AddProductToCheckServlet extends HttpServlet {
         String quantity = request.getParameter("quantity");
         boolean result;
         try {
-            result = checkService.specifyCheckByProductId(Integer.parseInt(product), Integer.parseInt(quantity));
+            result = checkService.addToCheckByProductId(Integer.parseInt(product), Integer.parseInt(quantity));
         }
         catch (NumberFormatException e1) {
             try {
-                result = checkService.specifyCheckByProductName(product, Integer.parseInt(quantity));
+                result = checkService.addToCheckByProductName(product, Integer.parseInt(quantity));
             }
             catch (NumberFormatException e2) {
                 result = false;
@@ -86,9 +86,9 @@ public class AddProductToCheckServlet extends HttpServlet {
 
 //        try {
 //            if (productId != null) {
-//                result = checkService.specifyCheckByProductId(Integer.parseInt(productId), Integer.parseInt(quantity));
+//                result = checkService.addToCheckByProductId(Integer.parseInt(productId), Integer.parseInt(quantity));
 //            }
-//            else result = checkService.specifyCheckByProductName(productName, Integer.parseInt(quantity));
+//            else result = checkService.addToCheckByProductName(productName, Integer.parseInt(quantity));
 //        }
 //        catch (NullPointerException | NumberFormatException ignored) {
 //            result = false;
@@ -101,8 +101,8 @@ public class AddProductToCheckServlet extends HttpServlet {
         else url += "?success=Product was successfully added to check";
         if (request.getParameter("page") != null)
             url += "&page=" + request.getParameter("page");
-        if (request.getParameter("total") != null)
-            url += "&total=" + request.getParameter("total");
+//        if (request.getParameter("total") != null)
+//            url += "&total=" + request.getParameter("total");
 
         response.sendRedirect(url);
     }

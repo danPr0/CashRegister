@@ -10,10 +10,10 @@
 <fmt:bundle basename="messages">
     <div class="form-group">
         <label for="prodName"><fmt:message key="label.productName"/></label>
-        <input type="text" name="productName" required pattern="(([a-z][A-Z])+\s*)+|([а-я][А-Я]+\s*)+" minlength="1"
-               maxlength="50" class="form-control" id="prodName"
-               placeholder="<fmt:message key="placeHolder.productName"/>"/>
-        <div class="invalid-feedback">You can use only letters and whitespaces.</div>
+<%--        pattern="(([a-z][A-Z])+\s*)+|([а-я][А-Я]+\s*)+"--%>
+        <input type="text" name="productName" required maxlength="50" class="form-control"
+               placeholder="<fmt:message key="placeHolder.productName"/>" id="prodName"/>
+        <div class="invalid-feedback">Product name required</div>
 
     </div>
 </fmt:bundle>

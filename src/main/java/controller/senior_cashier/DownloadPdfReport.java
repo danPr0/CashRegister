@@ -1,6 +1,5 @@
 package controller.senior_cashier;
 
-import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Phrase;
@@ -65,7 +64,7 @@ public class DownloadPdfReport extends HttpServlet {
         List<ReportElement> report = reportService.getAll();
         report.forEach((r) -> {
             PdfPCell header = new PdfPCell();
-            header.setPhrase(new Phrase(r.getUsername()));
+            header.setPhrase(new Phrase(r.getCreatedBy()));
             table.addCell(header);
             header.setPhrase(new Phrase(r.getClosed_at().toString()));
             table.addCell(header);

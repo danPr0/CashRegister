@@ -1,15 +1,14 @@
 package dao_impl;
 
 import dao.ReportDAO;
+import dto.ReportDTO;
 import entity.ReportElement;
+import jxl.write.DateTime;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import util.ConnectionFactory;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +22,7 @@ public class ReportRepository implements ReportDAO {
     private static final String INSERT_REPORT_QUERY = "INSERT INTO report (%s, %s, %s, %s) VALUES (?, ?, ?, ?)"
             .formatted(REPORT_CREATED_BY, REPORT_CLOSED_AT, REPORT_ITEMS_QUANTITY, REPORT_TOTAL_PRICE);
     private static final String GET_NUMBER_OF_ROWS = "SELECT COUNT(*) FROM report";
-    private static final String GET_LIMIT_QUERY = "SELECT * FROM report LIMIT ? OFFSET ?";
+    private static final String GET_LIMIT_QUERY = "SELECT * FROM report ORDER BY %S LIMIT ? OFFSET ?";
     private static final String GET_ALL_QUERY = "SELECT * FROM report";
     private static final String DELETE_ALL_QUERY = "DELETE FROM report";
 
@@ -40,12 +39,12 @@ public class ReportRepository implements ReportDAO {
 
         try (Connection con = connectionFactory.getConnection();
              PreparedStatement ps = con.prepareStatement(INSERT_REPORT_QUERY)) {
-            ps.setString(1, reportElement.getUsername());
-            ps.setDate(2, reportElement.getClosed_at());
+            ps.setString(1, reportElement.getCreatedBy());
+            ps.setTimestamp(2, reportElement.getClosed_at());
             ps.setInt(3, reportElement.getItems_quantity());
             ps.setDouble(4, reportElement.getTotal_price());
             ps.execute();
-            logger.info("Report element created by " + reportElement.getUsername() + " was successfully added");
+            logger.info("Report element created by " + reportElement.getCreatedBy() + " was successfully added");
         } catch (SQLException e) {
             e.printStackTrace();
             result = false;
@@ -73,17 +72,16 @@ public class ReportRepository implements ReportDAO {
     }
 
     @Override
-    public List<ReportElement> getLimit(int offset, int limit) {
-        List<ReportElement> resultList = new ArrayList<>();
+    public List<ReportDTO> getLimit(int offset, int limit, String sortColumn) {
+        List<ReportDTO> resultList = new ArrayList<>();
 
         try (Connection con = connectionFactory.getConnection();
-             PreparedStatement ps = con.prepareStatement(GET_LIMIT_QUERY)) {
+             PreparedStatement ps = con.prepareStatement(String.format(GET_LIMIT_QUERY, sortColumn))) {
             ps.setInt(1, limit);
             ps.setInt(2, offset);
             try (ResultSet resultSet = ps.executeQuery()) {
                 while (resultSet.next()) {
-                    resultList.add(new ReportElement(resultSet.getInt(REPORT_ID),
-                            resultSet.getString(REPORT_CREATED_BY), resultSet.getDate(REPORT_CLOSED_AT),
+                    resultList.add(new ReportDTO(resultSet.getString(REPORT_CREATED_BY), resultSet.getString(REPORT_CLOSED_AT),
                             resultSet.getInt(REPORT_ITEMS_QUANTITY), resultSet.getDouble(REPORT_TOTAL_PRICE)));
                 }
                 logger.info(resultList.size() + " report elements were successfully retrieved");
@@ -104,7 +102,7 @@ public class ReportRepository implements ReportDAO {
              ResultSet resultSet = ps.executeQuery()) {
                 while (resultSet.next()) {
                     resultList.add(new ReportElement(resultSet.getInt(REPORT_ID),
-                            resultSet.getString(REPORT_CREATED_BY), resultSet.getDate(REPORT_CLOSED_AT),
+                            resultSet.getString(REPORT_CREATED_BY), resultSet.getTimestamp(REPORT_CLOSED_AT),
                             resultSet.getInt(REPORT_ITEMS_QUANTITY), resultSet.getDouble(REPORT_TOTAL_PRICE)));
                 }
                 logger.info(resultList.size() + " report elements were successfully retrieved");
