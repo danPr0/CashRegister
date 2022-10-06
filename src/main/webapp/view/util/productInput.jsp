@@ -9,6 +9,6 @@
         <label for="prod"><fmt:message key="label.product"/></label>
         <input type="text" name="product" required maxlength="50" class="form-control"
                placeholder="<fmt:message key="placeHolder.product"/>" id="prod"/>
-        <div class="invalid-feedback">Must be 1-50 characters</div>
+        <div class="invalid-feedback"><fmt:message key="msg.invalidInput.required"/></div>
     </div>
 </fmt:bundle>

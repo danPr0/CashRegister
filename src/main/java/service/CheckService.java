@@ -130,24 +130,21 @@ public class CheckService {
         return checkRepository.deleteAll();
     }
 
-    public boolean cancelCheckElementById(int id, int quantity) {
+    public CheckElement getCheckElementByProductId(int id) {
         Product product = productRepository.getProductById(id);
-        return cancelCheckElement(product, quantity);
+        return checkRepository.getCheckElementByProduct(product);
     }
 
-    public boolean cancelCheckElementByName(String productName, int quantity) {
-        Product product = productRepository.getProductByName(productName);
-        return cancelCheckElement(product, quantity);
+    public CheckElement getCheckElementByProductName(String name) {
+        Product product = productRepository.getProductByName(name);
+        return checkRepository.getCheckElementByProduct(product);
     }
 
-    public boolean cancelCheckElement(Product product, int quantity) {
-        if (product == null)
-            return false;
-
-        CheckElement checkElement = checkRepository.getCheckElementByProduct(product);
+    public boolean cancelCheckElement(CheckElement checkElement, int quantity) {
         if (checkElement == null || checkElement.getQuantity() < quantity)
             return false;
 
+        Product product = checkElement.getProduct();
         product.setQuantity(product.getQuantity() + quantity);
         productRepository.updateProduct(product);
         if (checkElement.getQuantity() == quantity)

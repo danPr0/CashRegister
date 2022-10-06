@@ -27,6 +27,7 @@
     <body>
     <div class="container p-3 h-100 bg-dark text-white">
         <jsp:include page="../menu/menu.jsp"/>
+        <jsp:include page="../util/backToMainButton.jsp"/>
 
         <form action="<c:url value="/cashier/add-product-to-check?page=1"/>" method="post"
               class="needs-validation col-4" novalidate>
@@ -59,13 +60,16 @@
 
         </form>
 
-        <p class="text-danger pl-3">${param.error}</p>
-        <p class="text-success pl-3">${param.success}</p>
+        <c:if test="${param.error != null}">
+            <p class="text-danger pl-3"><fmt:message key="msg.error.cashier.${param.error}"/></p>
+        </c:if>
+        <c:if test="${param.success == 'true'}">
+            <p class="text-success pl-3"><fmt:message key="msg.success.cashier.addProductToCheck"/></p>
+        </c:if>
 
         <c:if test="${requestScope.nOfPages != 0}">
             <div>
-                <a class="card-link dropdown-toggle" href="#" id="sortDropdown" role="button" data-bs-toggle="dropdown"
-                   aria-expanded="false">
+                <a class="card-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
                     <fmt:message key="table.check.sort.dropdown"/>
                 </a>
                 <div class="dropdown-menu py-1" style="min-width: 3rem">

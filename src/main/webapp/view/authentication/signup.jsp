@@ -15,7 +15,7 @@
         <script src="<c:url value="/js?file=formValidation.js"/>"></script>
     </head>
     <body>
-    <div class="container p-3 h-100 bg-dark text-white">
+    <div class="container p-3 bg-dark text-white" style="min-height: 100%">
         <jsp:include page="/view/menu/menu.jsp"/>
 
         <form action="<c:url value="/auth/signup"/>" method="post" class="needs-validation col-4" novalidate>
@@ -23,16 +23,16 @@
 
             <div class="form-group">
                 <label for="firstName"><fmt:message key="label.firstName"/></label>
-                <input type="text" name="firstName" required pattern="([a-z][A-Z])+|([а-я][А-Я])+" maxlength="48"
+                <input type="text" name="firstName" required pattern="([A-Za-z]+|[А-Яа-яЁёЇїІіЄєҐґ']+" maxlength="48"
                        class="form-control" placeholder="<fmt:message key="placeHolder.firstName"/>" id="firstName"/>
-                <div class="invalid-feedback">Invalid first name</div>
+                <div class="invalid-feedback"><fmt:message key="msg.invalidInput.required"/></div>
             </div>
 
             <div class="form-group">
                 <label for="secondName"><fmt:message key="label.secondName"/></label>
-                <input type="text" name="secondName" required pattern="([a-z][A-Z])+|([а-я][А-Я])+" maxlength="48"
+                <input type="text" name="secondName" required pattern="[A-Za-z]+|[А-Яа-яЁёЇїІіЄєҐґ']+" maxlength="48"
                        class="form-control" placeholder="<fmt:message key="placeHolder.secondName"/>" id="secondName"/>
-                <div class="invalid-feedback">Invalid second name</div>
+                <div class="invalid-feedback"><fmt:message key="msg.invalidInput.required"/></div>
             </div>
 
             <jsp:include page="../util/passwordInput.jsp"/>
@@ -41,16 +41,19 @@
                 <label for="password"><fmt:message key="label.passwordConfirm"/></label>
                 <input type="password" name="passwordConfirm" required minlength="8" maxlength="48" class="form-control"
                        placeholder="<fmt:message key="placeHolder.passwordConfirm"/>" id="password"/>
-                <div class="invalid-feedback">Must be at least 8 characters</div>
+                <div class="invalid-feedback"><fmt:message key="msg.invalidInput.password"/></div>
             </div>
 
             <input type="submit" value="<fmt:message key="submit.signup"/>" class="btn btn-primary"/>
         </form>
 
-        <p class="text-danger pl-3">${param.error}</p>
+        <c:if test="${param.error != null}">
+            <p class="text-danger pl-3"><fmt:message key="msg.error.auth.signup.${param.error}"/></p>
+        </c:if>
+
         <p class="pl-3">
             <fmt:message key="msg.info.askToLogin"/>
-            <a href="<c:url value="/auth/login"/>">
+            <a href="<c:url value="/auth/login"/>" class="card-link">
                 <fmt:message key="button.login"/>
             </a>
         </p>

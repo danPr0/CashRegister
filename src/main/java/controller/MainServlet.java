@@ -25,14 +25,13 @@ public class MainServlet extends HttpServlet {
         String accessToken = jwtProvider.resolveToken(req, "accessToken");
         RoleName role = jwtProvider.getRole(accessToken);
 
-        if (role.equals(RoleName.cashier))
-//            req.getRequestDispatcher("/view/cashier/cashier.jsp").forward(req, resp);
+        if (role.equals(RoleName.guest))
+            req.getRequestDispatcher("/view/guest/guestPage.jsp").forward(req, resp);
+        else if (role.equals(RoleName.cashier))
             resp.sendRedirect("/cashier");
         else if (role.equals(RoleName.commodity_expert))
-//            req.getRequestDispatcher("/view/commodity-expert/commodityExpert.jsp").forward(req, resp);
             resp.sendRedirect("/commodity-expert");
         else if (role.equals(RoleName.senior_cashier))
             resp.sendRedirect("/senior-cashier");
-//            req.getRequestDispatcher("/view/senior-cashier/seniorCashier.jsp").forward(req, resp);
     }
 }

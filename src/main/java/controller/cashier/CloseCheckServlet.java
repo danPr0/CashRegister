@@ -22,9 +22,9 @@ public class CloseCheckServlet extends HttpServlet {
         String url = "/cashier";
         if (reportService.add((String) request.getSession().getAttribute("username"))) {
             checkService.closeCheck();
-            url += "?success=Check was successfully closed";
+            url += "?success=true";
         }
-        else url += "?error=Cannot close check. Please try again.";
+        else url += "?error=true";
 
         response.sendRedirect(url);
     }

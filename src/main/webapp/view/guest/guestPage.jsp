@@ -17,12 +17,9 @@
     <div class="container p-3 bg-dark text-white" style="min-height: 100%">
         <jsp:include page="../menu/menu.jsp"/>
 
-        <a href="<c:url value="/commodity-expert/add-product"/>" class="btn btn-primary">
-            <fmt:message key="button.addProduct"/>
-        </a>
-        <a href="<c:url value="/commodity-expert/update-product"/>" class="btn btn-secondary">
-            <fmt:message key="button.updateProduct"/>
-        </a>
+        <p class="ml-3">
+            <fmt:message key="msg.info.welcomeGuest"/>
+        </p>
     </div>
     </body>
 </fmt:bundle>

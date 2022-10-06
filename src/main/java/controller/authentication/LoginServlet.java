@@ -30,24 +30,18 @@ public class LoginServlet extends HttpServlet {
         String username = req.getParameter("username");
         String password = req.getParameter("password");
 
-        if (userService.authenticate(username, password)) {
-            User user = userService.getUser(username);
-//            req.getServletContext().setAttribute("username", username);
-            req.getSession().setAttribute("username", username);
-
-//            Cookie cookie = new Cookie("token", jwtProvider.generateJwtToken(user.getRole().getName().toString()));
-//            cookie.setPath("/");
-//            cookie.setHttpOnly(true);
-//            resp.addCookie(cookie);
+        User user;
+        if ((user = userService.getUser(username)) == null)
+            resp.sendRedirect("/auth/login?error=badUsername");
+        else if (userService.authenticate(username, password)) {
             jwtProvider.setTokenCookie(jwtProvider.generateJwtToken(user.getRole().getName(), "accessToken"),
                     "accessToken", JWTProvider.accessTokenExpirationInSec, resp);
             jwtProvider.setTokenCookie(jwtProvider.generateJwtToken(user.getRole().getName(), "refreshToken"),
                     "refreshToken", JWTProvider.refreshTokenExpirationInSec, resp);
 
+            req.getSession().setAttribute("username", username);
             resp.sendRedirect("/");
         }
-        else {
-            resp.sendRedirect("/auth/login?error=Username or password is incorrect");
-        }
+        else resp.sendRedirect("/auth/login?error=incorrectPassword");
     }
 }

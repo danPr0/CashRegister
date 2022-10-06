@@ -15,8 +15,9 @@
         <script src="<c:url value="/js?file=formValidation.js"/>"></script>
     </head>
     <body>
-    <div class="container p-3 h-100 bg-dark text-white">
+    <div class="container p-3 bg-dark text-white" style="min-height: 100%">
         <jsp:include page="/view/menu/menu.jsp"/>
+        <jsp:include page="../util/backToMainButton.jsp"/>
 
         <form action="<c:url value="/commodity-expert/update-product"/>" method="get" class="needs-validation col-4"
               novalidate>
@@ -34,7 +35,9 @@
             <input type="submit" value="<fmt:message key="submit.find"/>" class="btn btn-secondary"/>
         </form>
 
-        <p class="text-danger pl-3">${requestScope.error}</p>
+        <c:if test="${requestScope.error == 'true'}">
+            <p class="text-danger pl-3"><fmt:message key="msg.error.commodity-expert.findProduct"/></p>
+        </c:if>
 
         <c:if test="${requestScope.product != null}">
             <div class="pl-3 text-info">
@@ -60,8 +63,12 @@
             </form>
         </c:if>
 
-        <p class="text-danger pl-3">${param.error}</p>
-        <p class="text-success pl-3">${param.success}</p>
+        <c:if test="${param.error == 'true'}">
+            <p class="text-danger pl-3"><fmt:message key="msg.error.commodity-expert.updateProduct"/></p>
+        </c:if>
+        <c:if test="${param.success == 'true'}">
+            <p class="text-success pl-3"><fmt:message key="msg.success.commodity-expert.updateProduct"/></p>
+        </c:if>
     </div>
     </body>
 </fmt:bundle>

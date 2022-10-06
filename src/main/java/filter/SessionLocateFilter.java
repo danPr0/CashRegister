@@ -23,7 +23,6 @@ public class SessionLocateFilter implements Filter {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
 
-        httpRequest.setAttribute("username", httpRequest.getSession().getAttribute("username"));
         if (httpRequest.getParameter("sessionLocale") != null) {
             httpRequest.getSession().setAttribute("lang", httpRequest.getParameter("sessionLocale"));
         }

@@ -25,13 +25,13 @@
         <script src="<c:url value="/js?file=formValidation.js"/>"></script>
     </head>
     <body>
-    <div class="container p-3 h-100 bg-dark text-white">
+    <div class="container p-3 bg-dark text-white" style="min-height: 100%">
         <jsp:include page="../menu/menu.jsp"/>
+        <jsp:include page="../util/backToMainButton.jsp"/>
 
         <div class="m-3">
         <span class="mr-4">
-            <a class="card-link dropdown-toggle" href="#" id="sortDropdown" role="button" data-bs-toggle="dropdown"
-               aria-expanded="false">
+            <a class="card-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
                 <fmt:message key="table.report.sort.dropdown"/>
             </a>
             <span class="dropdown-menu py-1" style="min-width: 3rem">
@@ -54,8 +54,7 @@
             </span>
         </span>
             <span>
-            <a class="card-link dropdown-toggle" href="#" id="fileTypeDropdown" data-bs-toggle="dropdown" role="button"
-               aria-expanded="false">
+            <a class="card-link dropdown-toggle" href="#" data-bs-toggle="dropdown" role="button">
                 <fmt:message key="button.download"/>
             </a>
             <span class="dropdown-menu" style="min-width: 3rem; line-height: 0.5rem">
@@ -120,7 +119,9 @@
             </div>
         </div>
 
-        <p class="text-danger pl-3">${param.error}</p>
+        <c:if test="${param.error == 'true'}">
+            <p class="text-danger pl-3"><fmt:message key="msg.error.senior-cashier.createXReport"/></p>
+        </c:if>
     </div>
     </body>
 </fmt:bundle>

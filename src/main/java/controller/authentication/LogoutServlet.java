@@ -19,21 +19,10 @@ public class LogoutServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-//        Cookie accessTokenCookie = new Cookie("accessToken", "");
-//        accessTokenCookie.setHttpOnly(true);
-//        accessTokenCookie.setPath("/");
-//        accessTokenCookie.setMaxAge(0);
-//
-//        Cookie refreshTokenCookie = new Cookie("refreshToken", "");
-//        refreshTokenCookie.setHttpOnly(true);
-//        refreshTokenCookie.setPath("/");
-//        refreshTokenCookie.setMaxAge(0);
         jwtProvider.setTokenCookie("", "accessToken", 0, resp);
         jwtProvider.setTokenCookie("", "refreshToken", 0, resp);
 
         req.getSession().removeAttribute("username");
-//        resp.addCookie(accessTokenCookie);
-//        resp.addCookie(refreshTokenCookie);
         resp.sendRedirect("/");
     }
 }

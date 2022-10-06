@@ -1,5 +1,8 @@
 package controller.senior_cashier;
 
+import dao_impl.ProductRepository;
+import entity.CheckElement;
+import entity.Product;
 import service.CheckService;
 
 import javax.servlet.*;
@@ -18,26 +21,41 @@ public class CancelProductInCheckServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String product = request.getParameter("product");
-        String quantity = request.getParameter("quantity");
+//        String product = request.getParameter("product");
+//        String quantity = request.getParameter("quantity");
+//
+//        boolean result;
+//        try {
+//            result = checkService.cancelCheckElementById(Integer.parseInt(product), Integer.parseInt(quantity));
+//        }
+//        catch (NumberFormatException e1) {
+//            try {
+//                result = checkService.cancelCheckElementByName(product, Integer.parseInt(quantity));
+//            }
+//            catch (NumberFormatException e2) {
+//                result = false;
+//            }
+//        }
 
-        boolean result;
+        CheckElement checkElement;
         try {
-            result = checkService.cancelCheckElementById(Integer.parseInt(product), Integer.parseInt(quantity));
+            checkElement = checkService.getCheckElementByProductId(Integer.parseInt(request.getParameter("product")));
         }
-        catch (NumberFormatException e1) {
-            try {
-                result = checkService.cancelCheckElementByName(product, Integer.parseInt(quantity));
-            }
-            catch (NumberFormatException e2) {
-                result = false;
-            }
+        catch (NumberFormatException e) {
+            checkElement = checkService.getCheckElementByProductName(request.getParameter("product"));
         }
 
         String url = "/senior-cashier/cancel-product-in-check";
-        if (!result)
-            url += "?error=Cannot cancel product from check. Please try again.";
-        else url += "?success=Product was canceled from check";
+        if (checkElement == null)
+            url += "?error=";
+        else if (!checkService.cancelCheckElement(checkElement, Integer.parseInt(request.getParameter("quantity"))))
+            url += "?error=";
+        else url += "?success=";
+
+//        String url = "/senior-cashier/cancel-product-in-check";
+//        if (!result)
+//            url += "?error=true";
+//        else url += "?success=true";
 
         response.sendRedirect(url);
     }

@@ -34,24 +34,18 @@ public class SignupServlet extends HttpServlet {
         String secondName = req.getParameter("secondName");
 
         if (!password.equals(passwordConfirm))
-            resp.sendRedirect("/auth/signup?error=Password mismatch");
-        else if (userService.insertUser(username, password, firstName, secondName, RoleName.cashier)) {
-//            req.getServletContext().setAttribute("username", username);
-            req.getSession().setAttribute("username", username);
-
-//            Cookie cookie = new Cookie("token", jwtProvider.generateJwtToken(RoleName.cashier.toString()));
-//            cookie.setHttpOnly(true);
-//            cookie.setPath("/");
-//            resp.addCookie(cookie);
-            jwtProvider.setTokenCookie(jwtProvider.generateJwtToken(RoleName.cashier, "accessToken"),
+            resp.sendRedirect("/auth/signup?error=passwordMismatch");
+        else if (userService.insertUser(username, password, firstName, secondName, RoleName.guest)) {
+            jwtProvider.setTokenCookie(jwtProvider.generateJwtToken(RoleName.guest, "accessToken"),
                     "accessToken", JWTProvider.accessTokenExpirationInSec, resp);
-            jwtProvider.setTokenCookie(jwtProvider.generateJwtToken(RoleName.cashier, "refreshToken"),
+            jwtProvider.setTokenCookie(jwtProvider.generateJwtToken(RoleName.guest, "refreshToken"),
                     "refreshToken", JWTProvider.refreshTokenExpirationInSec, resp);
 
+            req.getSession().setAttribute("username", username);
             resp.sendRedirect("/");
         }
         else {
-            resp.sendRedirect("/auth/signup?error=Username is already taken");
+            resp.sendRedirect("/auth/signup?error=badUsername");
         }
     }
 }

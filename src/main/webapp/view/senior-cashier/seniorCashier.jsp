@@ -14,7 +14,7 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     </head>
     <body>
-    <div class="container p-3 h-100 bg-dark text-white">
+    <div class="container p-3 bg-dark text-white" style="min-height: 100%">
         <jsp:include page="/view/menu/menu.jsp"/>
 
         <div class="row">
@@ -44,8 +44,12 @@
             </c:choose>
         </div>
 
-        <p class="text-danger pl-3">${param.error}</p>
-        <p class="text-success pl-3">${param.success}</p>
+        <c:if test="${param.error == 'true'}">
+            <p class="text-danger pl-3"><fmt:message key="msg.error.senior-cashier.cancelCheck"/></p>
+        </c:if>
+        <c:if test="${param.success == 'true'}">
+            <p class="text-success pl-3"><fmt:message key="msg.success.senior-cashier.cancelCheck"/></p>
+        </c:if>
 
         <div class="row">
             <div class="col">
@@ -64,8 +68,7 @@
                         <fmt:message key="msg.info.emptyZReport"/><br/>
                         <fmt:message key="msg.info.downloadZReport"/>
                     </span>
-                    <a class="card-link dropdown-toggle" href="#" id="fileTypeDropdown" role="button"
-                       data-bs-toggle="dropdown" aria-expanded="false">
+                    <a class="card-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
                         <fmt:message key="button.file"/>
                     </a>
                     <div class="dropdown-menu" style="min-width: 1rem; line-height: 0.5rem">

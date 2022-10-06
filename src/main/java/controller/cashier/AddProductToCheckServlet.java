@@ -1,7 +1,10 @@
 package controller.cashier;
 
+import dao_impl.ProductRepository;
 import entity.CheckElement;
+import entity.Product;
 import service.CheckService;
+import service.ProductService;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -16,6 +19,7 @@ import java.util.List;
 @WebServlet("/cashier/add-product-to-check")
 public class AddProductToCheckServlet extends HttpServlet {
     private final CheckService checkService = CheckService.getInstance();
+    private final ProductRepository productRepository = ProductRepository.getInstance();
 
     /**
      * Method implements check pagination to display table to user
@@ -53,35 +57,39 @@ public class AddProductToCheckServlet extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-//        String productId = request.getParameter("productId");
-//        String productName = request.getParameter("productName");
+        Product product;
+        try {
+            product = productRepository.getProductById(Integer.parseInt(request.getParameter("product")));
+        }
+        catch (NumberFormatException ignored) {
+            product = productRepository.getProductByName(request.getParameter("product"));
+        }
+
+        String url = "/cashier/add-product-to-check";
+        if (product == null)
+            url += "?error=noSuchProduct";
+        else if (!checkService.addToCheck(product, Integer.parseInt(request.getParameter("quantity"))))
+            url += "?error=overExceededQuantity";
+        else url += "?success=true";
+
+        response.sendRedirect(url);
+
+
+
+//        String product = request.getParameter("product");
 //        String quantity = request.getParameter("quantity");
-//
 //        boolean result;
 //        try {
-//            if (productId != null) {
-//                result = checkService.addToCheckByProductId(Integer.parseInt(productId), Integer.parseInt(quantity));
+//            result = checkService.addToCheckByProductId(Integer.parseInt(product), Integer.parseInt(quantity));
+//        }
+//        catch (NumberFormatException e1) {
+//            try {
+//                result = checkService.addToCheckByProductName(product, Integer.parseInt(quantity));
 //            }
-//            else result = checkService.addToCheckByProductName(productName, Integer.parseInt(quantity));
+//            catch (NumberFormatException e2) {
+//                result = false;
+//            }
 //        }
-//        catch (NullPointerException | NumberFormatException ignored) {
-//            result = false;
-//        }
-
-        String product = request.getParameter("product");
-        String quantity = request.getParameter("quantity");
-        boolean result;
-        try {
-            result = checkService.addToCheckByProductId(Integer.parseInt(product), Integer.parseInt(quantity));
-        }
-        catch (NumberFormatException e1) {
-            try {
-                result = checkService.addToCheckByProductName(product, Integer.parseInt(quantity));
-            }
-            catch (NumberFormatException e2) {
-                result = false;
-            }
-        }
 
 
 //        try {
@@ -95,15 +103,15 @@ public class AddProductToCheckServlet extends HttpServlet {
 //        }
 
 //        String url = "/cashier/add-product-to-check?page=1";
-        String url = request.getRequestURL().toString();
-        if (!result)
-            url += "?error=Cannot add product to check. Please try again";
-        else url += "?success=Product was successfully added to check";
-        if (request.getParameter("page") != null)
-            url += "&page=" + request.getParameter("page");
+//        String url = request.getRequestURL().toString();
+//        if (!result)
+//            url += "?error=Cannot add product to check. Please try again";
+//        else url += "?success=Product was successfully added to check";
+//        if (request.getParameter("page") != null)
+//            url += "&page=" + request.getParameter("page");
 //        if (request.getParameter("total") != null)
 //            url += "&total=" + request.getParameter("total");
 
-        response.sendRedirect(url);
+//        response.sendRedirect(url);
     }
 }

@@ -22,19 +22,19 @@ public class AddProductServlet extends HttpServlet {
         String quantity = request.getParameter("quantity");
         String price = request.getParameter("price");
 
-        boolean result;
-        try {
-            result = productService.addProduct(productName, Integer.parseInt(quantity), Double.parseDouble(price));
-        }
-        catch (NumberFormatException | NullPointerException e) {
-            result = false;
-        }
+//        boolean result;
+//        try {
+//            result = productService.addProduct(productName, Integer.parseInt(quantity), Double.parseDouble(price));
+//        }
+//        catch (NumberFormatException | NullPointerException e) {
+//            result = false;
+//        }
 
         String url = "/commodity-expert/add-product";
-        if (!result)
-            url += "?error=Cannot add product. Please try again";
+        if (!productService.addProduct(productName, Integer.parseInt(quantity), Double.parseDouble(price)))
+            url += "?error=true";
         else {
-            url += "?success=" + "Product was successfully added";
+            url += "?success=true";
             url += "&productName=" + productName;
         }
 

@@ -16,7 +16,7 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     </head>
     <body>
-    <div class="container p-3 h-100 bg-dark text-white">
+    <div class="container p-3 bg-dark text-white" style="min-height: 100%">
         <jsp:include page="../menu/menu.jsp"/>
 
         <c:choose>
@@ -35,8 +35,12 @@
             </c:otherwise>
         </c:choose>
 
-        <p class="text-danger pl-3">${param.error}</p>
-        <p class="text-success pl-3">${param.success}</p>
+        <c:if test="${param.error == 'true'}">
+            <p class="text-danger pl-3"><fmt:message key="msg.error.cashier.closeCheck"/></p>
+        </c:if>
+        <c:if test="${param.success == 'true'}">
+            <p class="text-success pl-3"><fmt:message key="msg.success.cashier.closeCheck"/></p>
+        </c:if>
     </div>
     </body>
 </fmt:bundle>

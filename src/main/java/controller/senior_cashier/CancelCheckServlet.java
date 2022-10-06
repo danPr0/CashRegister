@@ -15,8 +15,8 @@ public class CancelCheckServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String url = "/senior-cashier";
         if (!checkService.cancelCheck())
-            url += "?error=Cannot cancel product from check. Please try again.";
-        else url += "?success=Check was canceled";
+            url += "?error=true";
+        else url += "?success=true";
 
         response.sendRedirect(url);
     }

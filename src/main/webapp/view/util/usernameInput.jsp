@@ -9,6 +9,6 @@
         <label for="username"><fmt:message key="label.username"/></label>
             <input type="text" name="username" required minlength="3" maxlength="16" class="form-control"
                    placeholder="<fmt:message key="placeHolder.username"/>" id="username"/>
-        <div class="invalid-feedback">Must be 3-16 characters</div>
+        <div class="invalid-feedback"><fmt:message key="msg.invalidInput.username"/></div>
     </div>
 </fmt:bundle>

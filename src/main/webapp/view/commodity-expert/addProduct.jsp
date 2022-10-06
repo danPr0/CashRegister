@@ -15,8 +15,9 @@
         <script src="<c:url value="/js?file=formValidation.js"/>"></script>
     </head>
     <body>
-    <div class="container p-3 h-100 bg-dark text-white">
+    <div class="container p-3 bg-dark text-white" style="min-height: 100%">
         <jsp:include page="/view/menu/menu.jsp"/>
+        <jsp:include page="../util/backToMainButton.jsp"/>
 
         <form action="<c:url value="/commodity-expert/add-product"/>" method="post" class="needs-validation col-4"
               novalidate>
@@ -34,8 +35,12 @@
             <input type="submit" value="<fmt:message key="submit.add"/>" class="btn btn-primary"/>
         </form>
 
-        <p class="text-danger pl-3">${param.error}</p>
-        <p class="text-success pl-3">${param.success}</p>
+        <c:if test="${param.error == 'true'}">
+            <p class="text-danger pl-3"><fmt:message key="msg.error.commodity-expert.addProduct"/></p>
+        </c:if>
+        <c:if test="${param.success == 'true'}">
+            <p class="text-success pl-3"><fmt:message key="msg.success.commodity-expert.addProduct"/></p>
+        </c:if>
     </div>
     </body>
 </fmt:bundle>

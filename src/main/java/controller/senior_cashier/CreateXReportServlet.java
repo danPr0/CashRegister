@@ -41,7 +41,7 @@ public class CreateXReportServlet extends HttpServlet {
             req.setAttribute("nOfPages", nOfPages);
             req.setAttribute("sort", req.getParameter("sortBy"));
         }
-        else req.setAttribute("error", "Something went wrong. Please try again.");
+        else req.setAttribute("error", "true");
 
         req.getRequestDispatcher("/view/senior-cashier/createXReport.jsp").forward(req, resp);
     }

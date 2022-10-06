@@ -39,7 +39,7 @@ public class UpdateProductServlet extends HttpServlet {
             }
 
             if (productToUpdate == null)
-                req.setAttribute("error", "No such product");
+                req.setAttribute("error", "true");
             else req.setAttribute("product", productToUpdate);
         }
 
@@ -52,18 +52,10 @@ public class UpdateProductServlet extends HttpServlet {
         String quantity = request.getParameter("quantity");
         String price = request.getParameter("price");
 
-        boolean result;
-        try {
-            result = productService.updateProductById(Integer.parseInt(productId), Integer.parseInt(quantity), Double.parseDouble(price));
-        }
-        catch (NumberFormatException ignored) {
-            result = false;
-        }
-
         String url = "/commodity-expert/update-product?product=" + productId;
-        if (!result)
-            url += "&error=Cannot update product. Please try again";
-        else url += "&success=" + "Product was successfully updated";
+        if (!productService.updateProductById(Integer.parseInt(productId), Integer.parseInt(quantity), Double.parseDouble(price)))
+            url += "&error=true";
+        else url += "&success=true";
 
         response.sendRedirect(url);
     }

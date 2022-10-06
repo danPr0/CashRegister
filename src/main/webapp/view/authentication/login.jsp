@@ -21,13 +21,16 @@
         <form action="<c:url value="/auth/login"/>" method="post" class="needs-validation col-4" novalidate>
             <jsp:include page="../util/usernameInput.jsp"/>
             <jsp:include page="../util/passwordInput.jsp"/>
-            <input type="submit" value="<fmt:message key="button.login"/>" class="btn btn-primary"/>
+            <input type="submit" value="<fmt:message key="submit.login"/>" class="btn btn-primary"/>
         </form>
 
-        <p class="text-danger pl-3">${param.error}</p>
+        <c:if test="${param.error != null}">
+            <p class="text-danger pl-3"><fmt:message key="msg.error.auth.login.${param.error}"/></p>
+        </c:if>
+
         <p class="pl-3">
             <fmt:message key="msg.info.askToSignUp"/>
-            <a href="<c:url value="/auth/signup"/>">
+            <a href="<c:url value="/auth/signup"/>" class="card-link">
                 <fmt:message key="button.signUp"/>
             </a>
         </p>
