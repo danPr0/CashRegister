@@ -13,6 +13,7 @@
         <link rel="stylesheet" href="<c:url value="/css?file=bootstrap.min.css"/>"/>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
         <script src="<c:url value="/js?file=formValidation.js"/>"></script>
+        <script src="<c:url value="/js?file=togglePassword.js"/>"></script>
     </head>
     <body>
     <div class="container p-3 h-100 bg-dark text-white">
@@ -35,6 +36,10 @@
             </a>
         </p>
     </div>
+
+    <script>
+        togglePassword("togglePassword", "password");
+    </script>
     </body>
 </fmt:bundle>
 </html>

@@ -10,6 +10,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 @WebServlet("/commodity-expert/update-product")
 public class UpdateProductServlet extends HttpServlet {
@@ -49,12 +51,14 @@ public class UpdateProductServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String productId = request.getParameter("productId");
-        String quantity = request.getParameter("quantity");
-        String price = request.getParameter("price");
+        String quantity = String.format(request.getParameter("quantity"), "%.3f");
+        String price = String.format(request.getParameter("price"), "%.2f");
 
         String url = "/commodity-expert/update-product?product=" + productId;
-        if (!productService.updateProductById(Integer.parseInt(productId), Integer.parseInt(quantity), Double.parseDouble(price)))
-            url += "&error=true";
+        if (!productService.updateProductById(Integer.parseInt(productId),
+                new BigDecimal(quantity).setScale(3, RoundingMode.UP).doubleValue(),
+                new BigDecimal(price).setScale(2, RoundingMode.UP).doubleValue()))
+            url += String.format("&error=true&quantity=%s&price=%s", quantity, price);
         else url += "&success=true";
 
         response.sendRedirect(url);

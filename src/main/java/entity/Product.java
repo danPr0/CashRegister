@@ -1,14 +1,18 @@
 package entity;
 
+import util.ProductMeasure;
+
 public class Product {
     private int id;
     private String name;
-    private int quantity;
+    private ProductMeasure measure;
+    private double quantity;
     private double price;
 
-    public Product(int id, String name, int quantity, double price) {
+    public Product(int id, String name, ProductMeasure measure, double quantity, double price) {
         this.id = id;
         this.name = name;
+        this.measure = measure;
         this.quantity = quantity;
         this.price = price;
     }
@@ -29,11 +33,11 @@ public class Product {
         this.name = name;
     }
 
-    public int getQuantity() {
+    public double getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(int quantity) {
+    public void setQuantity(double quantity) {
         this.quantity = quantity;
     }
 
@@ -43,5 +47,13 @@ public class Product {
 
     public void setPrice(double price) {
         this.price = price;
+    }
+
+    public ProductMeasure getMeasure() {
+        return measure;
+    }
+
+    public void setMeasure(ProductMeasure measure) {
+        this.measure = measure;
     }
 }

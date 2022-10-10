@@ -86,7 +86,7 @@ public class UserService {
             e.printStackTrace();
         }
 
-        return new String(Objects.requireNonNull(new Base64().encode(cipherText)));
+        return new String(Objects.requireNonNull(new Base64().encode(cipherText)), StandardCharsets.UTF_8);
     }
 
     private String decryptPassword(SecretKeySpec secretKey, String input) {
@@ -101,6 +101,6 @@ public class UserService {
             e.printStackTrace();
         }
 
-        return new String(Objects.requireNonNull(plainText));
+        return new String(Objects.requireNonNull(plainText), StandardCharsets.UTF_8);
     }
 }

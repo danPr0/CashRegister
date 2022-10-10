@@ -37,15 +37,13 @@ public class ReportService {
         if (check.isEmpty() || user == null)
             return false;
 
-        int items_quantity = 0;
         double total_price = 0;
 
         for (CheckElement checkElement : check) {
-            items_quantity += checkElement.getQuantity();
             total_price += checkElement.getQuantity() * checkElement.getProduct().getPrice();
         }
 
-        return reportRepository.insertReportElement(new ReportElement(0, username, Timestamp.from(Instant.now()), items_quantity, total_price));
+        return reportRepository.insertReportElement(new ReportElement(0, username, Timestamp.from(Instant.now()), check.size(), total_price));
     }
 
     public List<ReportDTO> getPerPage(int nOfPage, int total, String sortParameter) {

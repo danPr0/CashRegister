@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-
 /**
  * Class is designed to process client authentication
  */
@@ -32,7 +31,7 @@ public class LoginServlet extends HttpServlet {
 
         User user;
         if ((user = userService.getUser(username)) == null)
-            resp.sendRedirect("/auth/login?error=badUsername");
+            resp.sendRedirect(String.format("/auth/login?error=badUsername&username=%s&password=%s", username, password));
         else if (userService.authenticate(username, password)) {
             jwtProvider.setTokenCookie(jwtProvider.generateJwtToken(user.getRole().getName(), "accessToken"),
                     "accessToken", JWTProvider.accessTokenExpirationInSec, resp);
@@ -42,6 +41,6 @@ public class LoginServlet extends HttpServlet {
             req.getSession().setAttribute("username", username);
             resp.sendRedirect("/");
         }
-        else resp.sendRedirect("/auth/login?error=incorrectPassword");
+        else resp.sendRedirect(String.format("/auth/login?error=incorrectPassword&username=%s&password=%s", username, password));
     }
 }

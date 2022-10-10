@@ -1,6 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ page contentType="text/html;charset=UTF-8"%>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page isELIgnored="false" %>
 
 <fmt:setLocale value="${sessionScope.lang}"/>
@@ -23,6 +23,7 @@
         <link rel="stylesheet" href="<c:url value="/css?file=bootstrap.min.css"/>"/>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
         <script src="<c:url value="/js?file=formValidation.js"/>"></script>
+        <script src="<c:url value="/js?file=tableSortSelect.js"/>"></script>
     </head>
     <body>
     <div class="container p-3 bg-dark text-white" style="min-height: 100%">
@@ -31,27 +32,41 @@
 
         <div class="m-3">
         <span class="mr-4">
-            <a class="card-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                <fmt:message key="table.report.sort.dropdown"/>
-            </a>
-            <span class="dropdown-menu py-1" style="min-width: 3rem">
-                <a class="dropdown-item" href="<c:url value="/senior-cashier/create-x-report?sortBy=default"/>"
-                   <c:if test="${sort == 'default'}">style="pointer-events: none; color: gray"</c:if>>
-                    <fmt:message key="table.report.sort.dropdown"/>
-                </a>
-                <a class="dropdown-item" href="<c:url value="/senior-cashier/create-x-report?sortBy=createdBy"/>"
-                   <c:if test="${sort == 'createdBy'}">style="pointer-events: none; color: gray"</c:if>>
+            <select id="sortSelect">
+                <option value="default" <c:if test="${sort == 'default'}">selected disabled</c:if>>
+                    <fmt:message key="table.check.sort.default"/>
+                </option>
+                <option value="createdBy" <c:if test="${sort == 'createdBy'}">selected disabled</c:if>>
                     <fmt:message key="table.report.sort.createdBy"/>
-                </a>
-                <a class="dropdown-item" href="<c:url value="/senior-cashier/create-x-report?sortBy=quantity"/>"
-                   <c:if test="${sort == 'quantity'}">style="pointer-events: none; color: gray"</c:if>>
+                </option>
+                <option value="quantity" <c:if test="${sort == 'quantity'}">selected disabled</c:if>>
                     <fmt:message key="table.report.sort.quantity"/>
-                </a>
-                <a class="dropdown-item" href="<c:url value="/senior-cashier/create-x-report?sortBy=price"/>"
-                   <c:if test="${sort == 'price'}">style="pointer-events: none; color: gray"</c:if>>
+                </option>
+                <option value="price" <c:if test="${sort == 'price'}">selected disabled</c:if>>
                     <fmt:message key="table.report.sort.price"/>
-                </a>
-            </span>
+                </option>
+            </select>
+<%--            <a class="card-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">--%>
+<%--                <fmt:message key="table.report.sort.dropdown"/>--%>
+<%--            </a>--%>
+<%--            <span class="dropdown-menu py-1" style="min-width: 3rem">--%>
+<%--                <a class="dropdown-item" href="<c:url value="/senior-cashier/create-x-report?sortBy=default"/>"--%>
+<%--                   <c:if test="${sort == 'default'}">style="pointer-events: none; color: gray"</c:if>>--%>
+<%--                    <fmt:message key="table.report.sort.default"/>--%>
+<%--                </a>--%>
+<%--                <a class="dropdown-item" href="<c:url value="/senior-cashier/create-x-report?sortBy=createdBy"/>"--%>
+<%--                   <c:if test="${sort == 'createdBy'}">style="pointer-events: none; color: gray"</c:if>>--%>
+<%--                    <fmt:message key="table.report.sort.createdBy"/>--%>
+<%--                </a>--%>
+<%--                <a class="dropdown-item" href="<c:url value="/senior-cashier/create-x-report?sortBy=quantity"/>"--%>
+<%--                   <c:if test="${sort == 'quantity'}">style="pointer-events: none; color: gray"</c:if>>--%>
+<%--                    <fmt:message key="table.report.sort.quantity"/>--%>
+<%--                </a>--%>
+<%--                <a class="dropdown-item" href="<c:url value="/senior-cashier/create-x-report?sortBy=price"/>"--%>
+<%--                   <c:if test="${sort == 'price'}">style="pointer-events: none; color: gray"</c:if>>--%>
+<%--                    <fmt:message key="table.report.sort.price"/>--%>
+<%--                </a>--%>
+<%--            </span>--%>
         </span>
             <span>
             <a class="card-link dropdown-toggle" href="#" data-bs-toggle="dropdown" role="button">
@@ -123,6 +138,8 @@
             <p class="text-danger pl-3"><fmt:message key="msg.error.senior-cashier.createXReport"/></p>
         </c:if>
     </div>
+
+    <script>sort("/senior-cashier/create-x-report?sortBy=")</script>
     </body>
 </fmt:bundle>
 </html>

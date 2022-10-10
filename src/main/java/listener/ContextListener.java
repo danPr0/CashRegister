@@ -8,7 +8,7 @@ import javax.servlet.annotation.WebListener;
 public class ContextListener implements ServletContextListener {
     @Override
     public void contextInitialized(ServletContextEvent sce) {
-        sce.getServletContext().setAttribute("checkTotalPerPage", 10);
+        sce.getServletContext().setAttribute("checkTotalPerPage", 1);
         sce.getServletContext().setAttribute("reportTotalPerPage", 10);
     }
 }

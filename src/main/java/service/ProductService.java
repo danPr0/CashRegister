@@ -2,6 +2,7 @@ package service;
 
 import entity.Product;
 import dao_impl.ProductRepository;
+import util.ProductMeasure;
 import util.Validator;
 
 public class ProductService {
@@ -16,11 +17,12 @@ public class ProductService {
         return instance;
     }
 
-    public boolean addProduct(String productName, int quantity, double price) {
-        if (!Validator.validateProductName(productName) || quantity < 0 || price <= 0)
+    public boolean addProduct(String productName, ProductMeasure measure, double quantity, double price) {
+        if (!Validator.validateProductName(productName) || quantity < 0 || price <= 0 ||
+                (measure.equals(ProductMeasure.apiece) && quantity % 1 != 0))
             return false;
 
-        return productRepository.insertProduct(new Product(0, productName, quantity, price));
+        return productRepository.insertProduct(new Product(0, productName, measure, quantity, price));
     }
 
     public Product getProductById(int id) {
@@ -31,7 +33,7 @@ public class ProductService {
         return productRepository.getProductByName(name);
     }
 
-    public boolean updateProductById(int id, int quantity, double price) {
+    public boolean updateProductById(int id, double quantity, double price) {
         Product product = productRepository.getProductById(id);
         return updateProduct(product, quantity, price);
     }
@@ -41,8 +43,9 @@ public class ProductService {
         return updateProduct(product, quantity, price);
     }
 
-    public boolean updateProduct(Product product, int newQuantity, double newPrice) {
-        if (product == null || newQuantity < 0 || newPrice <= 0)
+    public boolean updateProduct(Product product, double newQuantity, double newPrice) {
+        if (product == null || newQuantity < 0 || newPrice <= 0 ||
+                (product.getMeasure().equals(ProductMeasure.apiece) && newQuantity % 1 != 0))
             return false;
 
         product.setQuantity(newQuantity);

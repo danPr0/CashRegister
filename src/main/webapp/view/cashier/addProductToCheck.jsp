@@ -23,6 +23,7 @@
         <link rel="stylesheet" href="<c:url value="/css?file=bootstrap.min.css"/>"/>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
         <script src="<c:url value="/js?file=formValidation.js"/>"></script>
+        <script src="<c:url value="/js?file=tableSortSelect.js"/>"></script>
     </head>
     <body>
     <div class="container p-3 h-100 bg-dark text-white">
@@ -68,28 +69,39 @@
         </c:if>
 
         <c:if test="${requestScope.nOfPages != 0}">
-            <div>
-                <a class="card-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                    <fmt:message key="table.check.sort.dropdown"/>
-                </a>
-                <div class="dropdown-menu py-1" style="min-width: 3rem">
-                    <a class="dropdown-item" href="<c:url value="/cashier/add-product-to-check?sortBy=default"/>"
-                       <c:if test="${sort == 'default'}">style="pointer-events: none; color: gray"</c:if>>
-                        <fmt:message key="table.check.sort.default"/>
-                    </a>
+            <select id="sortSelect">
+                <option value="default" <c:if test="${sort == 'default'}">selected disabled</c:if>>
+                    <fmt:message key="table.check.sort.default"/>
+                </option>
+                <option value="productId" <c:if test="${sort == 'productId'}">selected disabled</c:if>>
+                    <fmt:message key="table.check.sort.productId"/>
+                </option>
+                <option value="quantity" <c:if test="${sort == 'quantity'}">selected disabled</c:if>>
+                    <fmt:message key="table.check.sort.quantity"/>
+                </option>
+            </select>
+<%--            <div>--%>
+<%--                <a class="card-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">--%>
+<%--                    <fmt:message key="table.check.sort.dropdown"/>--%>
+<%--                </a>--%>
+<%--                <div class="dropdown-menu py-1" style="min-width: 3rem">--%>
+<%--                    <a class="dropdown-item" href="<c:url value="/cashier/add-product-to-check?sortBy=default"/>"--%>
+<%--                       <c:if test="${sort == 'default'}">style="pointer-events: none; color: gray"</c:if>>--%>
+<%--                        <fmt:message key="table.check.sort.default"/>--%>
+<%--                    </a>--%>
 
-                    <a class="dropdown-item" href="<c:url value="/cashier/add-product-to-check?sortBy=productId"/>"
-                       <c:if test="${sort == 'productId'}">style="pointer-events: none; color: gray"</c:if>>
-                        <fmt:message key="table.check.sort.productId"/>
-                    </a>
+<%--                    <a class="dropdown-item" href="<c:url value="/cashier/add-product-to-check?sortBy=productId"/>"--%>
+<%--                       <c:if test="${sort == 'productId'}">style="pointer-events: none; color: gray"</c:if>>--%>
+<%--                        <fmt:message key="table.check.sort.productId"/>--%>
+<%--                    </a>--%>
 
-                    <a class="dropdown-item" href="<c:url value="/cashier/add-product-to-check?sortBy=quantity"/>"
-                       <c:if test="${sort == 'quantity'}">style="pointer-events: none; color: gray"</c:if>>
-                        <fmt:message key="table.check.sort.quantity"/>
-                    </a>
-                </div>
-            </div>
-            <table class="table-light table-striped table-hover col-8">
+<%--                    <a class="dropdown-item" href="<c:url value="/cashier/add-product-to-check?sortBy=quantity"/>"--%>
+<%--                       <c:if test="${sort == 'quantity'}">style="pointer-events: none; color: gray"</c:if>>--%>
+<%--                        <fmt:message key="table.check.sort.quantity"/>--%>
+<%--                    </a>--%>
+<%--                </div>--%>
+<%--            </div>--%>
+            <table class="table table-light table-striped table-hover table-responsive col-8 row">
                 <tr>
                     <th><fmt:message key="table.check.id"/></th>
                     <th><fmt:message key="table.check.name"/></th>
@@ -113,6 +125,7 @@
                     <a href="<c:url value="/cashier/add-product-to-check?page=${page - 1}&sortBy=${sort}"/>"
                        class="page-link">
                         <fmt:message key="pagination.previous"/>
+<%--                        <img src="<c:url value="/images?file=left_arrow.png"/>" alt="leftArrow" style=""/>--%>
                     </a>
                 </li>
 
@@ -134,6 +147,8 @@
             </ul>
         </c:if>
     </div>
+
+    <script>sort("/cashier/add-product-to-check?sortBy=")</script>
     </body>
 </fmt:bundle>
 </html>

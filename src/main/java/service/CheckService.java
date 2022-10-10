@@ -4,6 +4,7 @@ import entity.CheckElement;
 import entity.Product;
 import dao_impl.CheckRepository;
 import dao_impl.ProductRepository;
+import util.ProductMeasure;
 
 import java.util.List;
 import java.util.Objects;
@@ -61,8 +62,9 @@ public class CheckService {
         return addToCheck(product, quantity);
     }
 
-    public boolean addToCheck(Product product, int quantity) {
-        if (product == null || quantity <= 0 || product.getQuantity() < quantity)
+    public boolean addToCheck(Product product, double quantity) {
+        if (product == null || quantity <= 0 || product.getQuantity() < quantity ||
+                (product.getMeasure().equals(ProductMeasure.apiece) && quantity % 1 != 0))
             return false;
 
         CheckElement checkElement = checkRepository.getCheckElementByProduct(product);
@@ -140,8 +142,9 @@ public class CheckService {
         return checkRepository.getCheckElementByProduct(product);
     }
 
-    public boolean cancelCheckElement(CheckElement checkElement, int quantity) {
-        if (checkElement == null || checkElement.getQuantity() < quantity)
+    public boolean cancelCheckElement(CheckElement checkElement, double quantity) {
+        if (checkElement == null || checkElement.getQuantity() < quantity ||
+                (checkElement.getProduct().getMeasure().equals(ProductMeasure.apiece) && quantity % 1 != 0))
             return false;
 
         Product product = checkElement.getProduct();

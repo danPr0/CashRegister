@@ -5,11 +5,14 @@ import entity.CheckElement;
 import entity.Product;
 import service.CheckService;
 import service.ProductService;
+import util.ProductMeasure;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
 import javax.servlet.annotation.*;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 
 /**
@@ -57,19 +60,31 @@ public class AddProductToCheckServlet extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String productParam = request.getParameter("product");
+        String quantityParam = request.getParameter("quantity");
+
         Product product;
         try {
-            product = productRepository.getProductById(Integer.parseInt(request.getParameter("product")));
+            product = productRepository.getProductById(Integer.parseInt(productParam));
         }
         catch (NumberFormatException ignored) {
-            product = productRepository.getProductByName(request.getParameter("product"));
+            product = productRepository.getProductByName(productParam);
         }
 
         String url = "/cashier/add-product-to-check";
+
         if (product == null)
-            url += "?error=noSuchProduct";
-        else if (!checkService.addToCheck(product, Integer.parseInt(request.getParameter("quantity"))))
-            url += "?error=overExceededQuantity";
+            url += String.format("?error=noSuchProduct&product=%s&quantity=%s", productParam, quantityParam);
+//        else if (product.getMeasure().equals(ProductMeasure.apiece)) {
+//            try {
+//                Integer.parseInt(quantityParam);
+//            }
+//            catch (NumberFormatException e) {
+//                url += String.format("?error=overExceededQuantity&product=%s&quantity=%s", productParam, quantityParam);
+//            }
+//        }
+        else if (!checkService.addToCheck(product,  new BigDecimal(quantityParam).setScale(3, RoundingMode.UP).doubleValue()))
+            url += String.format("?error=overExceededQuantity&product=%s&quantity=%s", productParam, quantityParam);
         else url += "?success=true";
 
         response.sendRedirect(url);

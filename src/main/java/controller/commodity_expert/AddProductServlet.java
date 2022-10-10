@@ -1,11 +1,15 @@
 package controller.commodity_expert;
 
 import service.ProductService;
+import util.ProductMeasure;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
 import javax.servlet.annotation.*;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 
 @WebServlet("/commodity-expert/add-product")
 public class AddProductServlet extends HttpServlet {
@@ -19,9 +23,11 @@ public class AddProductServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String productName = request.getParameter("productName");
+        String measure = request.getParameter("measure");
         String quantity = request.getParameter("quantity");
         String price = request.getParameter("price");
 
+        System.out.println(quantity);
 //        boolean result;
 //        try {
 //            result = productService.addProduct(productName, Integer.parseInt(quantity), Double.parseDouble(price));
@@ -31,12 +37,11 @@ public class AddProductServlet extends HttpServlet {
 //        }
 
         String url = "/commodity-expert/add-product";
-        if (!productService.addProduct(productName, Integer.parseInt(quantity), Double.parseDouble(price)))
-            url += "?error=true";
-        else {
-            url += "?success=true";
-            url += "&productName=" + productName;
-        }
+        if (!productService.addProduct(productName, ProductMeasure.valueOf(measure),
+                new BigDecimal(quantity).setScale(3, RoundingMode.UP).doubleValue(),
+                new BigDecimal(price).setScale(2, RoundingMode.UP).doubleValue()))
+            url += String.format("?error=true&productName=%s&measure=%s&quantity=%s&price=%s", productName, measure, quantity, price);
+        else url += "?success=true";
 
         response.sendRedirect(url);
     }

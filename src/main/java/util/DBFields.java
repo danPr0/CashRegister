@@ -16,6 +16,7 @@ public class DBFields {
 
     public static final String PRODUCT_ID = "id";
     public static final String PRODUCT_NAME = "name";
+    public static final String PRODUCT_MEASURE = "measure";
     public static final String PRODUCT_QUANTITY = "quantity";
     public static final String PRODUCT_PRICE = "price";
 

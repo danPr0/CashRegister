@@ -9,6 +9,8 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 import javax.servlet.annotation.*;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 @WebServlet("/senior-cashier/cancel-product-in-check")
 public class CancelProductInCheckServlet extends HttpServlet {
@@ -37,20 +39,23 @@ public class CancelProductInCheckServlet extends HttpServlet {
 //            }
 //        }
 
+        String productParam = request.getParameter("product");
+        String quantityParam = request.getParameter("quantity");
+
         CheckElement checkElement;
         try {
-            checkElement = checkService.getCheckElementByProductId(Integer.parseInt(request.getParameter("product")));
+            checkElement = checkService.getCheckElementByProductId(Integer.parseInt(productParam));
         }
         catch (NumberFormatException e) {
-            checkElement = checkService.getCheckElementByProductName(request.getParameter("product"));
+            checkElement = checkService.getCheckElementByProductName(productParam);
         }
 
         String url = "/senior-cashier/cancel-product-in-check";
         if (checkElement == null)
-            url += "?error=";
-        else if (!checkService.cancelCheckElement(checkElement, Integer.parseInt(request.getParameter("quantity"))))
-            url += "?error=";
-        else url += "?success=";
+            url += String.format("?error=noSuchProduct&product=%s&quantity=%s", productParam, quantityParam);
+        else if (!checkService.cancelCheckElement(checkElement,  new BigDecimal(quantityParam).setScale(3, RoundingMode.UP).doubleValue()))
+            url += String.format("?error=overExceededQuantity&product=%s&quantity=%s", productParam, quantityParam);
+        else url += "?success=true";
 
 //        String url = "/senior-cashier/cancel-product-in-check";
 //        if (!result)

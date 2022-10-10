@@ -47,7 +47,7 @@ public class CheckRepository implements CheckDAO {
             ps.setInt(1, product.getId());
             try (ResultSet resultSet = ps.executeQuery()) {
                 if (resultSet.next()) {
-                    result = new CheckElement(resultSet.getInt(CHECK_ID), product, resultSet.getInt(CHECK_PRODUCT_QUANTITY));
+                    result = new CheckElement(resultSet.getInt(CHECK_ID), product, resultSet.getDouble(CHECK_PRODUCT_QUANTITY));
                     logger.info("Check element " + product.getName() + " was successfully retrieved");
                 }
             }
@@ -68,7 +68,7 @@ public class CheckRepository implements CheckDAO {
                 if (resultSet.next()) {
                     result = new CheckElement(resultSet.getInt(CHECK_ID),
                             productRepository.getProductById(resultSet.getInt(CHECK_PRODUCT_ID)),
-                            resultSet.getInt(CHECK_PRODUCT_QUANTITY));
+                            resultSet.getDouble(CHECK_PRODUCT_QUANTITY));
                     logger.info("Check element with id = " + id+ " was successfully retrieved");
                 }
             }
@@ -86,7 +86,7 @@ public class CheckRepository implements CheckDAO {
         try (Connection con = connectionFactory.getConnection();
              PreparedStatement ps = con.prepareStatement(INSERT_CHECK_QUERY)) {
             ps.setInt(1, checkElement.getProduct().getId());
-            ps.setInt(2, checkElement.getQuantity());
+            ps.setDouble(2, checkElement.getQuantity());
             ps.execute();
             logger.info("Check element " + checkElement.getProduct().getName()+ " was successfully added");
         } catch (SQLException e) {
@@ -103,7 +103,7 @@ public class CheckRepository implements CheckDAO {
 
         try (Connection con = connectionFactory.getConnection();
              PreparedStatement ps = con.prepareStatement(UPDATE_CHECK_BY_ID_QUERY)) {
-            ps.setInt(1, checkElement.getQuantity());
+            ps.setDouble(1, checkElement.getQuantity());
             ps.setInt(2, checkElement.getId());
             ps.execute();
             logger.info("Check element " + checkElement.getProduct().getName()+ " was successfully updated");
@@ -142,7 +142,7 @@ public class CheckRepository implements CheckDAO {
                 while (resultSet.next()) {
                     resultList.add(new CheckElement(resultSet.getInt(CHECK_ID),
                             productRepository.getProductById(resultSet.getInt(CHECK_PRODUCT_ID)),
-                            resultSet.getInt(CHECK_PRODUCT_QUANTITY)));
+                            resultSet.getDouble(CHECK_PRODUCT_QUANTITY)));
                 }
                 logger.info(resultList.size() + " check elements were successfully retrieved");
         } catch (SQLException e) {
@@ -180,7 +180,7 @@ public class CheckRepository implements CheckDAO {
                 while (resultSet.next()) {
                     resultList.add(new CheckElement(resultSet.getInt(CHECK_ID),
                             productRepository.getProductById(resultSet.getInt(CHECK_PRODUCT_ID)),
-                            resultSet.getInt(CHECK_PRODUCT_QUANTITY)));
+                            resultSet.getDouble(CHECK_PRODUCT_QUANTITY)));
                 }
                 logger.info(resultList.size() + " check elements were successfully retrieved");
             }

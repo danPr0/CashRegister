@@ -15,13 +15,13 @@
             <%--            <a href="<c:url value="/"/>" class="nav-link">Main</a>--%>
             <%--        </li>--%>
             <%--    </ul>--%>
-        <ul class="navbar-nav ml-auto">
+        <ul class="navbar-nav ms-auto">
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
                     <c:choose>
                         <c:when test="${sessionScope.lang == 'en'}">
                             <img src="<c:url value="/images?file=uk_flag.png"/>" class="rounded"
-                                 style="width: 3rem; height: 2rem" alt="UK flag"/>
+                                 style="width: 3rem; height: 2rem; opacity: 20%" alt="UK flag"/>
                         </c:when>
                         <c:otherwise>
                             <img src="<c:url value="/images?file=ukr_flag.png"/>" class="rounded"
@@ -29,16 +29,16 @@
                         </c:otherwise>
                     </c:choose>
                 </a>
-                <div class="dropdown-menu py-1" style="min-width: 3rem">
+                <div class="dropdown-menu py-0" style="min-width: 3rem; background-color: gray">
                     <c:choose>
                         <c:when test="${sessionScope.lang == 'en'}">
-                            <a href="?sessionLocale=ua" class="dropdown-item px-1 py-0">
+                            <a href="?sessionLocale=ua" class="dropdown-item px-1 py-1">
                                 <img src="<c:url value="/images?file=ukr_flag.png"/>" class="rounded"
                                      style="width: 3rem; height: 2rem" alt="UK flag"/>
                             </a>
                         </c:when>
                         <c:otherwise>
-                            <a href="?sessionLocale=en" class="dropdown-item px-1 py-0">
+                            <a href="?sessionLocale=en" class="dropdown-item px-1 py-1">
                                 <img src="<c:url value="/images?file=uk_flag.png"/>" class="rounded"
                                      style="width: 3rem; height: 2rem" alt="UK flag"/>
                             </a>

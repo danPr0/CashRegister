@@ -34,7 +34,8 @@ public class SignupServlet extends HttpServlet {
         String secondName = req.getParameter("secondName");
 
         if (!password.equals(passwordConfirm))
-            resp.sendRedirect("/auth/signup?error=passwordMismatch");
+            resp.sendRedirect(String.format("/auth/signup?error=passwordMismatch&username=%s&password=%s&passwordConfirm=%s&firstName=%s&secondName=%s",
+                    username, password, passwordConfirm, firstName, secondName));
         else if (userService.insertUser(username, password, firstName, secondName, RoleName.guest)) {
             jwtProvider.setTokenCookie(jwtProvider.generateJwtToken(RoleName.guest, "accessToken"),
                     "accessToken", JWTProvider.accessTokenExpirationInSec, resp);
@@ -43,9 +44,9 @@ public class SignupServlet extends HttpServlet {
 
             req.getSession().setAttribute("username", username);
             resp.sendRedirect("/");
-        }
-        else {
-            resp.sendRedirect("/auth/signup?error=badUsername");
+        } else {
+            resp.sendRedirect(String.format("/auth/signup?error=badUsername&username=%s&password=%s&passwordConfirm=%s&firstName=%s&secondName=%s",
+                    username, password, passwordConfirm, firstName, secondName));
         }
     }
 }

@@ -5,10 +5,10 @@
 <fmt:setLocale value="${sessionScope.lang}"/>
 
 <fmt:bundle basename="messages">
-    <div class="form-group">
-        <label for="prod"><fmt:message key="label.product"/></label>
+    <div class="mb-2">
+        <label for="prod" class="form-label"><fmt:message key="label.product"/></label>
         <input type="text" name="product" required maxlength="50" class="form-control"
-               placeholder="<fmt:message key="placeHolder.product"/>" id="prod"/>
+               placeholder="<fmt:message key="placeHolder.product"/>" id="prod" value="${param.product}"/>
         <div class="invalid-feedback"><fmt:message key="msg.invalidInput.required"/></div>
     </div>
 </fmt:bundle>

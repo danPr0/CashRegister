@@ -3,9 +3,9 @@ package entity;
 public class CheckElement {
     private int id;
     private Product product;
-    private int quantity;
+    private double quantity;
 
-    public CheckElement(int id, Product product, int quantity) {
+    public CheckElement(int id, Product product, double quantity) {
         this.id = id;
         this.product = product;
         this.quantity = quantity;
@@ -27,11 +27,11 @@ public class CheckElement {
         this.product = product;
     }
 
-    public int getQuantity() {
+    public double getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(int quantity) {
+    public void setQuantity(double quantity) {
         this.quantity = quantity;
     }
 }
