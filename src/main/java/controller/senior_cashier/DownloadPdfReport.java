@@ -7,7 +7,7 @@ import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import entity.ReportElement;
-import service.ReportService;
+import service_impl.ReportServiceImpl;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -22,7 +22,7 @@ import java.util.List;
 
 @WebServlet("/download-pdf-report")
 public class DownloadPdfReport extends HttpServlet {
-    private final ReportService reportService = ReportService.getInstance();
+    private final ReportServiceImpl reportServiceImpl = ReportServiceImpl.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -61,7 +61,7 @@ public class DownloadPdfReport extends HttpServlet {
     }
 
     private void addRows(PdfPTable table) {
-        List<ReportElement> report = reportService.getAll();
+        List<ReportElement> report = reportServiceImpl.getAll();
         report.forEach((r) -> {
             PdfPCell header = new PdfPCell();
             header.setPhrase(new Phrase(r.getCreatedBy()));

@@ -7,7 +7,7 @@
 <fmt:bundle basename="messages">
     <div class="mb-2">
         <label for="prodName" class="form-label"><fmt:message key="label.productName"/></label>
-        <input type="text" name="productName" required maxlength="50" class="form-control"
+        <input type="text" name="productName" required maxlength="60" class="form-control"
                placeholder="<fmt:message key="placeHolder.productName"/>" id="prodName" value="${param.productName}"/>
         <div class="invalid-feedback"><fmt:message key="msg.invalidInput.required"/></div>
     </div>

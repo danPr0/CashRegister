@@ -21,7 +21,7 @@
                     <c:choose>
                         <c:when test="${sessionScope.lang == 'en'}">
                             <img src="<c:url value="/images?file=uk_flag.png"/>" class="rounded"
-                                 style="width: 3rem; height: 2rem; opacity: 20%" alt="UK flag"/>
+                                 style="width: 3rem; height: 2rem" alt="UK flag"/>
                         </c:when>
                         <c:otherwise>
                             <img src="<c:url value="/images?file=ukr_flag.png"/>" class="rounded"

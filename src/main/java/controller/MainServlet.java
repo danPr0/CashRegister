@@ -18,12 +18,11 @@ import java.io.IOException;
 
 @WebServlet("/")
 public class MainServlet extends HttpServlet {
-    private final JWTProvider jwtProvider = JWTProvider.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String accessToken = jwtProvider.resolveToken(req, "accessToken");
-        RoleName role = jwtProvider.getRole(accessToken);
+        String accessToken = JWTProvider.resolveToken(req, "accessToken");
+        RoleName role = JWTProvider.getRole(accessToken);
 
         if (role.equals(RoleName.guest))
             req.getRequestDispatcher("/view/guest/guestPage.jsp").forward(req, resp);

@@ -1,6 +1,6 @@
 package controller.authentication;
 
-import service.UserService;
+import service_impl.UserServiceImpl;
 import util.JWTProvider;
 import util.RoleName;
 
@@ -17,8 +17,7 @@ import java.io.IOException;
 
 @WebServlet("/auth/signup")
 public class SignupServlet extends HttpServlet {
-    UserService userService = UserService.getInstance();
-    private final JWTProvider jwtProvider = JWTProvider.getInstance();
+    UserServiceImpl userServiceImpl = UserServiceImpl.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -36,10 +35,10 @@ public class SignupServlet extends HttpServlet {
         if (!password.equals(passwordConfirm))
             resp.sendRedirect(String.format("/auth/signup?error=passwordMismatch&username=%s&password=%s&passwordConfirm=%s&firstName=%s&secondName=%s",
                     username, password, passwordConfirm, firstName, secondName));
-        else if (userService.insertUser(username, password, firstName, secondName, RoleName.guest)) {
-            jwtProvider.setTokenCookie(jwtProvider.generateJwtToken(RoleName.guest, "accessToken"),
+        else if (userServiceImpl.insertUser(username, password, firstName, secondName, RoleName.guest)) {
+            JWTProvider.setTokenCookie(JWTProvider.generateJwtToken(RoleName.guest, "accessToken"),
                     "accessToken", JWTProvider.accessTokenExpirationInSec, resp);
-            jwtProvider.setTokenCookie(jwtProvider.generateJwtToken(RoleName.guest, "refreshToken"),
+            JWTProvider.setTokenCookie(JWTProvider.generateJwtToken(RoleName.guest, "refreshToken"),
                     "refreshToken", JWTProvider.refreshTokenExpirationInSec, resp);
 
             req.getSession().setAttribute("username", username);

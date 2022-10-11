@@ -3,7 +3,7 @@ package controller.senior_cashier;
 import entity.ReportElement;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
-import service.ReportService;
+import service_impl.ReportServiceImpl;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -15,7 +15,7 @@ import java.util.List;
 
 @WebServlet("/download-csv-report")
 public class DownloadCsvReportServlet extends HttpServlet {
-    private final ReportService reportService = ReportService.getInstance();
+    private final ReportServiceImpl reportServiceImpl = ReportServiceImpl.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -23,7 +23,7 @@ public class DownloadCsvReportServlet extends HttpServlet {
         FileWriter fileWriter = new FileWriter(file);
 
         try (CSVPrinter printer = new CSVPrinter(fileWriter, CSVFormat.DEFAULT.builder().setHeader("User", "Date", "Items", "Price").build())) {
-            List<ReportElement> report = reportService.getAll();
+            List<ReportElement> report = reportServiceImpl.getAll();
             report.forEach((r -> {
                 try {
                     printer.printRecord(r.getCreatedBy(), r.getClosed_at(), r.getItems_quantity(), r.getTotal_price());

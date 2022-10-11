@@ -1,6 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ page contentType="text/html;charset=UTF-8"%>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page isELIgnored="false" %>
 
 <fmt:setLocale value="${sessionScope.lang}"/>
@@ -19,19 +19,25 @@
         <jsp:include page="../menu/menu.jsp"/>
         <jsp:include page="../util/backToMainButton.jsp"/>
 
-        <form action="<c:url value="/senior-cashier/cancel-product-in-check"/>" method="post"
-              class="needs-validation col-4" novalidate>
-            <jsp:include page="../util/productInput.jsp"/>
-            <jsp:include page="../util/productQuantityInput.jsp"/>
-            <input type="submit" value="<fmt:message key="submit.cancel"/>" class="btn btn-primary"/>
-        </form>
+        <div>
+            <form action="<c:url value="/senior-cashier/cancel-product-in-check"/>" method="post"
+                  class="needs-validation col-4" novalidate>
+                <jsp:include page="../util/productInput.jsp"/>
+                <jsp:include page="../util/productQuantityInput.jsp"/>
 
-        <c:if test="${param.error != null}">
-            <p class="text-danger pl-3"><fmt:message key="msg.error.senior-cashier.cancelProduct.${param.error}"/></p>
-        </c:if>
-        <c:if test="${param.success == 'true'}">
-            <p class="text-success pl-3"><fmt:message key="msg.success.senior-cashier.cancelProduct"/></p>
-        </c:if>
+                <input type="submit" value="<fmt:message key="submit.cancel"/>" class="btn btn-primary"/>
+            </form>
+        </div>
+
+        <div>
+            <c:if test="${param.error != null}">
+                <p class="text-danger pl-3"><fmt:message
+                        key="msg.error.senior-cashier.cancelProduct.${param.error}"/></p>
+            </c:if>
+            <c:if test="${param.success == 'true'}">
+                <p class="text-success pl-3"><fmt:message key="msg.success.senior-cashier.cancelProduct"/></p>
+            </c:if>
+        </div>
     </div>
     </body>
 </fmt:bundle>

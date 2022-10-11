@@ -1,4 +1,4 @@
-package service;
+package service_impl;
 
 import dao_impl.UserRepository;
 import dto.ReportDTO;
@@ -7,30 +7,31 @@ import entity.ReportElement;
 import dao_impl.CheckRepository;
 import dao_impl.ReportRepository;
 import entity.User;
+import service.ReportServiceInterface;
 
 import java.sql.Timestamp;
 import java.time.Instant;
-import java.time.LocalDate;
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 import static util.DBFields.*;
 
-public class ReportService {
-    private static ReportService instance = null;
+public class ReportServiceImpl implements ReportServiceInterface {
+    private static ReportServiceImpl instance = null;
     private final ReportRepository reportRepository = ReportRepository.getInstance();
     private final CheckRepository checkRepository = CheckRepository.getInstance();
     private final UserRepository userRepository = UserRepository.getInstance();
 
-    private ReportService() {}
+    private ReportServiceImpl() {}
 
-    public static ReportService getInstance() {
+    public static ReportServiceImpl getInstance() {
         if (instance == null)
-            instance = new ReportService();
+            instance = new ReportServiceImpl();
         return instance;
     }
 
+    @Override
     public boolean add(String username) {
         List<CheckElement> check = checkRepository.getAll();
         User user = userRepository.getUserByUsername(username);
@@ -46,7 +47,8 @@ public class ReportService {
         return reportRepository.insertReportElement(new ReportElement(0, username, Timestamp.from(Instant.now()), check.size(), total_price));
     }
 
-    public List<ReportDTO> getPerPage(int nOfPage, int total, String sortParameter) {
+    @Override
+    public List<ReportElement> getPerPage(int nOfPage, int total, String sortParameter) {
         String sortColumn = REPORT_ID;
         if (Objects.equals(sortParameter, "createdBy"))
             sortColumn = REPORT_CREATED_BY;
@@ -58,15 +60,28 @@ public class ReportService {
         return reportRepository.getLimit(total * (nOfPage - 1), total, sortColumn);
     }
 
+    @Override
     public int getNumberOfRows() {
         return reportRepository.getNumberOfRows();
     }
 
+    @Override
     public List<ReportElement> getAll() {
         return reportRepository.getAll();
     }
 
+    @Override
     public boolean deleteAll() {
         return reportRepository.deleteAll();
+    }
+
+    @Override
+    public List<ReportDTO> convertToDTO(List<ReportElement> report) {
+        List<ReportDTO> result = new ArrayList<>();
+
+        report.forEach(el -> result.add(new ReportDTO(report.indexOf(el) + 1, el.getCreatedBy(),
+                el.getClosed_at().toLocalDateTime().toString().replace("T", " "),
+                el.getItems_quantity(), String.format("%.2f", el.getTotal_price()))));
+        return result;
     }
 }

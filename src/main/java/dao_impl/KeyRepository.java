@@ -41,7 +41,7 @@ public class KeyRepository implements KeyDAO {
             logger.info("Key was added to user with id=" + key.getUser_id());
         }
         catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Cannot insert secret key with userId=" + key.getUser_id());
             result = false;
         }
 
@@ -63,7 +63,7 @@ public class KeyRepository implements KeyDAO {
             }
         }
         catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Cannot get secret key for user with id=" + userId);
         }
 
         return result;

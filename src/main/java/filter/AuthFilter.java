@@ -10,15 +10,13 @@ import java.io.IOException;
 
 @WebFilter("/auth/*")
 public class AuthFilter implements Filter {
-    private final JWTProvider jwtProvider = JWTProvider.getInstance();
-
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws ServletException, IOException {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
 
-        String accessToken = jwtProvider.resolveToken(httpRequest, "accessToken");
-        if (jwtProvider.validateToken(accessToken))
+        String accessToken = JWTProvider.resolveToken(httpRequest, "accessToken");
+        if (JWTProvider.validateToken(accessToken))
             httpResponse.sendRedirect("/");
         else {
 //            httpRequest.getServletContext().setAttribute("username", "");

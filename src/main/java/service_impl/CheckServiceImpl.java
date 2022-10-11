@@ -1,27 +1,31 @@
-package service;
+package service_impl;
 
+import dto.CheckDTO;
 import entity.CheckElement;
 import entity.Product;
 import dao_impl.CheckRepository;
 import dao_impl.ProductRepository;
+import service.CheckServiceInterface;
 import util.ProductMeasure;
+import util.Validator;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 import static util.DBFields.*;
 
-public class CheckService {
-    private static CheckService instance = null;
+public class CheckServiceImpl implements CheckServiceInterface {
+    private static CheckServiceImpl instance = null;
     private final CheckRepository checkRepository = CheckRepository.getInstance();
     private final ProductRepository productRepository = ProductRepository.getInstance();
 
-    private CheckService() {
+    private CheckServiceImpl() {
     }
 
-    public static CheckService getInstance() {
+    public static CheckServiceImpl getInstance() {
         if (instance == null)
-            instance = new CheckService();
+            instance = new CheckServiceImpl();
         return instance;
     }
 
@@ -62,9 +66,9 @@ public class CheckService {
         return addToCheck(product, quantity);
     }
 
+    @Override
     public boolean addToCheck(Product product, double quantity) {
-        if (product == null || quantity <= 0 || product.getQuantity() < quantity ||
-                (product.getMeasure().equals(ProductMeasure.apiece) && quantity % 1 != 0))
+        if (product == null || !Validator.validateQuantity(product.getMeasure(), quantity) || product.getQuantity() < quantity)
             return false;
 
         CheckElement checkElement = checkRepository.getCheckElementByProduct(product);
@@ -101,13 +105,15 @@ public class CheckService {
 //        }
 //    }
 
-    public boolean updateCheck(String name, int newQuantity) {
+    @Override
+    public boolean updateCheckByProductName(String name, int newQuantity) {
         Product product = productRepository.getProductByName(name);
         if (product == null)
             return false;
 
         CheckElement checkElement = checkRepository.getCheckElementByProduct(product);
-        if (checkElement == null || newQuantity < 0 || product.getQuantity() + checkElement.getQuantity() < newQuantity)
+        if (checkElement == null || !Validator.validateQuantity(product.getMeasure(), newQuantity) ||
+                product.getQuantity() + checkElement.getQuantity() < newQuantity)
             return false;
 
         product.setQuantity(product.getQuantity() + checkElement.getQuantity() - newQuantity);
@@ -117,7 +123,7 @@ public class CheckService {
         return checkRepository.updateCheckElement(checkElement);
     }
 
-//    public boolean updateCheck(Product product, CheckElement checkElement, int newQuantity) {
+//    public boolean updateCheckByProductName(Product product, CheckElement checkElement, int newQuantity) {
 //        if (newQuantity < 0 || product.getQuantity() + checkElement.getQuantity() < newQuantity)
 //            return false;
 //
@@ -128,23 +134,27 @@ public class CheckService {
 //        return checkRepository.updateProduct(checkElement);
 //    }
 
+    @Override
     public boolean closeCheck() {
         return checkRepository.deleteAll();
     }
 
+    @Override
     public CheckElement getCheckElementByProductId(int id) {
         Product product = productRepository.getProductById(id);
         return checkRepository.getCheckElementByProduct(product);
     }
 
+    @Override
     public CheckElement getCheckElementByProductName(String name) {
         Product product = productRepository.getProductByName(name);
         return checkRepository.getCheckElementByProduct(product);
     }
 
+    @Override
     public boolean cancelCheckElement(CheckElement checkElement, double quantity) {
-        if (checkElement == null || checkElement.getQuantity() < quantity ||
-                (checkElement.getProduct().getMeasure().equals(ProductMeasure.apiece) && quantity % 1 != 0))
+        if (checkElement == null || !Validator.validateQuantity(checkElement.getProduct().getMeasure(), quantity) ||
+                checkElement.getQuantity() < quantity)
             return false;
 
         Product product = checkElement.getProduct();
@@ -158,6 +168,7 @@ public class CheckService {
         }
     }
 
+    @Override
     public boolean cancelCheck() {
         List<CheckElement> productsInCheckElement = checkRepository.getAll();
         if (productsInCheckElement == null)
@@ -172,10 +183,12 @@ public class CheckService {
         return checkRepository.deleteAll();
     }
 
+    @Override
     public List<CheckElement> getAll() {
         return checkRepository.getAll();
     }
 
+    @Override
     public List<CheckElement> getPerPage(int nOfPage, int total, String sortBy) {
         if (Objects.equals(sortBy, "productId"))
             sortBy = CHECK_PRODUCT_ID;
@@ -186,7 +199,21 @@ public class CheckService {
         return checkRepository.getLimit(total * (nOfPage - 1), total, sortBy);
     }
 
+    @Override
     public int getNumberOfRows() {
         return checkRepository.getNumberOfRows();
+    }
+
+    @Override
+    public List<CheckDTO> convertToDTO(List<CheckElement> check) {
+        List<CheckDTO> result = new ArrayList<>();
+
+        check.forEach(el -> {
+            Product product = el.getProduct();
+            String quantity = String.format(product.getMeasure().equals(ProductMeasure.weight) ? "%.3f" : "%.0f", el.getQuantity());
+            result.add(new CheckDTO(check.indexOf(el) + 1, product.getId(), product.getName(), quantity,
+                    String.format("%.2f", product.getPrice()), String.format("%.2f", product.getPrice() * el.getQuantity())));
+        });
+        return result;
     }
 }

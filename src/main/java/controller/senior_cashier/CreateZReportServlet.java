@@ -1,6 +1,6 @@
 package controller.senior_cashier;
 
-import service.ReportService;
+import service_impl.ReportServiceImpl;
 import util.ReportFileCreator;
 
 import javax.servlet.ServletException;
@@ -12,7 +12,7 @@ import java.io.IOException;
 
 @WebServlet("/senior-cashier/create-z-report")
 public class CreateZReportServlet extends HttpServlet {
-    private final ReportService reportService = ReportService.getInstance();
+    private final ReportServiceImpl reportServiceImpl = ReportServiceImpl.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -20,7 +20,7 @@ public class CreateZReportServlet extends HttpServlet {
         ReportFileCreator.createPdf("z-report.pdf", req.getServletContext());
         ReportFileCreator.createXls("z-report.xls", req.getServletContext());
 
-        reportService.deleteAll();
+        reportServiceImpl.deleteAll();
         resp.sendRedirect("/senior-cashier");
     }
 }

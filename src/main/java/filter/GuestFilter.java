@@ -12,16 +12,15 @@ import java.io.IOException;
 
 @WebFilter("/guest/*")
 public class GuestFilter implements Filter {
-    private final JWTProvider jwtProvider = JWTProvider.getInstance();
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws ServletException, IOException {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
 
-        String accessToken = jwtProvider.resolveToken(httpRequest, "accessToken");
-        if (jwtProvider.validateToken(accessToken)) {
-            if (!jwtProvider.getRole(accessToken).equals(RoleName.guest))
+        String accessToken = JWTProvider.resolveToken(httpRequest, "accessToken");
+        if (JWTProvider.validateToken(accessToken)) {
+            if (!JWTProvider.getRole(accessToken).equals(RoleName.guest))
                 httpResponse.sendRedirect("/");
             else chain.doFilter(request, response);
         }

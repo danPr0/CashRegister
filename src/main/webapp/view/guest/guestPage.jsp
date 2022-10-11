@@ -1,6 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ page contentType="text/html;charset=UTF-8"%>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page isELIgnored="false" %>
 
 <fmt:setLocale value="${sessionScope.lang}"/>
@@ -17,9 +17,11 @@
     <div class="container p-3 bg-dark text-white" style="min-height: 100%">
         <jsp:include page="../menu/menu.jsp"/>
 
-        <p class="ml-3">
-            <fmt:message key="msg.info.welcomeGuest"/>
-        </p>
+        <div>
+            <p class="ml-3">
+                <fmt:message key="msg.info.welcomeGuest"/>
+            </p>
+        </div>
     </div>
     </body>
 </fmt:bundle>

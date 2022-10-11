@@ -1,6 +1,6 @@
 package controller.senior_cashier;
 
-import service.CheckService;
+import service_impl.CheckServiceImpl;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -9,12 +9,12 @@ import java.io.IOException;
 
 @WebServlet("/senior-cashier/cancel-check")
 public class CancelCheckServlet extends HttpServlet {
-    private final CheckService checkService = CheckService.getInstance();
+    private final CheckServiceImpl checkServiceImpl = CheckServiceImpl.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String url = "/senior-cashier";
-        if (!checkService.cancelCheck())
+        if (!checkServiceImpl.cancelCheck())
             url += "?error=true";
         else url += "?success=true";
 

@@ -1,8 +1,7 @@
 package controller.senior_cashier;
 
 import dto.ReportDTO;
-import entity.ReportElement;
-import service.ReportService;
+import service_impl.ReportServiceImpl;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -14,7 +13,7 @@ import java.util.List;
 
 @WebServlet("/senior-cashier/create-x-report")
 public class CreateXReportServlet extends HttpServlet {
-    private final ReportService reportService = ReportService.getInstance();
+    private final ReportServiceImpl reportServiceImpl = ReportServiceImpl.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -33,8 +32,8 @@ public class CreateXReportServlet extends HttpServlet {
             total = 10;
         }
 
-        List<ReportDTO> report = reportService.getPerPage(page, total, req.getParameter("sortBy"));
-        int nOfPages = (reportService.getNumberOfRows() + total - 1) / total;
+        List<ReportDTO> report = reportServiceImpl.convertToDTO(reportServiceImpl.getPerPage(page, total, req.getParameter("sortBy")));
+        int nOfPages = (reportServiceImpl.getNumberOfRows() + total - 1) / total;
 
         if (!report.isEmpty()) {
             req.setAttribute("report", report);

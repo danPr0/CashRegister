@@ -15,21 +15,21 @@ import jxl.write.WritableWorkbook;
 import jxl.write.WriteException;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
-import service.ReportService;
+import service_impl.ReportServiceImpl;
 
 import javax.servlet.ServletContext;
 import java.io.*;
 import java.util.List;
 
 public class ReportFileCreator {
-    private static final ReportService reportService = ReportService.getInstance();
+    private static final ReportServiceImpl REPORT_SERVICE_IMPL = ReportServiceImpl.getInstance();
 
     public static void createCsv(String filename, ServletContext context) throws IOException {
         File file = new File(context.getRealPath("") + "/WEB-INF/reports/" + filename);
         FileWriter fileWriter = new FileWriter(file);
 
         try (CSVPrinter printer = new CSVPrinter(fileWriter, CSVFormat.DEFAULT.builder().setHeader("User", "Date", "Items", "Price").build())) {
-            List<ReportElement> report = reportService.getAll();
+            List<ReportElement> report = REPORT_SERVICE_IMPL.getAll();
             report.forEach((r -> {
                 try {
                     printer.printRecord(r.getCreatedBy(), r.getClosed_at(), r.getItems_quantity(), r.getTotal_price());
@@ -52,7 +52,7 @@ public class ReportFileCreator {
             e.printStackTrace();
         }
 
-        List<ReportElement> report = reportService.getAll();
+        List<ReportElement> report = REPORT_SERVICE_IMPL.getAll();
         report.forEach((r) -> {
             int index = report.indexOf(r);
             try {
@@ -103,7 +103,7 @@ public class ReportFileCreator {
     }
 
     private static void addRowsToPdf(PdfPTable table) {
-        List<ReportElement> report = reportService.getAll();
+        List<ReportElement> report = REPORT_SERVICE_IMPL.getAll();
         report.forEach((r) -> {
             PdfPCell header = new PdfPCell();
             header.setPhrase(new Phrase(r.getCreatedBy()));

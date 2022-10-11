@@ -1,47 +1,31 @@
 package util;
 
 public class Validator {
-    static public boolean validateUsername(String username) {
-        return !(username == null || username.isBlank() || username.length() < 3 || username.length() > 16);
+    public static boolean validateUsername(String username) {
+        return !(username == null || username.matches("([A-Za-zА-Яа-яЁёЇїІіЄєҐґ'0-9_]+)") || username.length() < 3 || username.length() > 16);
     }
 
-    static public boolean validatePassword(String username) {
-        return !(username == null || username.isBlank() || username.length() < 8 || username.length() > 24);
+    public static boolean validatePassword(String password) {
+        return !(password == null || password.length() < 8 || password.length() > 55);
     }
 
-    static public boolean validateFirstName(String firstName) {
-        return !(firstName == null || firstName.isBlank() || firstName.length() > 30);
+    public static boolean validateFirstName(String firstName) {
+        return !(firstName == null || firstName.matches("[-.\sA-Za-z]+|[-.\sА-Яа-яЁёЇїІіЄєҐґ']+") || firstName.length() > 48);
     }
 
-    static public boolean validateSecondName(String secondName) {
-        return !(secondName == null || secondName.isBlank() || secondName.length() > 30);
+    public static boolean validateSecondName(String secondName) {
+        return !(secondName == null || secondName.matches("[-.\sA-Za-z]+|[-.\sА-Яа-яЁёЇїІіЄєҐґ']+") || secondName.length() > 48);
     }
 
-    static public boolean validateProductName(String productName) {
-        return !(productName == null || productName.isBlank() || productName.length() < 2 || productName.length() > 30);
-    }
-    
-    static public boolean isInteger(String number) {
-        boolean result = true;
-        try {
-            Integer.parseInt(number);
-        }
-        catch (NumberFormatException e) {
-            result = false;
-        }
-        
-        return result;
+    public static boolean validateProductName(String productName) {
+        return !(productName == null || productName.length() > 60);
     }
 
-    static public boolean isDouble(String number) {
-        boolean result = true;
-        try {
-            Double.parseDouble(number);
-        }
-        catch (NullPointerException | NumberFormatException e) {
-            result = false;
-        }
+    public static boolean validateQuantity(ProductMeasure measure, double quantity) {
+        return !(quantity <= 0 || quantity >= 10_000 || (measure.equals(ProductMeasure.apiece) && quantity % 1 != 0));
+    }
 
-        return result;
+    public static boolean validatePrice(double price) {
+        return !(price <= 0 || price >= 10_000_000);
     }
 }

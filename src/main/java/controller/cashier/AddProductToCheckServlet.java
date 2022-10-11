@@ -1,11 +1,9 @@
 package controller.cashier;
 
 import dao_impl.ProductRepository;
-import entity.CheckElement;
+import dto.CheckDTO;
 import entity.Product;
-import service.CheckService;
-import service.ProductService;
-import util.ProductMeasure;
+import service_impl.CheckServiceImpl;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -21,7 +19,7 @@ import java.util.List;
 
 @WebServlet("/cashier/add-product-to-check")
 public class AddProductToCheckServlet extends HttpServlet {
-    private final CheckService checkService = CheckService.getInstance();
+    private final CheckServiceImpl checkServiceImpl = CheckServiceImpl.getInstance();
     private final ProductRepository productRepository = ProductRepository.getInstance();
 
     /**
@@ -44,8 +42,8 @@ public class AddProductToCheckServlet extends HttpServlet {
             total = 10;
         }
 
-        List<CheckElement> check = checkService.getPerPage(page, total, req.getParameter("sortBy"));
-        int nOfPages = (checkService.getNumberOfRows() + total - 1) / total;
+        List<CheckDTO> check = checkServiceImpl.convertToDTO(checkServiceImpl.getPerPage(page, total, req.getParameter("sortBy")));
+        int nOfPages = (checkServiceImpl.getNumberOfRows() + total - 1) / total;
 
         if (!check.isEmpty()) {
             req.setAttribute("check", check);
@@ -83,7 +81,7 @@ public class AddProductToCheckServlet extends HttpServlet {
 //                url += String.format("?error=overExceededQuantity&product=%s&quantity=%s", productParam, quantityParam);
 //            }
 //        }
-        else if (!checkService.addToCheck(product,  new BigDecimal(quantityParam).setScale(3, RoundingMode.UP).doubleValue()))
+        else if (!checkServiceImpl.addToCheck(product,  new BigDecimal(quantityParam).setScale(3, RoundingMode.UP).doubleValue()))
             url += String.format("?error=overExceededQuantity&product=%s&quantity=%s", productParam, quantityParam);
         else url += "?success=true";
 

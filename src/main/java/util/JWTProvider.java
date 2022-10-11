@@ -10,21 +10,21 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 
 public class JWTProvider {
-    private static JWTProvider instance = null;
+//    private static JWTProvider instance = null;
     private static final String secretKey = "cash_register";
     public static final int accessTokenExpirationInSec = 900;
     public static final int refreshTokenExpirationInSec = 86_400;
 
-    private JWTProvider() {
-    }
+//    private JWTProvider() {
+//    }
+//
+//    public static JWTProvider getInstance() {
+//        if (instance == null)
+//            instance = new JWTProvider();
+//        return instance;
+//    }
 
-    public static JWTProvider getInstance() {
-        if (instance == null)
-            instance = new JWTProvider();
-        return instance;
-    }
-
-    public String generateJwtToken(RoleName role, String tokenName) {
+    public static String generateJwtToken(RoleName role, String tokenName) {
         int tokenExpirationInSec;
 
         if (tokenName.equals("accessToken"))
@@ -33,17 +33,15 @@ public class JWTProvider {
             tokenExpirationInSec = refreshTokenExpirationInSec;
         else return null;
 
-        String token = Jwts.builder()
+        return Jwts.builder()
                 .setSubject(role.toString())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(new Date().getTime() + tokenExpirationInSec * 1000))
                 .signWith(SignatureAlgorithm.HS512, secretKey)
                 .compact();
-        System.out.println(token);
-        return token;
     }
 
-    public String resolveToken(HttpServletRequest request, String tokenName) {
+    public static String resolveToken(HttpServletRequest request, String tokenName) {
 //        String headerValue = request.getHeader("Authorization");
 //        if (headerValue == null)
 //            return null;
@@ -63,7 +61,7 @@ public class JWTProvider {
         return result;
     }
 
-    public boolean validateToken(String token) throws JwtException {
+    public static boolean validateToken(String token) throws JwtException {
         if (token == null || token.isEmpty())
             return false;
 
@@ -77,7 +75,7 @@ public class JWTProvider {
         return result;
     }
 
-    public void setTokenCookie(String token, String tokenName, int maxAge, HttpServletResponse response) {
+    public static void setTokenCookie(String token, String tokenName, int maxAge, HttpServletResponse response) {
         Cookie cookie = new Cookie(tokenName, token);
         cookie.setPath("/");
         cookie.setHttpOnly(true);
@@ -85,7 +83,7 @@ public class JWTProvider {
         response.addCookie(cookie);
     }
 
-    public RoleName getRole(String token) {
+    public static RoleName getRole(String token) {
         return RoleName.valueOf(Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject());
     }
 }

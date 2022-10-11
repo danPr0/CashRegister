@@ -46,7 +46,7 @@ public class ReportRepository implements ReportDAO {
             ps.execute();
             logger.info("Report element created by " + reportElement.getCreatedBy() + " was successfully added");
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Cannot insert report element");
             result = false;
         }
 
@@ -65,15 +65,15 @@ public class ReportRepository implements ReportDAO {
                     logger.info("Number of rows in report were successfully retrieved");
                 }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Cannot get number of rows in report");
         }
 
         return result;
     }
 
     @Override
-    public List<ReportDTO> getLimit(int offset, int limit, String sortColumn) {
-        List<ReportDTO> resultList = new ArrayList<>();
+    public List<ReportElement> getLimit(int offset, int limit, String sortColumn) {
+        List<ReportElement> resultList = new ArrayList<>();
 
         try (Connection con = connectionFactory.getConnection();
              PreparedStatement ps = con.prepareStatement(String.format(GET_LIMIT_QUERY, sortColumn))) {
@@ -81,13 +81,13 @@ public class ReportRepository implements ReportDAO {
             ps.setInt(2, offset);
             try (ResultSet resultSet = ps.executeQuery()) {
                 while (resultSet.next()) {
-                    resultList.add(new ReportDTO(resultSet.getString(REPORT_CREATED_BY), resultSet.getString(REPORT_CLOSED_AT),
+                    resultList.add(new ReportElement(resultSet.getInt(REPORT_ID), resultSet.getString(REPORT_CREATED_BY), resultSet.getTimestamp(REPORT_CLOSED_AT),
                             resultSet.getInt(REPORT_ITEMS_QUANTITY), resultSet.getDouble(REPORT_TOTAL_PRICE)));
                 }
                 logger.info(resultList.size() + " report elements were successfully retrieved");
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Cannot get segment of report from " + offset + " to " + limit);
         }
 
         return resultList;
@@ -107,7 +107,7 @@ public class ReportRepository implements ReportDAO {
                 }
                 logger.info(resultList.size() + " report elements were successfully retrieved");
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Cannot get report");
         }
 
         return resultList;
@@ -122,7 +122,7 @@ public class ReportRepository implements ReportDAO {
             ps.execute(DELETE_ALL_QUERY);
             logger.info("All report elements were successfully deleted");
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Cannot delete report");
             result = false;
         }
 

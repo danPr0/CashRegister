@@ -17,7 +17,7 @@
 <!--    <url-pattern>*.jsp</url-pattern>-->
 <!--  </filter-mapping>-->
   <filter-mapping>
-    <filter-name>main</filter-name>
+    <filter-name>refreshAccessToken</filter-name>
     <url-pattern>/*</url-pattern>
   </filter-mapping>
 </web-app>

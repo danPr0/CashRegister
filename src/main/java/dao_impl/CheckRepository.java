@@ -52,7 +52,7 @@ public class CheckRepository implements CheckDAO {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Cannot get check element with productName=" + product.getName());
         }
 
         return result;
@@ -73,7 +73,7 @@ public class CheckRepository implements CheckDAO {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Cannot get check element by id=" + id);
         }
 
         return result;
@@ -90,7 +90,7 @@ public class CheckRepository implements CheckDAO {
             ps.execute();
             logger.info("Check element " + checkElement.getProduct().getName()+ " was successfully added");
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Cannot insert check element with productName=" + checkElement.getProduct().getName());
             result = false;
         }
 
@@ -108,7 +108,7 @@ public class CheckRepository implements CheckDAO {
             ps.execute();
             logger.info("Check element " + checkElement.getProduct().getName()+ " was successfully updated");
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Cannot update check element with productName=" + checkElement.getProduct().getName());
             result = false;
         }
 
@@ -125,7 +125,7 @@ public class CheckRepository implements CheckDAO {
             ps.execute();
             logger.info("Check element with id = " + id + " was successfully deleted");
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Cannot delete check element by id=" + id);
             result = false;
         }
 
@@ -146,7 +146,7 @@ public class CheckRepository implements CheckDAO {
                 }
                 logger.info(resultList.size() + " check elements were successfully retrieved");
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Cannot get check");
         }
 
         return resultList;
@@ -161,7 +161,7 @@ public class CheckRepository implements CheckDAO {
             ps.execute();
             logger.info("All check elements were successfully deleted");
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Cannot delete check");
             result = false;
         }
 
@@ -185,7 +185,7 @@ public class CheckRepository implements CheckDAO {
                 logger.info(resultList.size() + " check elements were successfully retrieved");
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Cannot get segment of check from " + offset + " to " + limit);
         }
 
         return resultList;
@@ -205,7 +205,7 @@ public class CheckRepository implements CheckDAO {
                     logger.info("Number of rows in check were successfully retrieved");
                 }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Cannot get number of rows in check");
         }
 
         return result;

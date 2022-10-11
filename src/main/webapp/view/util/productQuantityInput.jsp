@@ -6,8 +6,8 @@
 <fmt:bundle basename="messages">
     <div class="mb-2">
         <label for="prodQuantity" class="form-label"><fmt:message key="label.productQuantity"/></label>
-        <input type="text" name="quantity" required pattern="([1-9]{1}[0-9]*)|([0-9]+(.){1}[0-9]{0,3})" minlength="1" maxlength="9" class="form-control"
-               placeholder="<fmt:message key="placeHolder.productQuantity"/>" id="prodQuantity"
+        <input type="text" name="quantity" required pattern="([1-9]{1}[0-9]{0,3})|([0-9]{1,4}(.){1}[0-9]{1,3})"
+               class="form-control" placeholder="<fmt:message key="placeHolder.productQuantity"/>" id="prodQuantity"
                value="${param.quantity}"/>
         <div class="invalid-feedback"><fmt:message key="msg.invalidInput.productQuantity"/></div>
     </div>

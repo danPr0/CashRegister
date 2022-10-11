@@ -1,6 +1,9 @@
 package util;
 
+import dao_impl.RoleRepository;
 import org.apache.commons.dbcp2.BasicDataSource;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -11,6 +14,7 @@ import java.util.Properties;
 public class ConnectionFactory {
     private static ConnectionFactory instance = null;
     private static BasicDataSource dataSource = null;
+    private final Logger logger = LogManager.getLogger(ConnectionFactory.class);
 
     private ConnectionFactory() {
 //        try {
@@ -22,19 +26,18 @@ public class ConnectionFactory {
         dataSource = new BasicDataSource();
         dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
         dataSource.setUrl(getConnectionUrl());
-
+        dataSource.setMaxTotal(150);
 //        dataSource.setMinIdle(3);
 //        dataSource.setMaxIdle(11);
-        dataSource.setMaxTotal(150);
     }
 
     public Connection getConnection() {
         Connection conn = null;
         try {
-//            conn = DriverManager.getConnection(getConnectionUrl());
             conn = dataSource.getConnection();
+            conn.setAutoCommit(true);
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage());
         }
         return conn;
     }
@@ -55,7 +58,7 @@ public class ConnectionFactory {
             connection_url = properties.getProperty("connection.url");
         }
         catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage());
         }
 
         return connection_url;

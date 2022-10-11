@@ -11,5 +11,5 @@ public interface ReportDAO {
     List<ReportElement> getAll();
     boolean deleteAll();
     int getNumberOfRows();
-    List<ReportDTO> getLimit(int offset, int limit, String sortColumn);
+    List<ReportElement> getLimit(int offset, int limit, String sortColumn);
 }

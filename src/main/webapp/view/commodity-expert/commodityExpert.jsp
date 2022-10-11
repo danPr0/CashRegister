@@ -1,6 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ page contentType="text/html;charset=UTF-8"%>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page isELIgnored="false" %>
 
 <fmt:setLocale value="${sessionScope.lang}"/>
@@ -17,12 +17,14 @@
     <div class="container p-3 bg-dark text-white" style="min-height: 100%">
         <jsp:include page="../menu/menu.jsp"/>
 
-        <a href="<c:url value="/commodity-expert/add-product"/>" class="btn btn-primary">
-            <fmt:message key="button.addProduct"/>
-        </a>
-        <a href="<c:url value="/commodity-expert/update-product"/>" class="btn btn-secondary">
-            <fmt:message key="button.updateProduct"/>
-        </a>
+        <div>
+            <a href="<c:url value="/commodity-expert/add-product"/>" class="btn btn-primary">
+                <fmt:message key="button.addProduct"/>
+            </a>
+            <a href="<c:url value="/commodity-expert/update-product"/>" class="btn btn-secondary">
+                <fmt:message key="button.updateProduct"/>
+            </a>
+        </div>
     </div>
     </body>
 </fmt:bundle>

@@ -2,7 +2,7 @@ package controller.commodity_expert;
 
 
 import entity.Product;
-import service.ProductService;
+import service_impl.ProductServiceImpl;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -15,7 +15,7 @@ import java.math.RoundingMode;
 
 @WebServlet("/commodity-expert/update-product")
 public class UpdateProductServlet extends HttpServlet {
-    ProductService productService = ProductService.getInstance();
+    ProductServiceImpl productServiceImpl = ProductServiceImpl.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -35,14 +35,14 @@ public class UpdateProductServlet extends HttpServlet {
         if (product != null) {
             Product productToUpdate;
             try {
-                productToUpdate = productService.getProductById(Integer.parseInt(product));
+                productToUpdate = productServiceImpl.getProductById(Integer.parseInt(product));
             } catch (NumberFormatException e1) {
-                productToUpdate = productService.getProductByName(product);
+                productToUpdate = productServiceImpl.getProductByName(product);
             }
 
             if (productToUpdate == null)
                 req.setAttribute("error", "true");
-            else req.setAttribute("product", productToUpdate);
+            else req.setAttribute("product", productServiceImpl.convertToDTO(productToUpdate));
         }
 
         req.getRequestDispatcher("/view/commodity-expert/updateProduct.jsp").forward(req, resp);
@@ -55,7 +55,7 @@ public class UpdateProductServlet extends HttpServlet {
         String price = String.format(request.getParameter("price"), "%.2f");
 
         String url = "/commodity-expert/update-product?product=" + productId;
-        if (!productService.updateProductById(Integer.parseInt(productId),
+        if (!productServiceImpl.updateProductById(Integer.parseInt(productId),
                 new BigDecimal(quantity).setScale(3, RoundingMode.UP).doubleValue(),
                 new BigDecimal(price).setScale(2, RoundingMode.UP).doubleValue()))
             url += String.format("&error=true&quantity=%s&price=%s", quantity, price);

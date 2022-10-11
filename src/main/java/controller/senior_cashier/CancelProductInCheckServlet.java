@@ -1,9 +1,7 @@
 package controller.senior_cashier;
 
-import dao_impl.ProductRepository;
 import entity.CheckElement;
-import entity.Product;
-import service.CheckService;
+import service_impl.CheckServiceImpl;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -14,7 +12,7 @@ import java.math.RoundingMode;
 
 @WebServlet("/senior-cashier/cancel-product-in-check")
 public class CancelProductInCheckServlet extends HttpServlet {
-    private final CheckService checkService = CheckService.getInstance();
+    private final CheckServiceImpl checkServiceImpl = CheckServiceImpl.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -44,16 +42,16 @@ public class CancelProductInCheckServlet extends HttpServlet {
 
         CheckElement checkElement;
         try {
-            checkElement = checkService.getCheckElementByProductId(Integer.parseInt(productParam));
+            checkElement = checkServiceImpl.getCheckElementByProductId(Integer.parseInt(productParam));
         }
         catch (NumberFormatException e) {
-            checkElement = checkService.getCheckElementByProductName(productParam);
+            checkElement = checkServiceImpl.getCheckElementByProductName(productParam);
         }
 
         String url = "/senior-cashier/cancel-product-in-check";
         if (checkElement == null)
             url += String.format("?error=noSuchProduct&product=%s&quantity=%s", productParam, quantityParam);
-        else if (!checkService.cancelCheckElement(checkElement,  new BigDecimal(quantityParam).setScale(3, RoundingMode.UP).doubleValue()))
+        else if (!checkServiceImpl.cancelCheckElement(checkElement,  new BigDecimal(quantityParam).setScale(3, RoundingMode.UP).doubleValue()))
             url += String.format("?error=overExceededQuantity&product=%s&quantity=%s", productParam, quantityParam);
         else url += "?success=true";
 

@@ -15,12 +15,10 @@ import java.io.IOException;
 
 @WebServlet("/logout")
 public class LogoutServlet extends HttpServlet {
-    private final JWTProvider jwtProvider = JWTProvider.getInstance();
-
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        jwtProvider.setTokenCookie("", "accessToken", 0, resp);
-        jwtProvider.setTokenCookie("", "refreshToken", 0, resp);
+        JWTProvider.setTokenCookie("", "accessToken", 0, resp);
+        JWTProvider.setTokenCookie("", "refreshToken", 0, resp);
 
         req.getSession().removeAttribute("username");
         resp.sendRedirect("/");

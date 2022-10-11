@@ -5,6 +5,7 @@ import entity.Role;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import util.ConnectionFactory;
+import util.RoleName;
 
 import java.sql.*;
 
@@ -35,12 +36,12 @@ public class RoleRepository implements RoleDAO {
             ps.setInt(1, id);
             try (ResultSet resultSet = ps.executeQuery()) {
                 if (resultSet.next()) {
-                    result = new Role(resultSet.getInt(ROLE_ID), resultSet.getString(ROLE_NAME));
+                    result = new Role(resultSet.getInt(ROLE_ID), RoleName.valueOf(resultSet.getString(ROLE_NAME)));
                     logger.info("Role with id = " + id + " was successfully retrieved");
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Cannot get role by id=" + id);
         }
 
         return result;
@@ -55,12 +56,12 @@ public class RoleRepository implements RoleDAO {
             ps.setString(1, name);
             try (ResultSet resultSet = ps.executeQuery()) {
                 if (resultSet.next()) {
-                    result = new Role(resultSet.getInt(ROLE_ID), resultSet.getString(ROLE_NAME));
+                    result = new Role(resultSet.getInt(ROLE_ID), RoleName.valueOf(resultSet.getString(ROLE_NAME)));
                     logger.info("Role " + name + " was successfully retrieved");
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Cannot get role by name=" + name);
         }
 
         return result;

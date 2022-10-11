@@ -50,7 +50,7 @@ public class UserRepository implements UserDAO {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Cannot get user by name=" + username);
         }
 
         return result;
@@ -70,7 +70,7 @@ public class UserRepository implements UserDAO {
             ps.execute();
             logger.info("User " + user.getUsername() + " was successfully added");
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Cannot insert user with username=" + user.getUsername());
             result = false;
         }
 

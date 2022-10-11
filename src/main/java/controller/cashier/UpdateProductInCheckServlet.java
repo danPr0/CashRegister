@@ -1,7 +1,7 @@
 package controller.cashier;
 
 import entity.CheckElement;
-import service.CheckService;
+import service_impl.CheckServiceImpl;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -11,11 +11,11 @@ import java.util.List;
 
 @WebServlet("/cashier/update-product-in-check")
 public class UpdateProductInCheckServlet extends HttpServlet {
-    private final CheckService checkService = CheckService.getInstance();
+    private final CheckServiceImpl checkServiceImpl = CheckServiceImpl.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        List<CheckElement> check = checkService.getAll();
+        List<CheckElement> check = checkServiceImpl.getAll();
         if (!check.isEmpty())
             req.setAttribute("check", check);
         req.getRequestDispatcher("/view/cashier/update-product-in-check.jsp").forward(req, resp);
@@ -28,9 +28,8 @@ public class UpdateProductInCheckServlet extends HttpServlet {
 
         boolean result;
         try {
-            result = checkService.updateCheck(productName, Integer.parseInt(newQuantity));
-        }
-        catch (NullPointerException | NumberFormatException e) {
+            result = checkServiceImpl.updateCheckByProductName(productName, Integer.parseInt(newQuantity));
+        } catch (NullPointerException | NumberFormatException e) {
             result = false;
         }
 
@@ -44,4 +43,6 @@ public class UpdateProductInCheckServlet extends HttpServlet {
 
         response.sendRedirect(url);
     }
+
+
 }

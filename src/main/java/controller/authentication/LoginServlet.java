@@ -1,7 +1,7 @@
 package controller.authentication;
 
 import entity.User;
-import service.UserService;
+import service_impl.UserServiceImpl;
 import util.JWTProvider;
 
 import javax.servlet.ServletException;
@@ -16,8 +16,7 @@ import java.io.IOException;
 
 @WebServlet("/auth/login")
 public class LoginServlet extends HttpServlet {
-    private final UserService userService = UserService.getInstance();
-    private final JWTProvider jwtProvider = JWTProvider.getInstance();
+    private final UserServiceImpl userServiceImpl = UserServiceImpl.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -30,12 +29,12 @@ public class LoginServlet extends HttpServlet {
         String password = req.getParameter("password");
 
         User user;
-        if ((user = userService.getUser(username)) == null)
+        if ((user = userServiceImpl.getUser(username)) == null)
             resp.sendRedirect(String.format("/auth/login?error=badUsername&username=%s&password=%s", username, password));
-        else if (userService.authenticate(username, password)) {
-            jwtProvider.setTokenCookie(jwtProvider.generateJwtToken(user.getRole().getName(), "accessToken"),
+        else if (userServiceImpl.authenticate(username, password)) {
+            JWTProvider.setTokenCookie(JWTProvider.generateJwtToken(user.getRole().getName(), "accessToken"),
                     "accessToken", JWTProvider.accessTokenExpirationInSec, resp);
-            jwtProvider.setTokenCookie(jwtProvider.generateJwtToken(user.getRole().getName(), "refreshToken"),
+            JWTProvider.setTokenCookie(JWTProvider.generateJwtToken(user.getRole().getName(), "refreshToken"),
                     "refreshToken", JWTProvider.refreshTokenExpirationInSec, resp);
 
             req.getSession().setAttribute("username", username);

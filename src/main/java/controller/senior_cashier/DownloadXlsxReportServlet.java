@@ -7,7 +7,7 @@ import jxl.write.Number;
 import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
 import jxl.write.WriteException;
-import service.ReportService;
+import service_impl.ReportServiceImpl;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -19,7 +19,7 @@ import java.util.List;
 
 @WebServlet("/download-xlsx-report")
 public class DownloadXlsxReportServlet extends HttpServlet {
-    private final ReportService reportService = ReportService.getInstance();
+    private final ReportServiceImpl reportServiceImpl = ReportServiceImpl.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -69,7 +69,7 @@ public class DownloadXlsxReportServlet extends HttpServlet {
             e.printStackTrace();
         }
 
-        List<ReportElement> report = reportService.getAll();
+        List<ReportElement> report = reportServiceImpl.getAll();
         report.forEach((r) -> {
             int index = report.indexOf(r);
             try {

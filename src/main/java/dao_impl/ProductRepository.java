@@ -48,7 +48,7 @@ public class ProductRepository implements ProductDAO {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Cannot get product by name=" + name);
         }
 
         return result;
@@ -70,7 +70,7 @@ public class ProductRepository implements ProductDAO {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Cannot get product by id=" + id);
         }
 
         return result;
@@ -89,7 +89,7 @@ public class ProductRepository implements ProductDAO {
             ps.execute();
             logger.info("Product " + product.getName() + " was successfully added");
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Cannot insert product with name=" + product.getName());
             result = false;
         }
 
@@ -108,7 +108,7 @@ public class ProductRepository implements ProductDAO {
             ps.execute();
             logger.info("Product " + product.getName() + " was successfully updated");
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Cannot update product with name=" + product.getName());
             result = false;
         }
 
@@ -125,7 +125,7 @@ public class ProductRepository implements ProductDAO {
             ps.execute();
             logger.info("Product with id = " + id + " was successfully added");
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Cannot update product with id=" + id);
             result = false;
         }
 

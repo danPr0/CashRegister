@@ -1,6 +1,6 @@
 package controller.cashier;
 
-import service.CheckService;
+import service_impl.CheckServiceImpl;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -15,11 +15,11 @@ import java.io.IOException;
 
 @WebServlet("/cashier")
 public class MainCashierServlet extends HttpServlet {
-    private final CheckService checkService = CheckService.getInstance();
+    private final CheckServiceImpl checkServiceImpl = CheckServiceImpl.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.setAttribute("checkSize", checkService.getNumberOfRows());
+        req.setAttribute("checkSize", checkServiceImpl.getNumberOfRows());
         req.getRequestDispatcher("/view/cashier/cashier.jsp").forward(req, resp);
     }
 }

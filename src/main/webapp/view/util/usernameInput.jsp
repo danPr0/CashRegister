@@ -7,7 +7,7 @@
 <fmt:bundle basename="messages">
     <div class="mb-2">
         <label for="username"  class="form-label"><fmt:message key="label.username"/></label>
-            <input type="text" name="username" required minlength="3" maxlength="16" class="form-control"
+            <input type="text" name="username" required pattern="([A-Za-zА-Яа-яЁёЇїІіЄєҐґ'0-9_]+)" minlength="3" maxlength="16" class="form-control"
                    placeholder="<fmt:message key="placeHolder.username"/>" id="username" value="${param.username}"/>
         <div class="invalid-feedback"><fmt:message key="msg.invalidInput.username"/></div>
     </div>
