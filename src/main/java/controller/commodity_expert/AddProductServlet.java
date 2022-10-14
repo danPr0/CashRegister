@@ -10,6 +10,9 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
+import static java.net.URLEncoder.encode;
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 @WebServlet("/commodity-expert/add-product")
 public class AddProductServlet extends HttpServlet {
     ProductServiceImpl productServiceImpl = ProductServiceImpl.getInstance();
@@ -38,7 +41,7 @@ public class AddProductServlet extends HttpServlet {
         if (!productServiceImpl.addProduct(productName, ProductMeasure.valueOf(measure),
                 new BigDecimal(quantity).setScale(3, RoundingMode.UP).doubleValue(),
                 new BigDecimal(price).setScale(2, RoundingMode.UP).doubleValue()))
-            url += String.format("?error=true&productName=%s&measure=%s&quantity=%s&price=%s", productName, measure, quantity, price);
+            url += String.format("?error=true&productName=%s&measure=%s&quantity=%s&price=%s", encode(productName, UTF_8), measure, quantity, price);
         else url += "?success=true";
 
         response.sendRedirect(url);

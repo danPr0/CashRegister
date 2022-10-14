@@ -2,7 +2,7 @@ package util;
 
 public class DBFields {
     public static final String USER_ID = "id";
-    public static final String USER_LOGIN = "username";
+    public static final String USER_EMAIL = "email";
     public static final String USER_PASSWORD = "password";
     public static final String USER_FIRST_NAME = "first_name";
     public static final String USER_SECOND_NAME = "second_name";

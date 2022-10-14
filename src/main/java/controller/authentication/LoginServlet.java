@@ -10,6 +10,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+
+import static java.net.URLEncoder.encode;
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 /**
  * Class is designed to process client authentication
  */
@@ -25,21 +29,22 @@ public class LoginServlet extends HttpServlet {
 
     @Override
     public void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String username = req.getParameter("username");
+        String email = req.getParameter("email");
         String password = req.getParameter("password");
 
         User user;
-        if ((user = userServiceImpl.getUser(username)) == null)
-            resp.sendRedirect(String.format("/auth/login?error=badUsername&username=%s&password=%s", username, password));
-        else if (userServiceImpl.authenticate(username, password)) {
+        if ((user = userServiceImpl.getUser(email)) == null)
+            resp.sendRedirect(String.format("/auth/login?error=badEmail&email=%s&password=%s", email, encode(password, UTF_8)));
+        else if (userServiceImpl.authenticate(email, password)) {
             JWTProvider.setTokenCookie(JWTProvider.generateJwtToken(user.getRole().getName(), "accessToken"),
                     "accessToken", JWTProvider.accessTokenExpirationInSec, resp);
             JWTProvider.setTokenCookie(JWTProvider.generateJwtToken(user.getRole().getName(), "refreshToken"),
                     "refreshToken", JWTProvider.refreshTokenExpirationInSec, resp);
 
-            req.getSession().setAttribute("username", username);
+            req.getSession().setAttribute("email", email);
+            req.getSession().setAttribute("firstName", user.getFirstName());
             resp.sendRedirect("/");
         }
-        else resp.sendRedirect(String.format("/auth/login?error=incorrectPassword&username=%s&password=%s", username, password));
+        else resp.sendRedirect(String.format("/auth/login?error=incorrectPassword&email=%s&password=%s", email, encode(password, UTF_8)));
     }
 }

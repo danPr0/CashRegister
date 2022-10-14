@@ -8,7 +8,7 @@
 <fmt:bundle basename="messages">
     <div class="mb-2">
         <label for="firstName" class="form-label"><fmt:message key="label.firstName"/></label>
-        <input type="text" name="firstName" required pattern="[-.\sA-Za-z]+|[-.\sА-Яа-яЁёЇїІіЄєҐґ']+" maxlength="48"
+        <input type="password" name="firstName" required pattern="[-.\sA-Za-z]+|[-.\sА-Яа-яЁёЇїІіЄєҐґ']+" maxlength="48"
                class="form-control" placeholder="<fmt:message key="placeHolder.firstName"/>" id="firstName"
                value="${param.firstName}"/>
         <div class="invalid-feedback"><fmt:message key="msg.invalidInput.name"/></div>

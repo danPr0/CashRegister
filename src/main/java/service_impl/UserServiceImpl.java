@@ -4,6 +4,7 @@ import dao_impl.KeyRepository;
 import dao_impl.RoleRepository;
 import dao_impl.UserRepository;
 import entity.Key;
+import entity.Role;
 import entity.User;
 import org.apache.commons.codec.binary.Base64;
 import service.UserServiceInterface;
@@ -39,28 +40,38 @@ public class UserServiceImpl implements UserServiceInterface {
     }
 
     @Override
-    public User getUser(String username) {
-        return userRepository.getUserByUsername(username);
+    public User getUser(String email) {
+        return userRepository.getUserByEmail(email);
     }
 
     @Override
-    public boolean insertUser(String username, String password, String firstName, String secondName, RoleName role) {
-        if (!(Validator.validateUsername(username) && Validator.validatePassword(password)
+    public boolean insertUser(String email, String password, String firstName, String secondName, RoleName role) {
+        System.out.println(Validator.validateEmail(email));
+        System.out.println(Validator.validatePassword(password));
+        System.out.println(Validator.validateFirstName(firstName));
+        if (!(Validator.validateEmail(email) && Validator.validatePassword(password)
                 && Validator.validateFirstName(firstName) && Validator.validateSecondName(secondName)))
             return false;
 
+
+
         SecretKey secretKey = AESUtil.generateSecretKey();
         String encodedPassword = encryptPassword(secretKey, password);
-        User user = new User(0, username, encodedPassword, firstName, secondName, roleRepository.getRoleByName(role.toString()));
+        User user = new User(0, email, encodedPassword, firstName, secondName, roleRepository.getRoleByName(role.toString()));
         if (!userRepository.insertUser(user))
             return false;
 
-        return keyRepository.insertKey(new Key(userRepository.getUserByUsername(username).getId(), new Base64().encodeToString(secretKey.getEncoded())));
+        return keyRepository.insertKey(new Key(userRepository.getUserByEmail(email).getId(), new Base64().encodeToString(secretKey.getEncoded())));
     }
 
     @Override
-    public boolean authenticate(String username, String password) {
-        User user = userRepository.getUserByUsername(username);
+    public boolean updateUser(int id, Role role) {
+        return userRepository.updateUser(id, role);
+    }
+
+    @Override
+    public boolean authenticate(String email, String password) {
+        User user = userRepository.getUserByEmail(email);
         if (user == null || !Validator.validatePassword(password))
             return false;
 

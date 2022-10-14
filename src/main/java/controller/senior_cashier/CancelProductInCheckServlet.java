@@ -10,6 +10,9 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
+import static java.net.URLEncoder.encode;
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 @WebServlet("/senior-cashier/cancel-product-in-check")
 public class CancelProductInCheckServlet extends HttpServlet {
     private final CheckServiceImpl checkServiceImpl = CheckServiceImpl.getInstance();
@@ -50,9 +53,9 @@ public class CancelProductInCheckServlet extends HttpServlet {
 
         String url = "/senior-cashier/cancel-product-in-check";
         if (checkElement == null)
-            url += String.format("?error=noSuchProduct&product=%s&quantity=%s", productParam, quantityParam);
+            url += String.format("?error=noSuchProduct&product=%s&quantity=%s", encode(productParam, UTF_8), quantityParam);
         else if (!checkServiceImpl.cancelCheckElement(checkElement,  new BigDecimal(quantityParam).setScale(3, RoundingMode.UP).doubleValue()))
-            url += String.format("?error=overExceededQuantity&product=%s&quantity=%s", productParam, quantityParam);
+            url += String.format("?error=overExceededQuantity&product=%s&quantity=%s", encode(productParam, UTF_8), quantityParam);
         else url += "?success=true";
 
 //        String url = "/senior-cashier/cancel-product-in-check";

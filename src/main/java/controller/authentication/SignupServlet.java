@@ -10,6 +10,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+
+import static java.net.URLEncoder.encode;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * Class is designed to process client registration
@@ -26,26 +32,29 @@ public class SignupServlet extends HttpServlet {
 
     @Override
     public void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String username = req.getParameter("username");
+        String email = req.getParameter("email");
         String password = req.getParameter("password");
         String passwordConfirm = req.getParameter("passwordConfirm");
         String firstName = req.getParameter("firstName");
         String secondName = req.getParameter("secondName");
 
+        System.out.println(email);
+
         if (!password.equals(passwordConfirm))
-            resp.sendRedirect(String.format("/auth/signup?error=passwordMismatch&username=%s&password=%s&passwordConfirm=%s&firstName=%s&secondName=%s",
-                    username, password, passwordConfirm, firstName, secondName));
-        else if (userServiceImpl.insertUser(username, password, firstName, secondName, RoleName.guest)) {
+            resp.sendRedirect(String.format("/auth/signup?error=passwordMismatch&email=%s&firstName=%s&secondName=%s&password=%s&passwordConfirm=%s",
+                    email, encode(firstName, UTF_8), encode(secondName, UTF_8), encode(password, UTF_8), encode(passwordConfirm, UTF_8)));
+        else if (userServiceImpl.insertUser(email, password, firstName, secondName, RoleName.guest)) {
             JWTProvider.setTokenCookie(JWTProvider.generateJwtToken(RoleName.guest, "accessToken"),
                     "accessToken", JWTProvider.accessTokenExpirationInSec, resp);
             JWTProvider.setTokenCookie(JWTProvider.generateJwtToken(RoleName.guest, "refreshToken"),
                     "refreshToken", JWTProvider.refreshTokenExpirationInSec, resp);
 
-            req.getSession().setAttribute("username", username);
+            req.getSession().setAttribute("email", email);
+            req.getSession().setAttribute("firstName", firstName);
             resp.sendRedirect("/");
         } else {
-            resp.sendRedirect(String.format("/auth/signup?error=badUsername&username=%s&password=%s&passwordConfirm=%s&firstName=%s&secondName=%s",
-                    username, password, passwordConfirm, firstName, secondName));
+            resp.sendRedirect(String.format("/auth/signup?error=badEmail&email=%s&firstName=%s&secondName=%s&password=%s&passwordConfirm=%s",
+                    email, encode(firstName, UTF_8), encode(secondName, UTF_8), encode(password, UTF_8), encode(passwordConfirm, UTF_8)));
         }
     }
 }

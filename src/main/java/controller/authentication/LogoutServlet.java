@@ -20,7 +20,8 @@ public class LogoutServlet extends HttpServlet {
         JWTProvider.setTokenCookie("", "accessToken", 0, resp);
         JWTProvider.setTokenCookie("", "refreshToken", 0, resp);
 
-        req.getSession().removeAttribute("username");
+        req.getSession().removeAttribute("email");
+        req.getSession().removeAttribute("firstName");
         resp.sendRedirect("/");
     }
 }

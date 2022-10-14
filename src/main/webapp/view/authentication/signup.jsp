@@ -21,7 +21,7 @@
 
         <div>
             <form action="<c:url value="/auth/signup"/>" method="post" class="needs-validation ps-3 col-4" novalidate>
-                <jsp:include page="../util/usernameInput.jsp"/>
+                <jsp:include page="../util/emailInput.jsp"/>
                 <jsp:include page="../util/firstNameInput.jsp"/>
                 <jsp:include page="../util/secondNameInput.jsp"/>
 

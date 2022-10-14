@@ -18,12 +18,12 @@
     <body>
     <div class="container p-3 h-100 bg-dark text-white">
         <jsp:include page="/view/menu/menu.jsp"/>
-<%--        <re:menu lang="${sessionScope.lang}" username="${sessionScope.username}"/>--%>
+<%--        <re:menu lang="${sessionScope.lang}" email="${sessionScope.email}"/>--%>
 
         <div>
             <form action="<c:url value="/auth/login"/>" method="post" class="needs-validation col-4" novalidate>
-                <jsp:include page="../util/usernameInput.jsp"/>
-<%--                <re:usernameInput lang="${sessionScope.lang}" username="${param.username}"/>--%>
+                <jsp:include page="../util/emailInput.jsp"/>
+<%--                <re:emailInput lang="${sessionScope.lang}" email="${param.email}"/>--%>
                 <jsp:include page="../util/passwordInput.jsp">
                     <jsp:param name="passwordType" value="password"/>
                     <jsp:param name="inputValue" value="${param.password}"/>

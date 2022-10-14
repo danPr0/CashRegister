@@ -1,8 +1,10 @@
 package dao;
 
+import entity.Role;
 import entity.User;
 
 public interface UserDAO {
-    User getUserByUsername(String username);
+    User getUserByEmail(String username);
     boolean insertUser(User user);
+    boolean updateUser(int userId, Role role);
 }

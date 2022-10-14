@@ -24,6 +24,5 @@
             </option>
         </select>
         <div class="invalid-feedback"><fmt:message key="msg.invalidInput.required"/></div>
-
     </div>
 </fmt:bundle>

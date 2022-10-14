@@ -8,7 +8,7 @@
 <html lang="${sessionScope.lang}">
 <fmt:bundle basename="messages">
     <head>
-        <title><fmt:message key="title.main"/></title>
+        <title><fmt:message key="title.guest"/></title>
 
         <link rel="stylesheet" href="<c:url value="/css?file=bootstrap.min.css"/>"/>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>

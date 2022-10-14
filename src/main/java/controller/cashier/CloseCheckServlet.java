@@ -20,7 +20,7 @@ public class CloseCheckServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String url = "/cashier";
-        if (reportServiceImpl.add((String) request.getSession().getAttribute("username"))) {
+        if (reportServiceImpl.add((String) request.getSession().getAttribute("email"))) {
             checkServiceImpl.closeCheck();
             url += "?success=true";
         }

@@ -28,7 +28,7 @@ public class RefreshAccessTokenFilter extends HttpFilter {
         String refreshToken = JWTProvider.resolveToken(httpRequest, "refreshToken");
 
         if (!JWTProvider.validateToken(accessToken) && JWTProvider.validateToken(refreshToken)) {
-            User user = userRepository.getUserByUsername(String.valueOf(httpRequest.getSession().getAttribute("username")));
+            User user = userRepository.getUserByEmail(String.valueOf(httpRequest.getSession().getAttribute("email")));
             if (user == null) {
                 chain.doFilter(req, res);
                 return;

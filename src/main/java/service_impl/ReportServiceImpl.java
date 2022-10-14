@@ -34,7 +34,7 @@ public class ReportServiceImpl implements ReportServiceInterface {
     @Override
     public boolean add(String username) {
         List<CheckElement> check = checkRepository.getAll();
-        User user = userRepository.getUserByUsername(username);
+        User user = userRepository.getUserByEmail(username);
         if (check.isEmpty() || user == null)
             return false;
 

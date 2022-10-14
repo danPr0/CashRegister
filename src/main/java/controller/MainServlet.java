@@ -26,6 +26,8 @@ public class MainServlet extends HttpServlet {
 
         if (role.equals(RoleName.guest))
             req.getRequestDispatcher("/view/guest/guestPage.jsp").forward(req, resp);
+        else if (role.equals(RoleName.admin))
+            req.getRequestDispatcher("/view/admin/authorizeUser.jsp").forward(req, resp);
         else if (role.equals(RoleName.cashier))
             resp.sendRedirect("/cashier");
         else if (role.equals(RoleName.commodity_expert))

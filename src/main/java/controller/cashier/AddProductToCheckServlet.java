@@ -13,6 +13,9 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
 
+import static java.net.URLEncoder.encode;
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 /**
  * Class is designed to process user's request of adding/updating product to check
  */
@@ -72,7 +75,7 @@ public class AddProductToCheckServlet extends HttpServlet {
         String url = "/cashier/add-product-to-check";
 
         if (product == null)
-            url += String.format("?error=noSuchProduct&product=%s&quantity=%s", productParam, quantityParam);
+            url += String.format("?error=noSuchProduct&product=%s&quantity=%s", encode(productParam, UTF_8), quantityParam);
 //        else if (product.getMeasure().equals(ProductMeasure.apiece)) {
 //            try {
 //                Integer.parseInt(quantityParam);
@@ -82,7 +85,7 @@ public class AddProductToCheckServlet extends HttpServlet {
 //            }
 //        }
         else if (!checkServiceImpl.addToCheck(product,  new BigDecimal(quantityParam).setScale(3, RoundingMode.UP).doubleValue()))
-            url += String.format("?error=overExceededQuantity&product=%s&quantity=%s", productParam, quantityParam);
+            url += String.format("?error=overExceededQuantity&product=%s&quantity=%s", encode(productParam, UTF_8), quantityParam);
         else url += "?success=true";
 
         response.sendRedirect(url);

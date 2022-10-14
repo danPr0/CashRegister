@@ -1,8 +1,9 @@
 package util;
 
 public enum RoleName {
-    guest,
     cashier,
+    commodity_expert,
     senior_cashier,
-    commodity_expert
+    guest,
+    admin
 }

@@ -16,8 +16,8 @@
 <!--    <filter-name>ResponseOverrideFilter</filter-name>-->
 <!--    <url-pattern>*.jsp</url-pattern>-->
 <!--  </filter-mapping>-->
-  <filter-mapping>
-    <filter-name>refreshAccessToken</filter-name>
-    <url-pattern>/*</url-pattern>
-  </filter-mapping>
+<!--  <filter-mapping>-->
+<!--    <filter-name>refreshAccessToken</filter-name>-->
+<!--    <url-pattern>/*</url-pattern>-->
+<!--  </filter-mapping>-->
 </web-app>

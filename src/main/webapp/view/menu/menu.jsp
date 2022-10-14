@@ -32,13 +32,13 @@
                 <div class="dropdown-menu py-0" style="min-width: 3rem; background-color: gray">
                     <c:choose>
                         <c:when test="${sessionScope.lang == 'en'}">
-                            <a href="?sessionLocale=ua" class="dropdown-item px-1 py-1">
+                            <a href="${pageContext.request.contextPath}?sessionLocale=ua" class="dropdown-item px-1 py-1">
                                 <img src="<c:url value="/images?file=ukr_flag.png"/>" class="rounded"
                                      style="width: 3rem; height: 2rem" alt="UK flag"/>
                             </a>
                         </c:when>
                         <c:otherwise>
-                            <a href="?sessionLocale=en" class="dropdown-item px-1 py-1">
+                            <a href="${pageContext.request.contextPath}?sessionLocale=en" class="dropdown-item px-1 py-1">
                                 <img src="<c:url value="/images?file=uk_flag.png"/>" class="rounded"
                                      style="width: 3rem; height: 2rem" alt="UK flag"/>
                             </a>
@@ -46,10 +46,10 @@
                     </c:choose>
                 </div>
             </li>
-            <c:if test="${sessionScope.username != null}">
+            <c:if test="${sessionScope.firstName != null}">
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                            ${sessionScope.username}
+                            ${sessionScope.firstName}
                     </a>
                     <div class="dropdown-menu py-1" style="min-width: 5rem">
                         <a href="<c:url value="/logout"/>" class="dropdown-item">
@@ -59,10 +59,10 @@
                 </li>
             </c:if>
                 <%--        <c:choose>--%>
-                <%--            <c:when test="${requestScope.username != null}">--%>
+                <%--            <c:when test="${requestScope.email != null}">--%>
                 <%--                <li class="nav-item dropdown">--%>
                 <%--                    <a class="nav-link dropdown-toggle" href="#" id="navbarNameDropdown" role="button" data-bs-toggle="dropdown">--%>
-                <%--                            ${applicationScope.username}--%>
+                <%--                            ${applicationScope.email}--%>
                 <%--                    </a>--%>
                 <%--                    <div class="dropdown-menu py-1" style="min-width: 5rem">--%>
                 <%--                        <a href="<c:url value="/logout"/>" class="dropdown-item">Logout</a>--%>
