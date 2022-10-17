@@ -10,11 +10,13 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * Class is designed to process client logout
+ *  Process client logout
  */
-
 @WebServlet("/logout")
 public class LogoutServlet extends HttpServlet {
+    /**
+     *  Remove access and refresh tokens from cookies, session attributes
+     */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         JWTProvider.setTokenCookie("", "accessToken", 0, resp);

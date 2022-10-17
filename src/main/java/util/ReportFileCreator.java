@@ -6,7 +6,7 @@ import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
-import entity.ReportElement;
+import entity.ReportEntity;
 import jxl.Workbook;
 import jxl.write.Label;
 import jxl.write.Number;
@@ -21,6 +21,9 @@ import javax.servlet.ServletContext;
 import java.io.*;
 import java.util.List;
 
+/**
+ * Utility for creating .csv, .pdf and .xls files with report
+ */
 public class ReportFileCreator {
     private static final ReportServiceImpl REPORT_SERVICE_IMPL = ReportServiceImpl.getInstance();
 
@@ -29,7 +32,7 @@ public class ReportFileCreator {
         FileWriter fileWriter = new FileWriter(file);
 
         try (CSVPrinter printer = new CSVPrinter(fileWriter, CSVFormat.DEFAULT.builder().setHeader("User", "Date", "Items", "Price").build())) {
-            List<ReportElement> report = REPORT_SERVICE_IMPL.getAll();
+            List<ReportEntity> report = REPORT_SERVICE_IMPL.getAll();
             report.forEach((r -> {
                 try {
                     printer.printRecord(r.getCreatedBy(), r.getClosed_at(), r.getItems_quantity(), r.getTotal_price());
@@ -52,7 +55,7 @@ public class ReportFileCreator {
             e.printStackTrace();
         }
 
-        List<ReportElement> report = REPORT_SERVICE_IMPL.getAll();
+        List<ReportEntity> report = REPORT_SERVICE_IMPL.getAll();
         report.forEach((r) -> {
             int index = report.indexOf(r);
             try {
@@ -103,7 +106,7 @@ public class ReportFileCreator {
     }
 
     private static void addRowsToPdf(PdfPTable table) {
-        List<ReportElement> report = REPORT_SERVICE_IMPL.getAll();
+        List<ReportEntity> report = REPORT_SERVICE_IMPL.getAll();
         report.forEach((r) -> {
             PdfPCell header = new PdfPCell();
             header.setPhrase(new Phrase(r.getCreatedBy()));

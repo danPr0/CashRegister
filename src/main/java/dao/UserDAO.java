@@ -3,8 +3,11 @@ package dao;
 import entity.Role;
 import entity.User;
 
+/**
+ * DAO layer for "users" table
+ */
 public interface UserDAO {
-    User getUserByEmail(String username);
-    boolean insertUser(User user);
-    boolean updateUser(int userId, Role role);
+    User getEntityByEmail(String username);
+    boolean insertEntity(User user);
+    boolean updateEntity(int userId, Role role);
 }

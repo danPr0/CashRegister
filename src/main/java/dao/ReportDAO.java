@@ -1,15 +1,20 @@
 package dao;
 
-import dto.ReportDTO;
-import entity.CheckElement;
-import entity.ReportElement;
+import entity.ReportEntity;
 
 import java.util.List;
 
+/**
+ * DAO layer for "report" table
+ */
 public interface ReportDAO {
-    boolean insertReportElement(ReportElement reportElement);
-    List<ReportElement> getAll();
+    boolean insertEntity(ReportEntity reportEntity);
+    /**
+     * Get sorted and ordered segment of entities
+     * @param order (ASC/DESC)
+     */
+    List<ReportEntity> getSegment(int offset, int limit, String sortColumn, String order);
+    int getNoOfRows();
+    List<ReportEntity> getAll();
     boolean deleteAll();
-    int getNumberOfRows();
-    List<ReportElement> getLimit(int offset, int limit, String sortColumn);
 }

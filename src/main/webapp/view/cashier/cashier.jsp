@@ -15,10 +15,10 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     </head>
     <body>
-    <div class="container p-3 bg-dark text-white" style="min-height: 100%">
-        <jsp:include page="../menu/menu.jsp"/>
+    <div class="container p-3 px-5 bg-dark text-white" style="min-height: 100%">
+        <jsp:include page="/view/menu/menu.jsp"/>
 
-        <div>
+        <div class="mb-3">
             <c:choose>
                 <c:when test="${requestScope.checkSize == 0}">
                     <a href="<c:url value="/cashier/add-product-to-check"/>" class="btn btn-primary">
@@ -26,12 +26,16 @@
                     </a>
                 </c:when>
                 <c:otherwise>
-                    <a href="<c:url value="/cashier/add-product-to-check"/>" class="btn btn-primary">
-                        <fmt:message key="button.addProductToCheck"/>
-                    </a>
-                    <a href="<c:url value="/cashier/close-check"/>" class="btn btn-secondary">
-                        <fmt:message key="button.closeCheck"/>
-                    </a>
+                    <div class="mb-2">
+                        <a href="<c:url value="/cashier/add-product-to-check"/>" class="btn btn-primary">
+                            <fmt:message key="button.addProductToCheck"/>
+                        </a>
+                    </div>
+                    <div>
+                        <a href="<c:url value="/cashier/close-check"/>" class="btn btn-secondary">
+                            <fmt:message key="button.closeCheck"/>
+                        </a>
+                    </div>
                 </c:otherwise>
             </c:choose>
         </div>

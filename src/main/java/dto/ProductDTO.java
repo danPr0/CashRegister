@@ -4,6 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ *  DTO for {@link entity.Product}
+ */
 @AllArgsConstructor
 @Getter @Setter
 public class ProductDTO {

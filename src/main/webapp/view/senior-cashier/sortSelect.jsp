@@ -4,10 +4,9 @@
 <%@ page isELIgnored="false" %>
 
 <fmt:setLocale value="${sessionScope.lang}"/>
-<script src="<c:url value="/js?file=tableSortSelect.js"/>"></script>
 
 <fmt:bundle basename="messages">
-    <span class="mr-4">
+    <div class="mr-4">
         <select id="sortSelect">
             <option value="default" <c:if test="${param.sort == 'default'}">selected disabled</c:if>>
                 <fmt:message key="table.check.sort.default"/>
@@ -23,6 +22,6 @@
             </option>
         </select>
 
-        <script>sort("/senior-cashier/create-x-report?sortBy=")</script>
-    </span>
+<%--        <script>sort("/senior-cashier/create-x-report?sortBy=")</script>--%>
+    </div>
 </fmt:bundle>

@@ -1,13 +1,16 @@
 package service_impl;
 
-import dao_impl.UserRepository;
+import dao.CheckDAO;
+import dao.ReportDAO;
+import dao.UserDAO;
+import dao_impl.UserDAOImpl;
 import dto.ReportDTO;
-import entity.CheckElement;
-import entity.ReportElement;
-import dao_impl.CheckRepository;
-import dao_impl.ReportRepository;
+import entity.CheckEntity;
+import entity.ReportEntity;
+import dao_impl.CheckDAOImpl;
+import dao_impl.ReportDAOImpl;
 import entity.User;
-import service.ReportServiceInterface;
+import service.ReportService;
 
 import java.sql.Timestamp;
 import java.time.Instant;
@@ -15,13 +18,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static util.DBFields.*;
+import static util.db.DBFields.*;
 
-public class ReportServiceImpl implements ReportServiceInterface {
+public class ReportServiceImpl implements ReportService {
     private static ReportServiceImpl instance = null;
-    private final ReportRepository reportRepository = ReportRepository.getInstance();
-    private final CheckRepository checkRepository = CheckRepository.getInstance();
-    private final UserRepository userRepository = UserRepository.getInstance();
+    private final ReportDAO reportDAO = ReportDAOImpl.getInstance();
+    private final CheckDAO checkDAO = CheckDAOImpl.getInstance();
+    private final UserDAO userDAO = UserDAOImpl.getInstance();
 
     private ReportServiceImpl() {}
 
@@ -32,51 +35,51 @@ public class ReportServiceImpl implements ReportServiceInterface {
     }
 
     @Override
-    public boolean add(String username) {
-        List<CheckElement> check = checkRepository.getAll();
-        User user = userRepository.getUserByEmail(username);
+    public boolean createReport(String username) {
+        List<CheckEntity> check = checkDAO.getAll();
+        User user = userDAO.getEntityByEmail(username);
         if (check.isEmpty() || user == null)
             return false;
 
         double total_price = 0;
 
-        for (CheckElement checkElement : check) {
-            total_price += checkElement.getQuantity() * checkElement.getProduct().getPrice();
+        for (CheckEntity checkEntity : check) {
+            total_price += checkEntity.getQuantity() * checkEntity.getProduct().getPrice();
         }
 
-        return reportRepository.insertReportElement(new ReportElement(0, username, Timestamp.from(Instant.now()), check.size(), total_price));
+        return reportDAO.insertEntity(new ReportEntity(0, username, Timestamp.from(Instant.now()), check.size(), total_price));
     }
 
     @Override
-    public List<ReportElement> getPerPage(int nOfPage, int total, String sortParameter) {
+    public List<ReportEntity> getPerPage(int nOfPage, int total, String sortBy, boolean ifAscending) {
         String sortColumn = REPORT_ID;
-        if (Objects.equals(sortParameter, "createdBy"))
+        if (Objects.equals(sortBy, "createdBy"))
             sortColumn = REPORT_CREATED_BY;
-        else if (Objects.equals(sortParameter, "quantity"))
+        else if (Objects.equals(sortBy, "quantity"))
             sortColumn = REPORT_ITEMS_QUANTITY;
-        else if (Objects.equals(sortParameter, "price"))
+        else if (Objects.equals(sortBy, "price"))
             sortColumn = REPORT_TOTAL_PRICE;
 
-        return reportRepository.getLimit(total * (nOfPage - 1), total, sortColumn);
+        return reportDAO.getSegment(total * (nOfPage - 1), total, sortColumn, ifAscending ? "ASC" : "DESC");
     }
 
     @Override
-    public int getNumberOfRows() {
-        return reportRepository.getNumberOfRows();
+    public int getNoOfRows() {
+        return reportDAO.getNoOfRows();
     }
 
     @Override
-    public List<ReportElement> getAll() {
-        return reportRepository.getAll();
+    public List<ReportEntity> getAll() {
+        return reportDAO.getAll();
     }
 
     @Override
     public boolean deleteAll() {
-        return reportRepository.deleteAll();
+        return reportDAO.deleteAll();
     }
 
     @Override
-    public List<ReportDTO> convertToDTO(List<ReportElement> report) {
+    public List<ReportDTO> convertToDTO(List<ReportEntity> report) {
         List<ReportDTO> result = new ArrayList<>();
 
         report.forEach(el -> result.add(new ReportDTO(report.indexOf(el) + 1, el.getCreatedBy(),

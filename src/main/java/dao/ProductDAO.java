@@ -2,10 +2,12 @@ package dao;
 
 import entity.Product;
 
+/**
+ * DAO layer for "products" table
+ */
 public interface ProductDAO {
-    Product getProductByName(String name);
-    Product getProductById(int id);
-    boolean insertProduct(Product product);
-    boolean updateProduct(Product product);
-    boolean deleteProduct(int id);
+    Product getEntityById(int id);
+    Product getEntityByName(String name);
+    boolean insertEntity(Product product);
+    boolean updateEntity(Product product);
 }

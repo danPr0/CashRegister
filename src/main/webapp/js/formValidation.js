@@ -6,8 +6,11 @@ window.addEventListener("load", () => {
             if (form.checkValidity() === false) {
                 event.preventDefault();
                 event.stopPropagation();
+                form.classList.add("was-validated");
             }
-            form.classList.add("was-validated");
+            // else if (document.getElementById("password") !== document.getElementById("passwordConfirm")) {
+            //     document.getElementById("password").chil
+            // }
         }, false);
     });
 });

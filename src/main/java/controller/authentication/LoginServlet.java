@@ -2,6 +2,7 @@ package controller.authentication;
 
 import entity.User;
 import service_impl.UserServiceImpl;
+import util.GetProperties;
 import util.JWTProvider;
 
 import javax.servlet.ServletException;
@@ -10,14 +11,16 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.util.Properties;
 
 import static java.net.URLEncoder.encode;
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static util.GetProperties.getMessageByLang;
 
 /**
- * Class is designed to process client authentication
+ *  Process user authentication
  */
-
 @WebServlet("/auth/login")
 public class LoginServlet extends HttpServlet {
     private final UserServiceImpl userServiceImpl = UserServiceImpl.getInstance();
@@ -27,14 +30,20 @@ public class LoginServlet extends HttpServlet {
         req.getRequestDispatcher("/view/authentication/login.jsp").forward(req, resp);
     }
 
+    /**
+     *  If user is authenticated, access and refresh tokens are added to cookies and user's redirected to main page.
+     *  There can be 2 errors : "Bad email" and "Incorrect password"
+     */
     @Override
     public void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String email = req.getParameter("email");
         String password = req.getParameter("password");
+        String lang = req.getSession().getAttribute("lang").toString();
 
         User user;
         if ((user = userServiceImpl.getUser(email)) == null)
-            resp.sendRedirect(String.format("/auth/login?error=badEmail&email=%s&password=%s", email, encode(password, UTF_8)));
+            resp.sendRedirect(String.format("/auth/login?error=%s&email=%s&password=%s",
+                    encode(getMessageByLang("msg.error.auth.login.badEmail", lang), UTF_8), email, encode(password, UTF_8)));
         else if (userServiceImpl.authenticate(email, password)) {
             JWTProvider.setTokenCookie(JWTProvider.generateJwtToken(user.getRole().getName(), "accessToken"),
                     "accessToken", JWTProvider.accessTokenExpirationInSec, resp);
@@ -45,6 +54,7 @@ public class LoginServlet extends HttpServlet {
             req.getSession().setAttribute("firstName", user.getFirstName());
             resp.sendRedirect("/");
         }
-        else resp.sendRedirect(String.format("/auth/login?error=incorrectPassword&email=%s&password=%s", email, encode(password, UTF_8)));
+        else resp.sendRedirect(String.format("/auth/login?error=%s&email=%s&password=%s",
+                    encode(getMessageByLang("msg.error.auth.login.incorrectPassword", lang), UTF_8), email, encode(password, UTF_8)));
     }
 }

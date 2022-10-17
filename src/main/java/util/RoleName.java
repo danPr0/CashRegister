@@ -1,5 +1,8 @@
 package util;
 
+/**
+ * Roles enum
+ */
 public enum RoleName {
     cashier,
     commodity_expert,

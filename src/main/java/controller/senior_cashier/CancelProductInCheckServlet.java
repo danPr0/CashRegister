@@ -1,6 +1,7 @@
 package controller.senior_cashier;
 
-import entity.CheckElement;
+import entity.CheckEntity;
+import service.CheckService;
 import service_impl.CheckServiceImpl;
 
 import javax.servlet.*;
@@ -12,10 +13,14 @@ import java.math.RoundingMode;
 
 import static java.net.URLEncoder.encode;
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static util.GetProperties.getMessageByLang;
 
+/**
+ * Cancel product in check
+ */
 @WebServlet("/senior-cashier/cancel-product-in-check")
 public class CancelProductInCheckServlet extends HttpServlet {
-    private final CheckServiceImpl checkServiceImpl = CheckServiceImpl.getInstance();
+    private final CheckService checkService = CheckServiceImpl.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -23,46 +28,30 @@ public class CancelProductInCheckServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-//        String product = request.getParameter("product");
-//        String quantity = request.getParameter("quantity");
-//
-//        boolean result;
-//        try {
-//            result = checkService.cancelCheckElementById(Integer.parseInt(product), Integer.parseInt(quantity));
-//        }
-//        catch (NumberFormatException e1) {
-//            try {
-//                result = checkService.cancelCheckElementByName(product, Integer.parseInt(quantity));
-//            }
-//            catch (NumberFormatException e2) {
-//                result = false;
-//            }
-//        }
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String productParam = req.getParameter("product");
+        String quantityParam = req.getParameter("quantity");
+        String lang = req.getSession().getAttribute("lang").toString();
 
-        String productParam = request.getParameter("product");
-        String quantityParam = request.getParameter("quantity");
-
-        CheckElement checkElement;
+        CheckEntity checkEntity;
         try {
-            checkElement = checkServiceImpl.getCheckElementByProductId(Integer.parseInt(productParam));
+            checkEntity = checkService.getCheckElement(Integer.parseInt(productParam));
         }
         catch (NumberFormatException e) {
-            checkElement = checkServiceImpl.getCheckElementByProductName(productParam);
+            checkEntity = checkService.getCheckElement(productParam);
         }
 
         String url = "/senior-cashier/cancel-product-in-check";
-        if (checkElement == null)
-            url += String.format("?error=noSuchProduct&product=%s&quantity=%s", encode(productParam, UTF_8), quantityParam);
-        else if (!checkServiceImpl.cancelCheckElement(checkElement,  new BigDecimal(quantityParam).setScale(3, RoundingMode.UP).doubleValue()))
-            url += String.format("?error=overExceededQuantity&product=%s&quantity=%s", encode(productParam, UTF_8), quantityParam);
+        if (checkEntity == null)
+            url += String.format("?error=%s&product=%s&quantity=%s",
+                    encode(getMessageByLang("msg.error.senior-cashier.cancelProduct.noSuchProduct", lang), UTF_8),
+                    encode(productParam, UTF_8), quantityParam);
+        else if (!checkService.cancelCheckElement(checkEntity,  new BigDecimal(quantityParam).setScale(3, RoundingMode.UP).doubleValue()))
+            url += String.format("?error=%s&product=%s&quantity=%s",
+                    encode(getMessageByLang("msg.error.senior-cashier.cancelProduct.overExceededQuantity", lang), UTF_8),
+                    encode(productParam, UTF_8), quantityParam);
         else url += "?success=true";
 
-//        String url = "/senior-cashier/cancel-product-in-check";
-//        if (!result)
-//            url += "?error=true";
-//        else url += "?success=true";
-
-        response.sendRedirect(url);
+        resp.sendRedirect(url);
     }
 }

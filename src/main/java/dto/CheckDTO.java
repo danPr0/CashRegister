@@ -1,9 +1,13 @@
 package dto;
 
+import entity.CheckEntity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ *  DTO for {@link CheckEntity}
+ */
 @AllArgsConstructor
 @Getter @Setter
 public class CheckDTO {

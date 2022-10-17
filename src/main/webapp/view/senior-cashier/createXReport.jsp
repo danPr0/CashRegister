@@ -4,7 +4,11 @@
 <%@ page isELIgnored="false" %>
 
 <fmt:setLocale value="${sessionScope.lang}"/>
-<c:set var="sort" value="${requestScope.sort == null ? 'default' : requestScope.sort}"/>
+<%--<c:set var="sort" value="${requestScope.sort == null ? 'default' : requestScope.sort}"/>--%>
+<%--<c:set var="order" value="${requestScope.order == null ? 'asc' : requestScope.order}"/>--%>
+<c:set var="sort" value="${sessionScope.reportSortBy}"/>
+<c:set var="order" value="${sessionScope.reportOrderBy}"/>
+<c:set var="perPage" value="${sessionScope.reportTotalPerPage}"/>
 
 <html lang="${sessionScope.lang}">
 <fmt:bundle basename="messages">
@@ -14,39 +18,17 @@
         <link rel="stylesheet" href="<c:url value="/css?file=bootstrap.min.css"/>"/>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
         <script src="<c:url value="/js?file=formValidation.js"/>"></script>
+        <script src="<c:url value="/js?file=tableParams.js"/>"></script>
+        <script>addTableParamListener("/senior-cashier/create-x-report")</script>
     </head>
     <body>
-    <div class="container p-3 bg-dark text-white" style="min-height: 100%">
-        <jsp:include page="../menu/menu.jsp"/>
-        <jsp:include page="../util/backToMainButton.jsp"/>
+    <div class="container p-3 px-5 bg-dark text-white" style="min-height: 100%">
+        <jsp:include page="/view/menu/menu.jsp">
+            <jsp:param name="mainUrl" value="/senior-cashier"/>
+        </jsp:include>
 
         <div class="m-3">
-            <jsp:include page="sortSelect.jsp">
-                <jsp:param name="sort" value="${sort}"/>
-            </jsp:include>
-<%--            <a class="card-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">--%>
-<%--                <fmt:message key="table.report.sort.dropdown"/>--%>
-<%--            </a>--%>
-<%--            <span class="dropdown-menu py-1" style="min-width: 3rem">--%>
-<%--                <a class="dropdown-item" href="<c:url value="/senior-cashier/create-x-report?sortBy=default"/>"--%>
-<%--                   <c:if test="${sort == 'default'}">style="pointer-events: none; color: gray"</c:if>>--%>
-<%--                    <fmt:message key="table.report.sort.default"/>--%>
-<%--                </a>--%>
-<%--                <a class="dropdown-item" href="<c:url value="/senior-cashier/create-x-report?sortBy=createdBy"/>"--%>
-<%--                   <c:if test="${sort == 'createdBy'}">style="pointer-events: none; color: gray"</c:if>>--%>
-<%--                    <fmt:message key="table.report.sort.createdBy"/>--%>
-<%--                </a>--%>
-<%--                <a class="dropdown-item" href="<c:url value="/senior-cashier/create-x-report?sortBy=quantity"/>"--%>
-<%--                   <c:if test="${sort == 'quantity'}">style="pointer-events: none; color: gray"</c:if>>--%>
-<%--                    <fmt:message key="table.report.sort.quantity"/>--%>
-<%--                </a>--%>
-<%--                <a class="dropdown-item" href="<c:url value="/senior-cashier/create-x-report?sortBy=price"/>"--%>
-<%--                   <c:if test="${sort == 'price'}">style="pointer-events: none; color: gray"</c:if>>--%>
-<%--                    <fmt:message key="table.report.sort.price"/>--%>
-<%--                </a>--%>
-<%--            </span>--%>
-            <span>
-            <a class="card-link dropdown-toggle" href="#" data-bs-toggle="dropdown" role="button">
+            <a class="dropdown-toggle" style="text-decoration: none" href="#" data-bs-toggle="dropdown" role="button">
                 <fmt:message key="button.download"/>
             </a>
             <span class="dropdown-menu" style="min-width: 3rem; line-height: 0.5rem">
@@ -63,13 +45,29 @@
                     .xls
                 </a>
             </span>
-        </span>
         </div>
+
+        <div class="d-flex mb-2">
+            <span class="ms-0 me-4">
+                <jsp:include page="sortSelect.jsp">
+                    <jsp:param name="sort" value="${sort}"/>
+                </jsp:include>
+            </span>
+
+            <span>
+                <jsp:include page="../util/orderSelect.jsp">
+                    <jsp:param name="order" value="${order}"/>
+                </jsp:include>
+            </span>
+        </div>
+
         <div>
             <jsp:include page="reportTable.jsp"/>
 
-            <jsp:include page="pagination.jsp">
-                <jsp:param name="sort" value="${sort}"/>
+            <jsp:include page="pagination.jsp"/>
+
+            <jsp:include page="../util/showPerPageSelect.jsp">
+                <jsp:param name="perPage" value="${perPage}"/>
             </jsp:include>
         </div>
 

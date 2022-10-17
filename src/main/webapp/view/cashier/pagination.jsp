@@ -8,9 +8,9 @@
 
 <fmt:bundle basename="messages">
     <div>
-        <ul class="pagination">
+        <ul class="pagination justify-content-center">
             <li class="page-item <c:if test="${page == 1}">disabled</c:if>">
-                <a href="<c:url value="/cashier/add-product-to-check?page=${page - 1}&sortBy=${param.sort}"/>"
+                <a href="<c:url value="/cashier/add-product-to-check?page=${page - 1}"/>"
                    class="page-link">
                     <fmt:message key="pagination.previous"/>
                         <%--                        <img src="<c:url value="/images?file=left_arrow.png"/>" alt="leftArrow" style=""/>--%>
@@ -19,7 +19,7 @@
 
             <c:forEach var="i" begin="1" end="${requestScope.nOfPages}">
                 <li class="page-item <c:if test="${page == i}">active</c:if>">
-                    <a href="<c:url value="/cashier/add-product-to-check?page=${i}&sortBy=${param.sort}"/>"
+                    <a href="<c:url value="/cashier/add-product-to-check?page=${i}"/>"
                        class="page-link">
                             ${i}
                     </a>
@@ -27,7 +27,7 @@
             </c:forEach>
 
             <li class="page-item <c:if test="${page == requestScope.nOfPages}">disabled</c:if>">
-                <a href="<c:url value="/cashier/add-product-to-check?page=${page + 1}&sortBy=${param.sort}"/>"
+                <a href="<c:url value="/cashier/add-product-to-check?page=${page + 1}"/>"
                    class="page-link">
                     <fmt:message key="pagination.next"/>
                 </a>

@@ -8,8 +8,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ * Filter all authentication requests
+ */
 @WebFilter("/auth/*")
 public class AuthFilter implements Filter {
+    /**
+     * If already authenticated redirect to main page
+     */
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws ServletException, IOException {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
@@ -19,7 +25,6 @@ public class AuthFilter implements Filter {
         if (JWTProvider.validateToken(accessToken))
             httpResponse.sendRedirect("/");
         else {
-//            httpRequest.getServletContext().setAttribute("username", "");
             httpRequest.getSession().removeAttribute("email");
             httpRequest.getSession().removeAttribute("firstName");
             chain.doFilter(request, response);

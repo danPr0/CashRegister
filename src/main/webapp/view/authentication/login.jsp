@@ -16,30 +16,26 @@
         <script src="<c:url value="/js?file=formValidation.js"/>"></script>
     </head>
     <body>
-    <div class="container p-3 h-100 bg-dark text-white">
+    <div class="container p-3 px-5 h-100 bg-dark text-white" style="min-height: 100%">
         <jsp:include page="/view/menu/menu.jsp"/>
 <%--        <re:menu lang="${sessionScope.lang}" email="${sessionScope.email}"/>--%>
 
-        <div>
+        <div class="mb-4">
             <form action="<c:url value="/auth/login"/>" method="post" class="needs-validation col-4" novalidate>
-                <jsp:include page="../util/emailInput.jsp"/>
+                <jsp:include page="../util/inputs/user/emailInput.jsp"/>
 <%--                <re:emailInput lang="${sessionScope.lang}" email="${param.email}"/>--%>
-                <jsp:include page="../util/passwordInput.jsp">
+                <jsp:include page="../util/inputs/user/passwordInput.jsp">
                     <jsp:param name="passwordType" value="password"/>
                     <jsp:param name="inputValue" value="${param.password}"/>
                 </jsp:include>
                 <input type="submit" value="<fmt:message key="submit.login"/>" class="btn btn-primary"/>
             </form>
+
+            <p class="text-danger pl-3">${param.error}</p>
         </div>
 
         <div>
-            <c:if test="${param.error != null}">
-                <p class="text-danger pl-3"><fmt:message key="msg.error.auth.login.${param.error}"/></p>
-            </c:if>
-        </div>
-
-        <div>
-            <p class="pl-3">
+            <p>
                 <fmt:message key="msg.info.askToSignUp"/>
                 <a href="<c:url value="/auth/signup"/>" class="card-link">
                     <fmt:message key="button.signUp"/>

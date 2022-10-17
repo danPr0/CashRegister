@@ -14,7 +14,7 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     </head>
     <body>
-    <div class="container p-3 bg-dark text-white" style="min-height: 100%">
+    <div class="container p-3 px-5 bg-dark text-white" style="min-height: 100%">
         <jsp:include page="/view/menu/menu.jsp"/>
 
         <div class="row">
@@ -27,29 +27,29 @@
             </div>
         </div>
 
-        <div class="mb-5">
+        <div class="mb-2">
             <c:choose>
                 <c:when test="${requestScope.checkSize == 0}">
                     <p><fmt:message key="msg.info.emptyCheck"/></p>
                 </c:when>
                 <c:otherwise>
                     <p><fmt:message key="msg.info.checkSize"/> ${requestScope.checkSize}</p>
-                    <a href="<c:url value="/senior-cashier/cancel-product-in-check"/>" class="card-link">
+                    <a href="<c:url value="/senior-cashier/cancel-product-in-check"/>" style="text-decoration: none">
                         <fmt:message key="button.cancelProductInCheck"/>
                     </a><br/>
-                    <a href="<c:url value="/senior-cashier/cancel-check"/>" class="card-link">
+                    <a href="<c:url value="/senior-cashier/cancel-check"/>" style="text-decoration: none">
                         <fmt:message key="button.cancelCheck"/>
-                    </a><br/>
+                    </a>
                 </c:otherwise>
             </c:choose>
         </div>
 
         <div>
             <c:if test="${param.error == 'true'}">
-                <p class="text-danger pl-3"><fmt:message key="msg.error.senior-cashier.cancelCheck"/></p>
+                <p class="text-danger"><fmt:message key="msg.error.senior-cashier.cancelCheck"/></p>
             </c:if>
             <c:if test="${param.success == 'true'}">
-                <p class="text-success pl-3"><fmt:message key="msg.success.senior-cashier.cancelCheck"/></p>
+                <p class="text-success"><fmt:message key="msg.success.senior-cashier.cancelCheck"/></p>
             </c:if>
         </div>
 
@@ -71,7 +71,7 @@
                         <fmt:message key="msg.info.emptyZReport"/><br/>
                         <fmt:message key="msg.info.downloadZReport"/>
                     </span>
-                        <a class="card-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                        <a class="dropdown-toggle" style="text-decoration: none" href="#" role="button" data-bs-toggle="dropdown">
                             <fmt:message key="button.file"/>
                         </a>
                         <div class="dropdown-menu" style="min-width: 1rem; line-height: 0.5rem">
@@ -85,12 +85,12 @@
                     </div>
                 </c:when>
                 <c:otherwise>
-                    <a href="<c:url value="/senior-cashier/create-x-report"/>" class="card-link">
+                    <a href="<c:url value="/senior-cashier/create-x-report"/>" style="text-decoration: none">
                         <fmt:message key="button.createXReport"/>
                     </a><br/>
-                    <a href="<c:url value="/senior-cashier/create-z-report"/>" class="card-link">
+                    <a href="<c:url value="/senior-cashier/create-z-report"/>" style="text-decoration: none">
                         <fmt:message key="button.createZReport"/>
-                    </a><br/>
+                    </a>
                 </c:otherwise>
             </c:choose>
         </div>

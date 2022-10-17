@@ -7,6 +7,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ * Represent commodity expert main page
+ */
 @WebServlet("/commodity-expert")
 public class MainCommodityExpertServlet extends HttpServlet {
     @Override

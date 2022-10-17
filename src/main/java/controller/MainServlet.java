@@ -13,9 +13,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * Class is designed to distribute user to the specific page according to his role
+ * Distribute user to the specific page according to his role
  */
-
 @WebServlet("/")
 public class MainServlet extends HttpServlet {
 

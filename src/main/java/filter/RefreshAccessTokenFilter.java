@@ -1,6 +1,6 @@
 package filter;
 
-import dao_impl.UserRepository;
+import dao_impl.UserDAOImpl;
 import entity.User;
 import util.JWTProvider;
 import util.RoleName;
@@ -15,9 +15,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ * The first filter in chain. Filters all requests and renew access token if refresh one is valid
+ */
 @WebFilter(value = "/*", filterName = "refreshAccessToken")
 public class RefreshAccessTokenFilter extends HttpFilter {
-    private final UserRepository userRepository = UserRepository.getInstance();
+    private final UserDAOImpl userDAOImpl = UserDAOImpl.getInstance();
 
     @Override
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
@@ -28,7 +31,7 @@ public class RefreshAccessTokenFilter extends HttpFilter {
         String refreshToken = JWTProvider.resolveToken(httpRequest, "refreshToken");
 
         if (!JWTProvider.validateToken(accessToken) && JWTProvider.validateToken(refreshToken)) {
-            User user = userRepository.getUserByEmail(String.valueOf(httpRequest.getSession().getAttribute("email")));
+            User user = userDAOImpl.getEntityByEmail(String.valueOf(httpRequest.getSession().getAttribute("email")));
             if (user == null) {
                 chain.doFilter(req, res);
                 return;

@@ -10,17 +10,14 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 
 import static java.net.URLEncoder.encode;
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static util.GetProperties.getMessageByLang;
 
 /**
- * Class is designed to process client registration
+ *  Process user registration
  */
-
 @WebServlet("/auth/signup")
 public class SignupServlet extends HttpServlet {
     UserServiceImpl userServiceImpl = UserServiceImpl.getInstance();
@@ -30,6 +27,10 @@ public class SignupServlet extends HttpServlet {
         req.getRequestDispatcher("/view/authentication/signup.jsp").forward(req, resp);
     }
 
+    /**
+     *  If user is registered, access and refresh tokens are added to cookies and user's redirected to the main page.
+     *  There can be 2 errors : "Email is already taken" and "Passwords mismatch"
+     */
     @Override
     public void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String email = req.getParameter("email");
@@ -37,13 +38,13 @@ public class SignupServlet extends HttpServlet {
         String passwordConfirm = req.getParameter("passwordConfirm");
         String firstName = req.getParameter("firstName");
         String secondName = req.getParameter("secondName");
-
-        System.out.println(email);
+        String lang = req.getSession().getAttribute("lang").toString();
 
         if (!password.equals(passwordConfirm))
-            resp.sendRedirect(String.format("/auth/signup?error=passwordMismatch&email=%s&firstName=%s&secondName=%s&password=%s&passwordConfirm=%s",
-                    email, encode(firstName, UTF_8), encode(secondName, UTF_8), encode(password, UTF_8), encode(passwordConfirm, UTF_8)));
-        else if (userServiceImpl.insertUser(email, password, firstName, secondName, RoleName.guest)) {
+            resp.sendRedirect(String.format("/auth/signup?error=%s&email=%s&firstName=%s&secondName=%s&password=%s&passwordConfirm=%s",
+                    encode(getMessageByLang("msg.error.auth.signup.passwordMismatch", lang), UTF_8), email,
+                    encode(firstName, UTF_8), encode(secondName, UTF_8), encode(password, UTF_8), encode(passwordConfirm, UTF_8)));
+        else if (userServiceImpl.addUser(email, password, firstName, secondName, RoleName.guest)) {
             JWTProvider.setTokenCookie(JWTProvider.generateJwtToken(RoleName.guest, "accessToken"),
                     "accessToken", JWTProvider.accessTokenExpirationInSec, resp);
             JWTProvider.setTokenCookie(JWTProvider.generateJwtToken(RoleName.guest, "refreshToken"),
@@ -53,8 +54,9 @@ public class SignupServlet extends HttpServlet {
             req.getSession().setAttribute("firstName", firstName);
             resp.sendRedirect("/");
         } else {
-            resp.sendRedirect(String.format("/auth/signup?error=badEmail&email=%s&firstName=%s&secondName=%s&password=%s&passwordConfirm=%s",
-                    email, encode(firstName, UTF_8), encode(secondName, UTF_8), encode(password, UTF_8), encode(passwordConfirm, UTF_8)));
+            resp.sendRedirect(String.format("/auth/signup?error=%s&email=%s&firstName=%s&secondName=%s&password=%s&passwordConfirm=%s",
+                    encode(getMessageByLang("msg.error.auth.signup.badEmail", lang), UTF_8), email
+                    , encode(firstName, UTF_8), encode(secondName, UTF_8), encode(password, UTF_8), encode(passwordConfirm, UTF_8)));
         }
     }
 }

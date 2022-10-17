@@ -2,7 +2,10 @@ package dao;
 
 import entity.Role;
 
+/**
+ * DAO layer for "roles" table
+ */
 public interface RoleDAO {
-    Role getRoleById(int id);
-    Role getRoleByName(String name);
+    Role getEntityById(int id);
+    Role getEntityByName(String name);
 }

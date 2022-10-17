@@ -5,6 +5,9 @@ import lombok.Getter;
 import lombok.Setter;
 import util.ProductMeasure;
 
+/**
+ * Entity for "products" table
+ */
 @AllArgsConstructor
 @Getter @Setter
 public class Product {

@@ -1,13 +1,16 @@
 package service_impl;
 
-import dao_impl.KeyRepository;
-import dao_impl.RoleRepository;
-import dao_impl.UserRepository;
+import dao.KeyDAO;
+import dao.RoleDAO;
+import dao.UserDAO;
+import dao_impl.KeyDAOImpl;
+import dao_impl.RoleDAOImpl;
+import dao_impl.UserDAOImpl;
 import entity.Key;
 import entity.Role;
 import entity.User;
 import org.apache.commons.codec.binary.Base64;
-import service.UserServiceInterface;
+import service.UserService;
 import util.AESUtil;
 import util.RoleName;
 import util.Validator;
@@ -19,18 +22,13 @@ import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.util.Objects;
 
-/**
- * This class represents business logic of operation with {@link entity.User}
- */
-
-public class UserServiceImpl implements UserServiceInterface {
+public class UserServiceImpl implements UserService {
     private static UserServiceImpl instance = null;
-    private final UserRepository userRepository = UserRepository.getInstance();
-    RoleRepository roleRepository = RoleRepository.getInstance();
-    private final KeyRepository keyRepository = KeyRepository.getInstance();
+    private final UserDAO userDAO = UserDAOImpl.getInstance();
+    private final RoleDAO roleDAO = RoleDAOImpl.getInstance();
+    private final KeyDAO keyDAO = KeyDAOImpl.getInstance();
 
     private UserServiceImpl() {
-
     }
 
     public static UserServiceImpl getInstance() {
@@ -41,11 +39,11 @@ public class UserServiceImpl implements UserServiceInterface {
 
     @Override
     public User getUser(String email) {
-        return userRepository.getUserByEmail(email);
+        return userDAO.getEntityByEmail(email);
     }
 
     @Override
-    public boolean insertUser(String email, String password, String firstName, String secondName, RoleName role) {
+    public boolean addUser(String email, String password, String firstName, String secondName, RoleName role) {
         System.out.println(Validator.validateEmail(email));
         System.out.println(Validator.validatePassword(password));
         System.out.println(Validator.validateFirstName(firstName));
@@ -53,29 +51,27 @@ public class UserServiceImpl implements UserServiceInterface {
                 && Validator.validateFirstName(firstName) && Validator.validateSecondName(secondName)))
             return false;
 
-
-
         SecretKey secretKey = AESUtil.generateSecretKey();
         String encodedPassword = encryptPassword(secretKey, password);
-        User user = new User(0, email, encodedPassword, firstName, secondName, roleRepository.getRoleByName(role.toString()));
-        if (!userRepository.insertUser(user))
+        User user = new User(0, email, encodedPassword, firstName, secondName, roleDAO.getEntityByName(role.toString()));
+        if (!userDAO.insertEntity(user))
             return false;
 
-        return keyRepository.insertKey(new Key(userRepository.getUserByEmail(email).getId(), new Base64().encodeToString(secretKey.getEncoded())));
+        return keyDAO.insertEntity(new Key(userDAO.getEntityByEmail(email).getId(), new Base64().encodeToString(secretKey.getEncoded())));
     }
 
     @Override
-    public boolean updateUser(int id, Role role) {
-        return userRepository.updateUser(id, role);
+    public boolean updateUserRole(int id, Role role) {
+        return userDAO.updateEntity(id, role);
     }
 
     @Override
     public boolean authenticate(String email, String password) {
-        User user = userRepository.getUserByEmail(email);
+        User user = userDAO.getEntityByEmail(email);
         if (user == null || !Validator.validatePassword(password))
             return false;
 
-        byte[] decodedKey = new Base64().decode(keyRepository.getKeyByUserId(user.getId()).getKey());
+        byte[] decodedKey = new Base64().decode(keyDAO.getEntityByUserId(user.getId()).getKey());
         SecretKeySpec secretKey = new SecretKeySpec(decodedKey,"AES");
         return password.equals(decryptPassword(secretKey, user.getPassword()));
     }

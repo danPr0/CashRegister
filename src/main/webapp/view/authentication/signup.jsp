@@ -16,36 +16,32 @@
         <script src="<c:url value="/js?file=formValidation.js"/>"></script>
     </head>
     <body>
-    <div class="container p-3 bg-dark text-white" style="min-height: 100%">
+    <div class="container p-3 px-5 bg-dark text-white" style="min-height: 100%">
         <jsp:include page="/view/menu/menu.jsp"/>
 
-        <div>
+        <div class="mb-4">
             <form action="<c:url value="/auth/signup"/>" method="post" class="needs-validation ps-3 col-4" novalidate>
-                <jsp:include page="../util/emailInput.jsp"/>
-                <jsp:include page="../util/firstNameInput.jsp"/>
-                <jsp:include page="../util/secondNameInput.jsp"/>
+                <jsp:include page="../util/inputs/user/emailInput.jsp"/>
+                <jsp:include page="../util/inputs/user/firstNameInput.jsp"/>
+                <jsp:include page="../util/inputs/user/secondNameInput.jsp"/>
 
-                <jsp:include page="../util/passwordInput.jsp">
+                <jsp:include page="../util/inputs/user/passwordInput.jsp">
                     <jsp:param name="passwordType" value="password"/>
                     <jsp:param name="inputValue" value="${param.password}"/>
                 </jsp:include>
 
-                <jsp:include page="../util/passwordInput.jsp">
+                <jsp:include page="../util/inputs/user/passwordInput.jsp">
                     <jsp:param name="passwordType" value="passwordConfirm"/>
                     <jsp:param name="inputValue" value="${param.passwordConfirm}"/>
                 </jsp:include>
                 <input type="submit" value="<fmt:message key="submit.signup"/>" class="btn btn-primary"/>
             </form>
+
+            <p class="text-danger pl-3">${param.error}</p>
         </div>
 
         <div>
-            <c:if test="${param.error != null}">
-                <p class="text-danger pl-3"><fmt:message key="msg.error.auth.signup.${param.error}"/></p>
-            </c:if>
-        </div>
-
-        <div>
-            <p class="pl-3">
+            <p>
                 <fmt:message key="msg.info.askToLogin"/>
                 <a href="<c:url value="/auth/login"/>" class="card-link">
                     <fmt:message key="button.login"/>

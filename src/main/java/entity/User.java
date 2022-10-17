@@ -4,6 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * Entity for "users" table
+ */
 @AllArgsConstructor
 @Getter @Setter
 public class User {

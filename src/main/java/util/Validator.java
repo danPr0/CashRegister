@@ -1,10 +1,9 @@
 package util;
 
+/**
+ * Validate user inputs
+ */
 public class Validator {
-//    public static boolean validateUsername(String username) {
-//        return !(username == null || username.matches("([A-Za-zА-Яа-яЁёЇїІіЄєҐґ'0-9_]+)") || username.length() < 3 || username.length() > 16);
-//    }
-
     public static boolean validateEmail(String email) {
         return email != null && email.length() >= 3 && email.length() <= 254;
     }

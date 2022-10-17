@@ -2,7 +2,10 @@ package dao;
 
 import entity.Key;
 
+/**
+ * DAO layer for "user_key" table
+ */
 public interface KeyDAO {
-    boolean insertKey(Key key);
-    Key getKeyByUserId(int userId);
+    boolean insertEntity(Key key);
+    Key getEntityByUserId(int userId);
 }

@@ -9,20 +9,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 
+/**
+ * Utility for creating, resolving and validation access and refresh tokens
+ */
 public class JWTProvider {
-//    private static JWTProvider instance = null;
     private static final String secretKey = "cash_register";
     public static final int accessTokenExpirationInSec = 900;
     public static final int refreshTokenExpirationInSec = 86_400;
-
-//    private JWTProvider() {
-//    }
-//
-//    public static JWTProvider getInstance() {
-//        if (instance == null)
-//            instance = new JWTProvider();
-//        return instance;
-//    }
 
     public static String generateJwtToken(RoleName role, String tokenName) {
         int tokenExpirationInSec;
@@ -42,11 +35,6 @@ public class JWTProvider {
     }
 
     public static String resolveToken(HttpServletRequest request, String tokenName) {
-//        String headerValue = request.getHeader("Authorization");
-//        if (headerValue == null)
-//            return null;
-//
-//        return headerValue.substring(headerValue.lastIndexOf("Bearer ") + 7);
         String result = null;
         Cookie[] cookies = request.getCookies();
 

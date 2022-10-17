@@ -6,6 +6,9 @@ import javax.crypto.spec.IvParameterSpec;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 
+/**
+ * Utility for creating secret keys, which are used in password hashing and user authentication
+ */
 public class AESUtil {
     public static final String algorithm = "AES";
 
@@ -20,11 +23,5 @@ public class AESUtil {
             e.printStackTrace();
         }
         return key;
-    }
-
-    public static IvParameterSpec generateIv() {
-        byte[] iv = new byte[16];
-        new SecureRandom().nextBytes(iv);
-        return new IvParameterSpec(iv);
     }
 }

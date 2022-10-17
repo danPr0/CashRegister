@@ -11,8 +11,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+/**
+ * Download X or Z reports
+ */
 @WebServlet("/senior-cashier/download-report")
 public class DownloadReportServlet extends HttpServlet {
+    /**
+     * Create .csv, .pdf or .xls files with X or Z report
+     */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String reportType = req.getParameter("reportType");

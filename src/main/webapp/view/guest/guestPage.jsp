@@ -14,7 +14,7 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     </head>
     <body>
-    <div class="container p-3 bg-dark text-white" style="min-height: 100%">
+    <div class="container p-3 px-5 bg-dark text-white" style="min-height: 100%">
         <jsp:include page="../menu/menu.jsp"/>
 
         <div>

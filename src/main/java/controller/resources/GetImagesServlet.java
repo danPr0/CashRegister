@@ -9,14 +9,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+/**
+ * Provide client with images
+ */
 @WebServlet("/images")
 public class GetImagesServlet extends HttpServlet {
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String fileName = request.getParameter("file");
-        response.setContentType("image/png");
-        try (InputStream in = request.getServletContext().getResourceAsStream("/images/" + fileName);
-             OutputStream out = response.getOutputStream()) {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String fileName = req.getParameter("file");
+        resp.setContentType("image/png");
+        try (InputStream in = req.getServletContext().getResourceAsStream("/images/" + fileName);
+             OutputStream out = resp.getOutputStream()) {
             out.write(in.readAllBytes());
         }
     }

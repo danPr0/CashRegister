@@ -5,8 +5,14 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
-@WebFilter(value = "/*")
+/**
+ * Filter every request
+ */
+@WebFilter("/*")
 public class EveryRequestFilter implements Filter {
+    /**
+     * Set request and response encoding. Change some session attributes if they're in the params
+     */
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws ServletException, IOException {
         HttpServletRequest httpRequest = (HttpServletRequest) request;

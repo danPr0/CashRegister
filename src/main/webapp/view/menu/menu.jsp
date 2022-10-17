@@ -6,15 +6,21 @@
 <fmt:setLocale value="${sessionScope.lang}"/>
 
 <fmt:bundle basename="messages">
-    <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+    <nav class="navbar navbar-expand-sm bg-dark navbar-dark mb-3">
         <a href="<c:url value="/"/>" class="navbar-brand">
             <img src="<c:url value="/images?file=logo.png"/>" style="width: 5.5rem; height: 4.5rem;" alt="Logo"/>
         </a>
-            <%--    <ul class="navbar-nav">--%>
-            <%--        <li class="nav-item">--%>
-            <%--            <a href="<c:url value="/"/>" class="nav-link">Main</a>--%>
-            <%--        </li>--%>
-            <%--    </ul>--%>
+
+        <c:if test="${param.mainUrl != null}">
+            <ul class="navbar-nav">
+                <li class="nav-item ms-3">
+                    <a href="<c:url value="${param.mainUrl}"/>" class="nav-link"  style="font-size: 1.3rem">
+                        <fmt:message key="button.main"/>
+                    </a>
+                </li>
+            </ul>
+        </c:if>
+
         <ul class="navbar-nav ms-auto">
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
@@ -32,13 +38,15 @@
                 <div class="dropdown-menu py-0" style="min-width: 3rem; background-color: gray">
                     <c:choose>
                         <c:when test="${sessionScope.lang == 'en'}">
-                            <a href="${pageContext.request.contextPath}?sessionLocale=ua" class="dropdown-item px-1 py-1">
+                            <a href="${pageContext.request.contextPath}?sessionLocale=ua"
+                               class="dropdown-item px-1 py-1">
                                 <img src="<c:url value="/images?file=ukr_flag.png"/>" class="rounded"
                                      style="width: 3rem; height: 2rem" alt="UK flag"/>
                             </a>
                         </c:when>
                         <c:otherwise>
-                            <a href="${pageContext.request.contextPath}?sessionLocale=en" class="dropdown-item px-1 py-1">
+                            <a href="${pageContext.request.contextPath}?sessionLocale=en"
+                               class="dropdown-item px-1 py-1">
                                 <img src="<c:url value="/images?file=uk_flag.png"/>" class="rounded"
                                      style="width: 3rem; height: 2rem" alt="UK flag"/>
                             </a>
@@ -49,7 +57,7 @@
             <c:if test="${sessionScope.firstName != null}">
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                            ${sessionScope.firstName}
+                        ${sessionScope.firstName}
                     </a>
                     <div class="dropdown-menu py-1" style="min-width: 5rem">
                         <a href="<c:url value="/logout"/>" class="dropdown-item">
@@ -58,25 +66,6 @@
                     </div>
                 </li>
             </c:if>
-                <%--        <c:choose>--%>
-                <%--            <c:when test="${requestScope.email != null}">--%>
-                <%--                <li class="nav-item dropdown">--%>
-                <%--                    <a class="nav-link dropdown-toggle" href="#" id="navbarNameDropdown" role="button" data-bs-toggle="dropdown">--%>
-                <%--                            ${applicationScope.email}--%>
-                <%--                    </a>--%>
-                <%--                    <div class="dropdown-menu py-1" style="min-width: 5rem">--%>
-                <%--                        <a href="<c:url value="/logout"/>" class="dropdown-item">Logout</a>--%>
-                <%--                    </div>--%>
-                <%--                </li>--%>
-                <%--            </c:when>--%>
-                <%--            <c:otherwise>--%>
-                <%--                <a href="<c:url value="/auth/login"/>" class="nav-item nav-link">Login</a>--%>
-                <%--            </c:otherwise>--%>
-                <%--        </c:choose>--%>
         </ul>
-            <%--    <ul>--%>
-            <%--        <li><a href="?sessionLocale=en">English</a></li>--%>
-            <%--        <li><a href="?sessionLocale=ua">Ukrainian</a></li>--%>
-            <%--    </ul>--%>
     </nav>
 </fmt:bundle>
