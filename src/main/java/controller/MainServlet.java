@@ -1,9 +1,8 @@
 package controller;
 
 
-import entity.Role;
 import util.JWTProvider;
-import util.RoleName;
+import util.enums.RoleName;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;

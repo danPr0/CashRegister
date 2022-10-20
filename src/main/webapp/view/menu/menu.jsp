@@ -57,7 +57,7 @@
             <c:if test="${sessionScope.firstName != null}">
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                        ${sessionScope.firstName}
+                        <c:out value="${sessionScope.firstName}"/>
                     </a>
                     <div class="dropdown-menu py-1" style="min-width: 5rem">
                         <a href="<c:url value="/logout"/>" class="dropdown-item">

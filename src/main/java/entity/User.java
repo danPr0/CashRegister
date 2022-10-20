@@ -3,6 +3,7 @@ package entity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import util.enums.RoleName;
 
 /**
  * Entity for "users" table
@@ -15,5 +16,5 @@ public class User {
     private String password;
     private String firstName;
     private String secondName;
-    private Role role;
+    private RoleName roleId;
 }

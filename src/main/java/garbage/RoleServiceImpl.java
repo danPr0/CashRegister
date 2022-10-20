@@ -1,9 +1,4 @@
-package service_impl;
-
-import dao.RoleDAO;
-import dao_impl.RoleDAOImpl;
-import entity.Role;
-import service.RoleService;
+package garbage;
 
 public class RoleServiceImpl implements RoleService {
     private static RoleServiceImpl instance = null;

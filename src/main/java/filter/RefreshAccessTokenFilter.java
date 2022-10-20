@@ -1,9 +1,11 @@
 package filter;
 
-import dao_impl.UserDAOImpl;
 import entity.User;
+import garbage.RoleService;
+import service.UserService;
+import garbage.RoleServiceImpl;
+import service_impl.UserServiceImpl;
 import util.JWTProvider;
-import util.RoleName;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -20,7 +22,8 @@ import java.io.IOException;
  */
 @WebFilter(value = "/*", filterName = "refreshAccessToken")
 public class RefreshAccessTokenFilter extends HttpFilter {
-    private final UserDAOImpl userDAOImpl = UserDAOImpl.getInstance();
+    private final UserService userService = UserServiceImpl.getInstance();
+    private final RoleService roleService = RoleServiceImpl.getInstance();
 
     @Override
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
@@ -31,15 +34,15 @@ public class RefreshAccessTokenFilter extends HttpFilter {
         String refreshToken = JWTProvider.resolveToken(httpRequest, "refreshToken");
 
         if (!JWTProvider.validateToken(accessToken) && JWTProvider.validateToken(refreshToken)) {
-            User user = userDAOImpl.getEntityByEmail(String.valueOf(httpRequest.getSession().getAttribute("email")));
+            User user = userService.getUser(String.valueOf(httpRequest.getSession().getAttribute("email")));
             if (user == null) {
                 chain.doFilter(req, res);
                 return;
             }
-            RoleName role = user.getRole().getName();
-            JWTProvider.setTokenCookie(JWTProvider.generateJwtToken(role, "accessToken"),
+
+            JWTProvider.setTokenCookie(JWTProvider.generateJwtToken(user.getRoleId(), "accessToken"),
                     "accessToken", JWTProvider.accessTokenExpirationInSec,  httpResponse);
-            JWTProvider.setTokenCookie(JWTProvider.generateJwtToken(role, "refreshToken"),
+            JWTProvider.setTokenCookie(JWTProvider.generateJwtToken(user.getRoleId(), "refreshToken"),
                     "refreshToken", JWTProvider.refreshTokenExpirationInSec, httpResponse);
             httpResponse.sendRedirect(httpRequest.getRequestURI());
         }

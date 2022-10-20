@@ -34,10 +34,10 @@
 
         <c:if test="${requestScope.product != null}">
             <div class="pl-3 text-info">
-                <p class="mb-0"><fmt:message key="table.check.id"/> : ${requestScope.product.id}</p>
-                <p class="mb-0"><fmt:message key="table.check.name"/> : ${requestScope.product.name}</p>
-                <p class="mb-0"><fmt:message key="table.check.quantity"/> : ${requestScope.product.quantity}</p>
-                <p class="mb-3"><fmt:message key="table.check.price"/> : ${requestScope.product.price}</p>
+                <p class="mb-0"><fmt:message key="table.check.id"/> : <c:out value="${requestScope.product.id}"/></p>
+                <p class="mb-0"><fmt:message key="table.check.name"/> : <c:out value="${requestScope.product.name}"/></p>
+                <p class="mb-0"><fmt:message key="table.check.quantity"/> : <c:out value="${requestScope.product.quantity}"/></p>
+                <p class="mb-3"><fmt:message key="table.check.price"/> : <c:out value="${requestScope.product.price}"/></p>
             </div>
 
             <div>

@@ -1,18 +1,17 @@
 package service_impl;
 
 import dao.KeyDAO;
-import dao.RoleDAO;
+import garbage.RoleDAO;
 import dao.UserDAO;
 import dao_impl.KeyDAOImpl;
-import dao_impl.RoleDAOImpl;
+import garbage.RoleDAOImpl;
 import dao_impl.UserDAOImpl;
 import entity.Key;
-import entity.Role;
 import entity.User;
 import org.apache.commons.codec.binary.Base64;
 import service.UserService;
 import util.AESUtil;
-import util.RoleName;
+import util.enums.RoleName;
 import util.Validator;
 
 import javax.crypto.Cipher;
@@ -44,16 +43,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean addUser(String email, String password, String firstName, String secondName, RoleName role) {
-        System.out.println(Validator.validateEmail(email));
-        System.out.println(Validator.validatePassword(password));
-        System.out.println(Validator.validateFirstName(firstName));
         if (!(Validator.validateEmail(email) && Validator.validatePassword(password)
                 && Validator.validateFirstName(firstName) && Validator.validateSecondName(secondName)))
             return false;
 
         SecretKey secretKey = AESUtil.generateSecretKey();
         String encodedPassword = encryptPassword(secretKey, password);
-        User user = new User(0, email, encodedPassword, firstName, secondName, roleDAO.getEntityByName(role.toString()));
+        User user = new User(0, email, encodedPassword, firstName, secondName, role);
         if (!userDAO.insertEntity(user))
             return false;
 
@@ -61,7 +57,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean updateUserRole(int id, Role role) {
+    public boolean updateUserRole(int id, RoleName role) {
         return userDAO.updateEntity(id, role);
     }
 

@@ -1,6 +1,4 @@
-package dao;
-
-import entity.Role;
+package garbage;
 
 /**
  * DAO layer for "roles" table

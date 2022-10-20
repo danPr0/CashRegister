@@ -3,14 +3,11 @@ package entity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import util.RoleName;
 
-/**
- * Entity for "roles" table
- */
 @AllArgsConstructor
 @Getter @Setter
-public class Role {
-    private int id;
-    private RoleName name;
+public class ProductLang {
+    private int productId;
+    private String langId;
+    private String productName;
 }

@@ -1,123 +1,138 @@
 package util;
 
-import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Phrase;
-import com.itextpdf.text.pdf.PdfPCell;
-import com.itextpdf.text.pdf.PdfPTable;
-import com.itextpdf.text.pdf.PdfWriter;
-import entity.ReportEntity;
+import com.itextpdf.text.*;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.pdf.*;
+import dto.ReportDTO;
 import jxl.Workbook;
-import jxl.write.Label;
 import jxl.write.Number;
-import jxl.write.WritableSheet;
-import jxl.write.WritableWorkbook;
-import jxl.write.WriteException;
+import jxl.write.*;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import service.ReportService;
 import service_impl.ReportServiceImpl;
+import util.enums.Language;
 
 import javax.servlet.ServletContext;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
+
+import static util.GetProperties.getMessageByLang;
 
 /**
  * Utility for creating .csv, .pdf and .xls files with report
  */
 public class ReportFileCreator {
-    private static final ReportServiceImpl REPORT_SERVICE_IMPL = ReportServiceImpl.getInstance();
+    private static final ReportService REPORT_SERVICE = ReportServiceImpl.getInstance();
+    private static final Logger logger = LogManager.getLogger(ReportFileCreator.class);
 
-    public static void createCsv(String filename, ServletContext context) throws IOException {
-        File file = new File(context.getRealPath("") + "/WEB-INF/reports/" + filename);
-        FileWriter fileWriter = new FileWriter(file);
-
-        try (CSVPrinter printer = new CSVPrinter(fileWriter, CSVFormat.DEFAULT.builder().setHeader("User", "Date", "Items", "Price").build())) {
-            List<ReportEntity> report = REPORT_SERVICE_IMPL.getAll();
-            report.forEach((r -> {
-                try {
-                    printer.printRecord(r.getCreatedBy(), r.getClosed_at(), r.getItems_quantity(), r.getTotal_price());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }));
-        }
-    }
-
-    public static void createXls(String filename, ServletContext context) throws IOException {
-        WritableWorkbook workbook = Workbook.createWorkbook(new File(context.getRealPath("") + "/WEB-INF/reports/" + filename));
-        WritableSheet sheet = workbook.createSheet("Report", 0);
+    public static void createCsv(String filename, ServletContext context, Language lang) {
         try {
-            sheet.addCell(new Label(0, 0, "User"));
-            sheet.addCell(new Label(1, 0, "Date"));
-            sheet.addCell(new Label(2, 0, "Items"));
-            sheet.addCell(new Label(3, 0, "Price"));
-        } catch (WriteException e) {
-            e.printStackTrace();
-        }
+            File file = new File(context.getRealPath("") + "/WEB-INF/reports/" + filename);
+            OutputStream out = new FileOutputStream(file);
+            OutputStreamWriter fileWriter = new OutputStreamWriter(out, StandardCharsets.UTF_8);
 
-        List<ReportEntity> report = REPORT_SERVICE_IMPL.getAll();
-        report.forEach((r) -> {
-            int index = report.indexOf(r);
-            try {
-                sheet.addCell(new Label(0, index + 1, r.getCreatedBy()));
-                sheet.addCell(new Label(1, index + 1, r.getClosed_at().toString()));
-                sheet.addCell(new jxl.write.Number(2, index + 1, r.getItems_quantity()));
-                sheet.addCell(new Number(3, index + 1, r.getTotal_price()));
-            } catch (WriteException e) {
-                e.printStackTrace();
+            CSVPrinter printer = new CSVPrinter(fileWriter, CSVFormat.DEFAULT.builder().setHeader("#",
+                    getMessageByLang("table.report.createdBy", lang), getMessageByLang("table.report.createdAt", lang),
+                    getMessageByLang("table.report.quantity", lang), getMessageByLang("table.report.price", lang)).build());
+
+            List<ReportDTO> report = REPORT_SERVICE.convertToDTO(REPORT_SERVICE.getAll());
+            for (ReportDTO r : report) {
+                printer.printRecord(r.getIndex(), r.getCreatedBy(), r.getClosedAt(), r.getItemsQuantity(), r.getTotalPrice());
             }
-        });
-
-        workbook.write();
-        try {
-            workbook.close();
-        } catch (WriteException e) {
-            e.printStackTrace();
+            printer.close();
+        } catch (IOException e) {
+            logger.error("Cannot create csv report", e.getCause());
         }
     }
 
-    public static void createPdf(String filename, ServletContext context) throws FileNotFoundException {
+    public static void createXls(String filename, ServletContext context, Language lang) {
+        try {
+            WritableWorkbook workbook = Workbook.createWorkbook(new File(context.getRealPath("") + "/WEB-INF/reports/" + filename));
+            WritableSheet sheet = workbook.createSheet("Report", 0);
+
+            sheet.addCell(new Label(0, 0, "#"));
+            sheet.addCell(new Label(1, 0, getMessageByLang("table.report.createdBy", lang)));
+            sheet.addCell(new Label(2, 0, getMessageByLang("table.report.createdAt", lang)));
+            sheet.addCell(new Label(3, 0, getMessageByLang("table.report.quantity", lang)));
+            sheet.addCell(new Label(4, 0, getMessageByLang("table.report.price", lang)));
+
+            List<ReportDTO> report = REPORT_SERVICE.convertToDTO(REPORT_SERVICE.getAll());
+            for (ReportDTO r : report) {
+                int index = report.indexOf(r);
+                sheet.addCell(new Number(0, index + 1, r.getIndex()));
+                sheet.addCell(new Label(1, index + 1, r.getCreatedBy()));
+                sheet.addCell(new Label(2, index + 1, r.getClosedAt()));
+                sheet.addCell(new Number(3, index + 1, r.getItemsQuantity()));
+                sheet.addCell(new Label(4, index + 1, r.getTotalPrice()));
+            }
+
+            workbook.write();
+            workbook.close();
+        } catch (WriteException | IOException e) {
+            logger.error("Cannot create xls report", e.getCause());
+        }
+    }
+
+    public static void createPdf(String filename, ServletContext context, Language lang) {
         Document document = new Document();
         try {
             PdfWriter.getInstance(document, new FileOutputStream(context.getRealPath("") + "/WEB-INF/reports/" + filename));
             document.open();
 
-            PdfPTable table = new PdfPTable(4);
-            addTableHeaderToPdf(table);
+            float[] columnWidths = {1, 8, 8, 4, 4};
+            PdfPTable table = new PdfPTable(columnWidths);
+            table.setWidthPercentage(100);
+            table.setSpacingBefore(0f);
+            table.setSpacingAfter(0f);
+            addTableHeaderToPdf(table, lang);
             addRowsToPdf(table);
 
             document.add(table);
             document.close();
-        } catch (DocumentException e) {
-            e.printStackTrace();
+        } catch (DocumentException | IOException e) {
+            logger.error("Cannot create pdf report", e.getCause());
         }
     }
 
-    private static void addTableHeaderToPdf(PdfPTable table) {
+    private static void addTableHeaderToPdf(PdfPTable table, Language lang) throws IOException, DocumentException {
         PdfPCell header = new PdfPCell();
-        header.setPhrase(new Phrase("User"));
+        header.setHorizontalAlignment(Element.ALIGN_CENTER);
+        String FONT = "/arial.ttf";
+
+        BaseFont bf = BaseFont.createFont(FONT, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+        com.itextpdf.text.Font font = new com.itextpdf.text.Font(bf, 16, Font.NORMAL);
+
+        header.setPhrase(new Phrase("#"));
         table.addCell(header);
-        header.setPhrase(new Phrase("Date"));
+        header.setPhrase(new Phrase(getMessageByLang("table.report.createdBy", lang), font));
         table.addCell(header);
-        header.setPhrase(new Phrase("Items"));
+        header.setPhrase(new Phrase(getMessageByLang("table.report.createdAt", lang), font));
         table.addCell(header);
-        header.setPhrase(new Phrase("Price"));
+        header.setPhrase(new Phrase(getMessageByLang("table.report.quantity", lang), font));
+        table.addCell(header);
+        header.setPhrase(new Phrase(getMessageByLang("table.report.price", lang), font));
         table.addCell(header);
     }
 
     private static void addRowsToPdf(PdfPTable table) {
-        List<ReportEntity> report = REPORT_SERVICE_IMPL.getAll();
+        List<ReportDTO> report = REPORT_SERVICE.convertToDTO(REPORT_SERVICE.getAll());
         report.forEach((r) -> {
-            PdfPCell header = new PdfPCell();
-            header.setPhrase(new Phrase(r.getCreatedBy()));
-            table.addCell(header);
-            header.setPhrase(new Phrase(r.getClosed_at().toString()));
-            table.addCell(header);
-            header.setPhrase(new Phrase(String.valueOf(r.getItems_quantity())));
-            table.addCell(header);
-            header.setPhrase(new Phrase(String.valueOf(r.getTotal_price())));
-            table.addCell(header);
+            PdfPCell cell = new PdfPCell();
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell.setPhrase(new Phrase(String.valueOf(r.getIndex())));
+            table.addCell(cell);
+            cell.setPhrase(new Phrase(r.getCreatedBy()));
+            table.addCell(cell);
+            cell.setPhrase(new Phrase(r.getClosedAt()));
+            table.addCell(cell);
+            cell.setPhrase(new Phrase(String.valueOf(r.getItemsQuantity())));
+            table.addCell(cell);
+            cell.setPhrase(new Phrase(String.valueOf(r.getTotalPrice())));
+            table.addCell(cell);
         });
     }
-
 }

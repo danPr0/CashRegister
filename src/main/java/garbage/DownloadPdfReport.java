@@ -64,7 +64,7 @@ public class DownloadPdfReport extends HttpServlet {
         List<ReportEntity> report = reportServiceImpl.getAll();
         report.forEach((r) -> {
             PdfPCell header = new PdfPCell();
-            header.setPhrase(new Phrase(r.getCreatedBy()));
+            header.setPhrase(new Phrase(r.getUserId()));
             table.addCell(header);
             header.setPhrase(new Phrase(r.getClosed_at().toString()));
             table.addCell(header);

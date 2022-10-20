@@ -12,7 +12,7 @@
         <div class="input-group">
             <input type="password" name="${param.passwordType}" required minlength="8" maxlength="55"
                    class="form-control" id="${param.passwordType}"
-                   placeholder="<fmt:message key="placeHolder.${param.passwordType}"/>" value="${param.inputValue}"/>
+                   placeholder="<fmt:message key="placeHolder.${param.passwordType}"/>" value="<c:out value="${param.inputValue}"/>"/>
 
             <button class="btn btn-link px-0 py-0" type="button" id="toggle${param.passwordType}"
                     style="background-color: white; border-radius: 4px; margin-left: 1px">

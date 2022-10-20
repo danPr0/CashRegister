@@ -26,7 +26,7 @@ public class DownloadCsvReportServlet extends HttpServlet {
             List<ReportEntity> report = reportServiceImpl.getAll();
             report.forEach((r -> {
                 try {
-                    printer.printRecord(r.getCreatedBy(), r.getClosed_at(), r.getItems_quantity(), r.getTotal_price());
+                    printer.printRecord(r.getUserId(), r.getClosed_at(), r.getItems_quantity(), r.getTotal_price());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

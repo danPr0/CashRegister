@@ -1,8 +1,10 @@
 package controller.authentication;
 
+import service.UserService;
 import service_impl.UserServiceImpl;
 import util.JWTProvider;
-import util.RoleName;
+import util.enums.Language;
+import util.enums.RoleName;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -20,7 +22,7 @@ import static util.GetProperties.getMessageByLang;
  */
 @WebServlet("/auth/signup")
 public class SignupServlet extends HttpServlet {
-    UserServiceImpl userServiceImpl = UserServiceImpl.getInstance();
+    private final UserService userService = UserServiceImpl.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -38,13 +40,13 @@ public class SignupServlet extends HttpServlet {
         String passwordConfirm = req.getParameter("passwordConfirm");
         String firstName = req.getParameter("firstName");
         String secondName = req.getParameter("secondName");
-        String lang = req.getSession().getAttribute("lang").toString();
+        Language lang = Language.valueOf(req.getSession().getAttribute("lang").toString());
 
         if (!password.equals(passwordConfirm))
             resp.sendRedirect(String.format("/auth/signup?error=%s&email=%s&firstName=%s&secondName=%s&password=%s&passwordConfirm=%s",
                     encode(getMessageByLang("msg.error.auth.signup.passwordMismatch", lang), UTF_8), email,
                     encode(firstName, UTF_8), encode(secondName, UTF_8), encode(password, UTF_8), encode(passwordConfirm, UTF_8)));
-        else if (userServiceImpl.addUser(email, password, firstName, secondName, RoleName.guest)) {
+        else if (userService.addUser(email, password, firstName, secondName, RoleName.guest)) {
             JWTProvider.setTokenCookie(JWTProvider.generateJwtToken(RoleName.guest, "accessToken"),
                     "accessToken", JWTProvider.accessTokenExpirationInSec, resp);
             JWTProvider.setTokenCookie(JWTProvider.generateJwtToken(RoleName.guest, "refreshToken"),

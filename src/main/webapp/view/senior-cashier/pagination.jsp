@@ -19,7 +19,7 @@
                 <li class="page-item <c:if test="${page == i}">active</c:if>">
                     <a href="<c:url value="/senior-cashier/create-x-report?page=${i}"/>"
                        class="page-link">
-                            ${i}
+                            <c:out value="${i}"/>
                     </a>
                 </li>
             </c:forEach>

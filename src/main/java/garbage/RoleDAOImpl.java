@@ -1,11 +1,9 @@
-package dao_impl;
+package garbage;
 
-import dao.RoleDAO;
-import entity.Role;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import util.db.ConnectionFactory;
-import util.RoleName;
+import util.enums.RoleName;
 
 import java.sql.*;
 
@@ -17,7 +15,8 @@ public class RoleDAOImpl implements RoleDAO {
     private final ConnectionFactory connectionFactory = ConnectionFactory.getInstance();
     private final Logger logger = LogManager.getLogger(RoleDAOImpl.class);
 
-    private RoleDAOImpl() {}
+    private RoleDAOImpl() {
+    }
 
     public static RoleDAOImpl getInstance() {
         if (instance == null)
@@ -30,16 +29,15 @@ public class RoleDAOImpl implements RoleDAO {
         Role result = null;
 
         try (Connection con = connectionFactory.getConnection();
-             PreparedStatement ps = con.prepareStatement(ROLE_GET_BY_ID_QUERY)) {
+             PreparedStatement ps = con.prepareStatement(ROLES_GET_BY_ID_QUERY)) {
             ps.setInt(1, id);
             try (ResultSet resultSet = ps.executeQuery()) {
-                if (resultSet.next()) {
-                    result = new Role(resultSet.getInt(ROLE_ID), RoleName.valueOf(resultSet.getString(ROLE_NAME)));
-                    logger.info("Role with id = " + id + " was successfully retrieved");
-                }
+                resultSet.next();
+                result = new Role(resultSet.getInt(ROLE_ID), RoleName.valueOf(resultSet.getString(ROLE_NAME)));
+                logger.info("Role with id = " + id + " was successfully retrieved");
             }
         } catch (SQLException e) {
-            logger.error("Cannot get role by id=" + id);
+            logger.error("Cannot get role by id=" + id, e.getCause());
         }
 
         return result;
@@ -50,16 +48,15 @@ public class RoleDAOImpl implements RoleDAO {
         Role result = null;
 
         try (Connection con = connectionFactory.getConnection();
-             PreparedStatement ps = con.prepareStatement(ROLE_GET_BY_NAME_QUERY)) {
+             PreparedStatement ps = con.prepareStatement(ROLES_GET_BY_NAME_QUERY)) {
             ps.setString(1, name);
             try (ResultSet resultSet = ps.executeQuery()) {
-                if (resultSet.next()) {
-                    result = new Role(resultSet.getInt(ROLE_ID), RoleName.valueOf(resultSet.getString(ROLE_NAME)));
-                    logger.info("Role " + name + " was successfully retrieved");
-                }
+                resultSet.next();
+                result = new Role(resultSet.getInt(ROLE_ID), RoleName.valueOf(resultSet.getString(ROLE_NAME)));
+                logger.info("Role " + name + " was successfully retrieved");
             }
         } catch (SQLException e) {
-            logger.error("Cannot get role by name=" + name);
+            logger.error("Cannot get role by name=" + name, e.getCause());
         }
 
         return result;

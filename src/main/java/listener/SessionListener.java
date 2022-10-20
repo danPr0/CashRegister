@@ -3,6 +3,7 @@ package listener;
 import javax.servlet.annotation.WebListener;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
+import java.util.List;
 
 /**
  * Session listener
@@ -15,6 +16,7 @@ public class SessionListener implements HttpSessionListener {
     @Override
     public void sessionCreated(HttpSessionEvent se) {
         se.getSession().setAttribute("lang", "ua");
+        se.getSession().setAttribute("languages", List.of("en", "ua"));
 
         se.getSession().setAttribute("checkTotalPerPage", 1);
         se.getSession().setAttribute("checkSortBy", "default");

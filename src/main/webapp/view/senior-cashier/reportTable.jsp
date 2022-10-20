@@ -17,11 +17,11 @@
             </tr>
             <c:forEach var="i" items="${requestScope.report}">
                 <tr>
-                    <td>${i.index}</td>
-                    <td>${i.createdBy}</td>
-                    <td>${i.closedAt}</td>
-                    <td>${i.itemsQuantity}</td>
-                    <td>${i.totalPrice}</td>
+                    <td><c:out value="${i.index}"/></td>
+                    <td><c:out value="${i.createdBy}"/></td>
+                    <td><c:out value="${i.closedAt}"/></td>
+                    <td><c:out value="${i.itemsQuantity}"/></td>
+                    <td><c:out value="${i.totalPrice}"/></td>
                 </tr>
             </c:forEach>
         </table>

@@ -2,9 +2,9 @@ package controller.admin;
 
 import dto.UserDTO;
 import entity.User;
-import service_impl.RoleServiceImpl;
+import garbage.RoleServiceImpl;
 import service_impl.UserServiceImpl;
-import util.RoleName;
+import util.enums.RoleName;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -30,7 +30,7 @@ public class AuthorizeUser extends HttpServlet {
             req.setAttribute("error", "true");
         }
         else {
-            UserDTO result = new UserDTO(user.getEmail(), user.getFirstName(), user.getSecondName(), user.getRole().getName().toString());
+            UserDTO result = new UserDTO(user.getEmail(), user.getFirstName(), user.getSecondName(), user.getRoleId().toString());
             req.setAttribute("user", result);
             req.setAttribute("roles", RoleName.values());
         }
@@ -46,7 +46,7 @@ public class AuthorizeUser extends HttpServlet {
         User user = userService.getUser(email);
 
         String url = "/admin/authorize-user?email=" + email;
-        if (user != null && userService.updateUserRole(user.getId(), roleService.getRole(role)))
+        if (user != null && userService.updateUserRole(user.getId(), RoleName.valueOf(role)))
             url += "&success=true";
         else url += "&error=true";
 

@@ -1,21 +1,27 @@
 package service_impl;
 
 import dao.CheckDAO;
+import dao.ProductDAO;
 import dao.ReportDAO;
 import dao.UserDAO;
+import dao_impl.ProductDAOImpl;
 import dao_impl.UserDAOImpl;
 import dto.ReportDTO;
 import entity.CheckEntity;
+import entity.Product;
 import entity.ReportEntity;
 import dao_impl.CheckDAOImpl;
 import dao_impl.ReportDAOImpl;
 import entity.User;
 import service.ReportService;
+import util.enums.Language;
 
 import java.sql.Timestamp;
+import java.text.NumberFormat;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 import static util.db.DBFields.*;
@@ -24,6 +30,7 @@ public class ReportServiceImpl implements ReportService {
     private static ReportServiceImpl instance = null;
     private final ReportDAO reportDAO = ReportDAOImpl.getInstance();
     private final CheckDAO checkDAO = CheckDAOImpl.getInstance();
+    private final ProductDAO productDAO = ProductDAOImpl.getInstance();
     private final UserDAO userDAO = UserDAOImpl.getInstance();
 
     private ReportServiceImpl() {}
@@ -44,17 +51,18 @@ public class ReportServiceImpl implements ReportService {
         double total_price = 0;
 
         for (CheckEntity checkEntity : check) {
-            total_price += checkEntity.getQuantity() * checkEntity.getProduct().getPrice();
+            Product product = productDAO.getEntityById(checkEntity.getProductId());
+            total_price += checkEntity.getQuantity() * product.getPrice();
         }
 
-        return reportDAO.insertEntity(new ReportEntity(0, username, Timestamp.from(Instant.now()), check.size(), total_price));
+        return reportDAO.insertEntity(new ReportEntity(0, user.getId(), Timestamp.from(Instant.now()), check.size(), total_price));
     }
 
     @Override
     public List<ReportEntity> getPerPage(int nOfPage, int total, String sortBy, boolean ifAscending) {
         String sortColumn = REPORT_ID;
         if (Objects.equals(sortBy, "createdBy"))
-            sortColumn = REPORT_CREATED_BY;
+            sortColumn = REPORT_USER_ID;
         else if (Objects.equals(sortBy, "quantity"))
             sortColumn = REPORT_ITEMS_QUANTITY;
         else if (Objects.equals(sortBy, "price"))
@@ -82,9 +90,14 @@ public class ReportServiceImpl implements ReportService {
     public List<ReportDTO> convertToDTO(List<ReportEntity> report) {
         List<ReportDTO> result = new ArrayList<>();
 
-        report.forEach(el -> result.add(new ReportDTO(report.indexOf(el) + 1, el.getCreatedBy(),
-                el.getClosed_at().toLocalDateTime().toString().replace("T", " "),
-                el.getItems_quantity(), String.format("%.2f", el.getTotal_price()))));
+        report.forEach(el ->  {
+            User user = userDAO.getEntityById(el.getUserId());
+            result.add(new ReportDTO(report.indexOf(el) + 1, user.getFirstName() + " " + user.getSecondName(),
+                    el.getClosed_at().toLocalDateTime().toString().replace("T", " "),
+                    el.getItems_quantity(), NumberFormat.getCurrencyInstance(new Locale("uk", "UA"))
+                    .format(el.getTotal_price())));
+        });
+//        String.format("%.2f", el.getTotal_price())
         return result;
     }
 }

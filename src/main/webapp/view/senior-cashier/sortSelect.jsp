@@ -7,7 +7,7 @@
 
 <fmt:bundle basename="messages">
     <div class="mr-4">
-        <select id="sortSelect">
+        <select id="sortSelect" class="form-select form-select-sm w-auto">
             <option value="default" <c:if test="${param.sort == 'default'}">selected disabled</c:if>>
                 <fmt:message key="table.check.sort.default"/>
             </option>

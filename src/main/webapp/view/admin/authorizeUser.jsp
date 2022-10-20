@@ -42,9 +42,9 @@
 
         <c:if test="${requestScope.user != null}">
             <div>
-                <p class="mb-0 text-info"><fmt:message key="msg.info.user.email"/> : ${requestScope.user.email}</p>
-                <p class="mb-0 text-info"><fmt:message key="msg.info.user.firstName"/>: ${requestScope.user.firstName}</p>
-                <p class="mb-0 text-info"><fmt:message key="msg.info.user.secondName"/>: ${requestScope.user.secondName}</p>
+                <p class="mb-0 text-info"><fmt:message key="msg.info.user.email"/> : <c:out value="${requestScope.user.email}"/></p>
+                <p class="mb-0 text-info"><fmt:message key="msg.info.user.firstName"/>: <c:out value="${requestScope.user.firstName}"/></p>
+                <p class="mb-0 text-info"><fmt:message key="msg.info.user.secondName"/>: <c:out value="${requestScope.user.secondName}"/></p>
                 <p class="mb-3 text-info"><fmt:message key="msg.info.user.role"/> : <fmt:message key="select.userRole.${requestScope.user.role}"/></p>
             </div>
 

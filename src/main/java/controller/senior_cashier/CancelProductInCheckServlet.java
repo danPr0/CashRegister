@@ -3,6 +3,7 @@ package controller.senior_cashier;
 import entity.CheckEntity;
 import service.CheckService;
 import service_impl.CheckServiceImpl;
+import util.enums.Language;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -31,14 +32,14 @@ public class CancelProductInCheckServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String productParam = req.getParameter("product");
         String quantityParam = req.getParameter("quantity");
-        String lang = req.getSession().getAttribute("lang").toString();
+        Language lang = Language.valueOf(req.getSession().getAttribute("lang").toString());
 
         CheckEntity checkEntity;
         try {
             checkEntity = checkService.getCheckElement(Integer.parseInt(productParam));
         }
         catch (NumberFormatException e) {
-            checkEntity = checkService.getCheckElement(productParam);
+            checkEntity = checkService.getCheckElement(productParam, lang);
         }
 
         String url = "/senior-cashier/cancel-product-in-check";

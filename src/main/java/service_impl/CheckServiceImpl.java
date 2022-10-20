@@ -2,17 +2,22 @@ package service_impl;
 
 import dao.CheckDAO;
 import dao.ProductDAO;
+import dao.ProductLangDAO;
+import dao_impl.ProductLangDAOImpl;
 import dto.CheckDTO;
 import entity.CheckEntity;
 import entity.Product;
 import dao_impl.CheckDAOImpl;
 import dao_impl.ProductDAOImpl;
 import service.CheckService;
-import util.ProductMeasure;
+import util.enums.Language;
+import util.enums.ProductMeasure;
 import util.Validator;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 import static util.db.DBFields.*;
@@ -21,6 +26,8 @@ public class CheckServiceImpl implements CheckService {
     private static CheckServiceImpl instance = null;
     private final CheckDAO checkDAO = CheckDAOImpl.getInstance();
     private final ProductDAO productDAO = ProductDAOImpl.getInstance();
+    private final ProductLangDAO productLangDAO = ProductLangDAOImpl.getInstance();
+//    private final LangDAO langDAO = LangDAOImpl.getInstance();
 
     private CheckServiceImpl() {
     }
@@ -38,11 +45,11 @@ public class CheckServiceImpl implements CheckService {
     }
 
     @Override
-    public CheckEntity getCheckElement(String productName) {
-        Product product = productDAO.getEntityByName(productName);
+    public CheckEntity getCheckElement(String productName, Language langId) {
+        int productId = productLangDAO.getEntityByProductName(productName, langId).getProductId();
+        Product product = productDAO.getEntityById(productId);
         return checkDAO.getEntityByProduct(product);
     }
-
 
     @Override
     public boolean addToCheck(Product product, double quantity) {
@@ -53,7 +60,7 @@ public class CheckServiceImpl implements CheckService {
         product.setQuantity(product.getQuantity() - quantity);
         productDAO.updateEntity(product);
         if (checkEntity == null)
-            return checkDAO.insertEntity(new CheckEntity(0, product, quantity));
+            return checkDAO.insertEntity(new CheckEntity(0, product.getId(), quantity));
         else {
             checkEntity.setQuantity(checkEntity.getQuantity() + quantity);
             return checkDAO.updateEntity(checkEntity);
@@ -67,11 +74,12 @@ public class CheckServiceImpl implements CheckService {
 
     @Override
     public boolean cancelCheckElement(CheckEntity checkEntity, double quantity) {
-        if (checkEntity == null || !Validator.validateQuantity(checkEntity.getProduct().getMeasure(), quantity) ||
+        Product product;
+        if (checkEntity == null || (product = productDAO.getEntityById(checkEntity.getProductId())) == null
+                || !Validator.validateQuantity(product.getMeasure(), quantity) ||
                 checkEntity.getQuantity() < quantity)
             return false;
 
-        Product product = checkEntity.getProduct();
         product.setQuantity(product.getQuantity() + quantity);
         productDAO.updateEntity(product);
         if (checkEntity.getQuantity() == quantity)
@@ -89,7 +97,7 @@ public class CheckServiceImpl implements CheckService {
             return false;
 
         for (CheckEntity productInCheckEntity : productsInCheckEntity) {
-            Product product = productInCheckEntity.getProduct();
+            Product product = productDAO.getEntityById(productInCheckEntity.getProductId());
             product.setQuantity(product.getQuantity() + productInCheckEntity.getQuantity());
             productDAO.updateEntity(product);
         }
@@ -114,14 +122,16 @@ public class CheckServiceImpl implements CheckService {
     }
 
     @Override
-    public List<CheckDTO> convertToDTO(List<CheckEntity> check) {
+    public List<CheckDTO> convertToDTO(List<CheckEntity> check, Language lang) {
         List<CheckDTO> result = new ArrayList<>();
 
         check.forEach(el -> {
-            Product product = el.getProduct();
+            Product product = productDAO.getEntityById(el.getProductId());
+//            product.setName(productLangDAO.getProductName(product.getId(), langDAO.getEntityByVar(lang).getId()));
             String quantity = String.format(product.getMeasure().equals(ProductMeasure.weight) ? "%.3f" : "%.0f", el.getQuantity());
-            result.add(new CheckDTO(check.indexOf(el) + 1, product.getId(), product.getName(), quantity,
-                    String.format("%.2f", product.getPrice()), String.format("%.2f", product.getPrice() * el.getQuantity())));
+            result.add(new CheckDTO(check.indexOf(el) + 1, product.getId(), product.getProductTranslations().get(lang), quantity,
+                    NumberFormat.getCurrencyInstance(new Locale("uk", "UA")).format(product.getPrice()),
+                    NumberFormat.getCurrencyInstance(new Locale("uk", "UA")).format(product.getPrice() * el.getQuantity())));
         });
         return result;
     }

@@ -16,11 +16,11 @@ import static util.db.DBQueryConstants.*;
 
 public class CheckDAOImpl implements CheckDAO {
     private static CheckDAOImpl instance;
-    private final ProductDAOImpl productDAOImpl = ProductDAOImpl.getInstance();
     private final ConnectionFactory connectionFactory = ConnectionFactory.getInstance();
     private final Logger logger = LogManager.getLogger(CheckDAOImpl.class);
 
-    private CheckDAOImpl() {}
+    private CheckDAOImpl() {
+    }
 
     public static CheckDAOImpl getInstance() {
         if (instance == null)
@@ -35,13 +35,12 @@ public class CheckDAOImpl implements CheckDAO {
              PreparedStatement ps = con.prepareStatement(CHECK_GET_BY_PRODUCT_QUERY)) {
             ps.setInt(1, product.getId());
             try (ResultSet resultSet = ps.executeQuery()) {
-                if (resultSet.next()) {
-                    result = new CheckEntity(resultSet.getInt(CHECK_ID), product, resultSet.getDouble(CHECK_PRODUCT_QUANTITY));
-                    logger.info("Check element " + product.getName() + " was successfully retrieved");
-                }
+                resultSet.next();
+                result = new CheckEntity(resultSet.getInt(CHECK_ID), product.getId(), resultSet.getDouble(CHECK_PRODUCT_QUANTITY));
+                logger.info("Check element was successfully retrieved");
             }
         } catch (SQLException e) {
-            logger.error("Cannot get check element with productName=" + product.getName());
+            logger.error("Cannot get check element", e.getCause());
         }
 
         return result;
@@ -53,12 +52,12 @@ public class CheckDAOImpl implements CheckDAO {
 
         try (Connection con = connectionFactory.getConnection();
              PreparedStatement ps = con.prepareStatement(CHECK_INSERT_QUERY)) {
-            ps.setInt(1, checkEntity.getProduct().getId());
+            ps.setInt(1, checkEntity.getProductId());
             ps.setDouble(2, checkEntity.getQuantity());
             ps.execute();
-            logger.info("Check element " + checkEntity.getProduct().getName()+ " was successfully added");
+            logger.info("Check element with productId=" + checkEntity.getProductId() + " was successfully added");
         } catch (SQLException e) {
-            logger.error("Cannot insert check element with productName=" + checkEntity.getProduct().getName());
+            logger.error("Cannot insert check element with productId=" + checkEntity.getProductId(), e.getCause());
             result = false;
         }
 
@@ -74,9 +73,9 @@ public class CheckDAOImpl implements CheckDAO {
             ps.setDouble(1, checkEntity.getQuantity());
             ps.setInt(2, checkEntity.getId());
             ps.execute();
-            logger.info("Check element " + checkEntity.getProduct().getName()+ " was successfully updated");
+            logger.info("Check element with productId=" + checkEntity.getProductId() + " was successfully updated");
         } catch (SQLException e) {
-            logger.error("Cannot update check element with productName=" + checkEntity.getProduct().getName());
+            logger.error("Cannot update check element with productId=" + checkEntity.getProductId(), e.getCause());
             result = false;
         }
 
@@ -93,7 +92,7 @@ public class CheckDAOImpl implements CheckDAO {
             ps.execute();
             logger.info("Check element with id = " + id + " was successfully deleted");
         } catch (SQLException e) {
-            logger.error("Cannot delete check element by id=" + id);
+            logger.error("Cannot delete check element by id=" + id, e.getCause());
             result = false;
         }
 
@@ -111,13 +110,13 @@ public class CheckDAOImpl implements CheckDAO {
             try (ResultSet resultSet = ps.executeQuery()) {
                 while (resultSet.next()) {
                     resultList.add(new CheckEntity(resultSet.getInt(CHECK_ID),
-                            productDAOImpl.getEntityById(resultSet.getInt(CHECK_PRODUCT_ID)),
+                            resultSet.getInt(CHECK_PRODUCT_ID),
                             resultSet.getDouble(CHECK_PRODUCT_QUANTITY)));
                 }
                 logger.info(resultList.size() + " check elements were successfully retrieved");
             }
         } catch (SQLException e) {
-            logger.error("Cannot get segment of check from " + offset + " to " + limit);
+            logger.error("Cannot get segment of check from " + offset + " to " + limit, e.getCause());
         }
 
         return resultList;
@@ -130,12 +129,11 @@ public class CheckDAOImpl implements CheckDAO {
         try (Connection con = connectionFactory.getConnection();
              PreparedStatement ps = con.prepareStatement(CHECK_GET_NUMBER_OF_ROWS);
              ResultSet resultSet = ps.executeQuery()) {
-                if (resultSet.next()) {
-                    result = resultSet.getInt("count(*)");
-                    logger.info("Number of rows in check were successfully retrieved");
-                }
+            resultSet.next();
+            result = resultSet.getInt("count(*)");
+            logger.info("Number of rows in check were successfully retrieved");
         } catch (SQLException e) {
-            logger.error("Cannot get number of rows in check");
+            logger.error("Cannot get number of rows in check", e.getCause());
         }
 
         return result;
@@ -150,12 +148,12 @@ public class CheckDAOImpl implements CheckDAO {
              ResultSet resultSet = ps.executeQuery()) {
             while (resultSet.next()) {
                 resultList.add(new CheckEntity(resultSet.getInt(CHECK_ID),
-                        productDAOImpl.getEntityById(resultSet.getInt(CHECK_PRODUCT_ID)),
+                        resultSet.getInt(CHECK_PRODUCT_ID),
                         resultSet.getDouble(CHECK_PRODUCT_QUANTITY)));
             }
             logger.info(resultList.size() + " check elements were successfully retrieved");
         } catch (SQLException e) {
-            logger.error("Cannot get check");
+            logger.error("Cannot get check", e.getCause());
         }
 
         return resultList;
@@ -170,7 +168,7 @@ public class CheckDAOImpl implements CheckDAO {
             ps.execute();
             logger.info("All check elements were successfully deleted");
         } catch (SQLException e) {
-            logger.error("Cannot delete check");
+            logger.error("Cannot delete check", e.getCause());
             result = false;
         }
 

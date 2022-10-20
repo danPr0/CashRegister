@@ -18,7 +18,8 @@ public class DBFields {
     public static final String ROLE_NAME = "name";
 
     public static final String PRODUCT_ID = "id";
-    public static final String PRODUCT_NAME = "name";
+    public static final String PRODUCT_ORIGINAL_NAME = "original_name";
+    public static final String PRODUCT_ORIGINAL_LANG_ID = "original_lang_id";
     public static final String PRODUCT_MEASURE = "measure";
     public static final String PRODUCT_QUANTITY = "quantity";
     public static final String PRODUCT_PRICE = "price";
@@ -28,8 +29,15 @@ public class DBFields {
     public static final String CHECK_PRODUCT_QUANTITY = "quantity";
 
     public static final String REPORT_ID = "id";
-    public static final String REPORT_CREATED_BY = "created_by";
+    public static final String REPORT_USER_ID = "user_id";
     public static final String REPORT_CLOSED_AT = "closed_at";
     public static final String REPORT_ITEMS_QUANTITY = "items_quantity";
     public static final String REPORT_TOTAL_PRICE = "total_price";
+
+    public static final String LANG_ID = "id";
+    public static final String LANG_NAME = "name";
+
+    public static final String PRODUCT_TRANSLATION_PRODUCT_ID = "product_id";
+    public static final String PRODUCT_TRANSLATION_LANG_ID = "lang_id";
+    public static final String PRODUCT_TRANSLATION_PRODUCT_TRANSLATION = "product_translation";
 }

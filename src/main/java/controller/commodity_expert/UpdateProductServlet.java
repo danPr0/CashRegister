@@ -4,6 +4,7 @@ package controller.commodity_expert;
 import entity.Product;
 import service.ProductService;
 import service_impl.ProductServiceImpl;
+import util.enums.Language;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -32,12 +33,12 @@ public class UpdateProductServlet extends HttpServlet {
             try {
                 productToUpdate = productService.getProduct(Integer.parseInt(product));
             } catch (NumberFormatException e1) {
-                productToUpdate = productService.getProduct(product);
+                productToUpdate = productService.getProduct(product, Language.valueOf(req.getSession().getAttribute("lang").toString()));
             }
 
             if (productToUpdate == null)
                 req.setAttribute("error", "true");
-            else req.setAttribute("product", productService.convertToDTO(productToUpdate));
+            else req.setAttribute("product", productService.convertToDTO(productToUpdate, Language.valueOf(req.getSession().getAttribute("lang").toString())));
         }
 
         req.getRequestDispatcher("/view/commodity-expert/updateProduct.jsp").forward(req, resp);

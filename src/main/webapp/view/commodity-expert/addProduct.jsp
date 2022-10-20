@@ -1,6 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page isELIgnored="false" %>
 
 <fmt:setLocale value="${sessionScope.lang}"/>
@@ -23,7 +23,12 @@
         <div>
             <form action="<c:url value="/commodity-expert/add-product"/>" method="post" class="needs-validation col-4"
                   novalidate>
-                <jsp:include page="../util/inputs/product/productNameInput.jsp"/>
+                <c:forEach var="i" items="${sessionScope.languages}">
+                    <jsp:include page="../util/inputs/product/productNameInput.jsp">
+                        <jsp:param name="namw" value="productName_${i}"/>
+                    </jsp:include>
+                </c:forEach>
+
                 <jsp:include page="../util/inputs/product/productMeasureInput.jsp"/>
 
                 <jsp:include page="../util/inputs/product/productQuantityInput.jsp">
@@ -39,9 +44,7 @@
             </form>
 
             <div>
-                <c:if test="${param.error == 'true'}">
-                    <p class="text-danger pl-3"><fmt:message key="msg.error.commodity-expert.addProduct"/></p>
-                </c:if>
+                <p class="text-danger pl-3"><c:out value="${param.error}"/></p>
                 <c:if test="${param.success == 'true'}">
                     <p class="text-success pl-3"><fmt:message key="msg.success.commodity-expert.addProduct"/></p>
                 </c:if>

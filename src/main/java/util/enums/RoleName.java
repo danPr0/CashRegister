@@ -1,4 +1,4 @@
-package util;
+package util.enums;
 
 /**
  * Roles enum

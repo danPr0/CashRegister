@@ -6,6 +6,7 @@ import service.CheckService;
 import service.ProductService;
 import service_impl.CheckServiceImpl;
 import service_impl.ProductServiceImpl;
+import util.enums.Language;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -62,7 +63,7 @@ public class AddProductToCheckServlet extends HttpServlet {
         else orderBy = req.getSession().getAttribute("checkOrderBy").toString();
 
         List<CheckDTO> check = checkService.convertToDTO(checkService.getPerPage(page, total,
-                wrapSortParam(sortBy), orderBy.equals("asc")));
+                wrapSortParam(sortBy), orderBy.equals("asc")), Language.valueOf(req.getSession().getAttribute("lang").toString()));
         int nOfPages = (checkService.getNumberOfRows() + total - 1) / total;
 
         if (!check.isEmpty()) {
@@ -80,14 +81,14 @@ public class AddProductToCheckServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String productParam = req.getParameter("product");
         String quantityParam = req.getParameter("quantity");
-        String lang = req.getSession().getAttribute("lang").toString();
+        Language lang = Language.valueOf(req.getSession().getAttribute("lang").toString());
 
         Product product;
         try {
             product = productService.getProduct(Integer.parseInt(productParam));
         }
         catch (NumberFormatException ignored) {
-            product = productService.getProduct(productParam);
+            product = productService.getProduct(productParam, lang);
         }
 
         String url = "/cashier/add-product-to-check";

@@ -31,7 +31,7 @@
                 <input type="submit" value="<fmt:message key="submit.login"/>" class="btn btn-primary"/>
             </form>
 
-            <p class="text-danger pl-3">${param.error}</p>
+            <p class="text-danger pl-3"><c:out value="${param.error}"/></p>
         </div>
 
         <div>

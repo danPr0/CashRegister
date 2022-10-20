@@ -1,16 +1,16 @@
-package entity;
+package garbage;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import util.enums.RoleName;
 
 /**
- * Entity for "check" table
+ * Entity for "roles" table
  */
 @AllArgsConstructor
 @Getter @Setter
-public class CheckEntity {
+public class Role {
     private int id;
-    private int productId;
-    private double quantity;
+    private RoleName name;
 }

@@ -2,6 +2,7 @@ package garbage;
 
 import service_impl.ReportServiceImpl;
 import util.ReportFileCreator;
+import util.enums.Language;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -16,9 +17,10 @@ public class CreateZReportServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        ReportFileCreator.createCsv("z-report.csv", req.getServletContext());
-        ReportFileCreator.createPdf("z-report.pdf", req.getServletContext());
-        ReportFileCreator.createXls("z-report.xls", req.getServletContext());
+        Language lang = Language.valueOf(req.getSession().getAttribute("lang").toString());
+        ReportFileCreator.createCsv("z-report.csv", req.getServletContext(), lang);
+        ReportFileCreator.createPdf("z-report.pdf", req.getServletContext(), lang);
+        ReportFileCreator.createXls("z-report.xls", req.getServletContext(), lang);
 
         reportServiceImpl.deleteAll();
         resp.sendRedirect("/senior-cashier");

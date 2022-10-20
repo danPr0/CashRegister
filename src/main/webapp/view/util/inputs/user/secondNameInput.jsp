@@ -10,7 +10,7 @@
         <label for="secondName" class="form-label"><fmt:message key="label.secondName"/></label>
         <input type="text" name="secondName" required pattern="[-.sA-Za-z]+|[-.sА-Яа-яЁёЇїІіЄєҐґ']+" maxlength="48"
                class="form-control" placeholder="<fmt:message key="placeHolder.secondName"/>" id="secondName"
-               value="${param.secondName}"/>
+               value="<c:out value="${param.secondName}"/>"/>
         <div class="invalid-feedback"><fmt:message key="msg.invalidInput.name"/></div>
     </div>
 </fmt:bundle>

@@ -18,12 +18,12 @@
             </tr>
             <c:forEach var="i" items="${requestScope.check}">
                 <tr>
-                    <td>${i.index}</td>
-                    <td>${i.productId}</td>
-                    <td>${i.productName}</td>
-                    <td>${i.quantity}</td>
-                    <td>${i.productPrice}</td>
-                    <td>${i.totalPrice}</td>
+                    <td><c:out value="${i.index}"/></td>
+                    <td><c:out value="${i.productId}"/></td>
+                    <td><c:out value="${i.productName}"/></td>
+                    <td><c:out value="${i.quantity}"/></td>
+                    <td><c:out value="${i.productPrice}"/></td>
+                    <td><c:out value="${i.totalPrice}"/></td>
                 </tr>
             </c:forEach>
         </table>

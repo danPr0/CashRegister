@@ -1,6 +1,7 @@
 package controller.senior_cashier;
 
 import util.ReportFileCreator;
+import util.enums.Language;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -23,6 +24,7 @@ public class DownloadReportServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String reportType = req.getParameter("reportType");
         String format = req.getParameter("format");
+        Language lang = Language.valueOf(req.getSession().getAttribute("lang").toString());
         String fileName;
 
         if (!(format.equals("csv") || format.equals("pdf") || format.equals("xls"))) {
@@ -36,11 +38,11 @@ public class DownloadReportServlet extends HttpServlet {
         else {
             fileName = "x-report." + format;
             if (format.equals("csv"))
-                ReportFileCreator.createCsv(fileName, req.getServletContext());
+                ReportFileCreator.createCsv(fileName, req.getServletContext(), lang);
             else if (format.equals("pdf"))
-                ReportFileCreator.createPdf(fileName, req.getServletContext());
+                ReportFileCreator.createPdf(fileName, req.getServletContext(), lang);
             else
-                ReportFileCreator.createXls(fileName, req.getServletContext());
+                ReportFileCreator.createXls(fileName, req.getServletContext(), lang);
         }
 
         resp.setHeader("Content-disposition", "attachment; filename=" + fileName);

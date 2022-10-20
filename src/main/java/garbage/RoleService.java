@@ -1,6 +1,6 @@
-package service;
+package garbage;
 
-import entity.Role;
+import garbage.Role;
 
 public interface RoleService {
     Role getRole(int id);

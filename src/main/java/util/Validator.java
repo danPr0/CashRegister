@@ -1,5 +1,7 @@
 package util;
 
+import util.enums.ProductMeasure;
+
 /**
  * Validate user inputs
  */

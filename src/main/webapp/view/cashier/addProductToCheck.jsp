@@ -41,7 +41,7 @@
             </form>
 
             <div>
-                <p class="text-danger">${param.error}</p>
+                <p class="text-danger"><c:out value="${param.error}"/></p>
                 <c:if test="${param.success == 'true'}">
                     <p class="text-success"><fmt:message key="msg.success.cashier.addProductToCheck"/></p>
                 </c:if>

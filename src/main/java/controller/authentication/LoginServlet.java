@@ -1,9 +1,12 @@
 package controller.authentication;
 
 import entity.User;
+import garbage.RoleService;
+import service.UserService;
+import garbage.RoleServiceImpl;
 import service_impl.UserServiceImpl;
-import util.GetProperties;
 import util.JWTProvider;
+import util.enums.Language;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -11,8 +14,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.net.URLEncoder;
-import java.util.Properties;
 
 import static java.net.URLEncoder.encode;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -23,7 +24,8 @@ import static util.GetProperties.getMessageByLang;
  */
 @WebServlet("/auth/login")
 public class LoginServlet extends HttpServlet {
-    private final UserServiceImpl userServiceImpl = UserServiceImpl.getInstance();
+    private final UserService userService = UserServiceImpl.getInstance();
+    private final RoleService roleService = RoleServiceImpl.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -38,16 +40,16 @@ public class LoginServlet extends HttpServlet {
     public void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String email = req.getParameter("email");
         String password = req.getParameter("password");
-        String lang = req.getSession().getAttribute("lang").toString();
+        Language lang = Language.valueOf(req.getSession().getAttribute("lang").toString());
 
         User user;
-        if ((user = userServiceImpl.getUser(email)) == null)
+        if ((user = userService.getUser(email)) == null)
             resp.sendRedirect(String.format("/auth/login?error=%s&email=%s&password=%s",
                     encode(getMessageByLang("msg.error.auth.login.badEmail", lang), UTF_8), email, encode(password, UTF_8)));
-        else if (userServiceImpl.authenticate(email, password)) {
-            JWTProvider.setTokenCookie(JWTProvider.generateJwtToken(user.getRole().getName(), "accessToken"),
+        else if (userService.authenticate(email, password)) {
+            JWTProvider.setTokenCookie(JWTProvider.generateJwtToken(user.getRoleId(), "accessToken"),
                     "accessToken", JWTProvider.accessTokenExpirationInSec, resp);
-            JWTProvider.setTokenCookie(JWTProvider.generateJwtToken(user.getRole().getName(), "refreshToken"),
+            JWTProvider.setTokenCookie(JWTProvider.generateJwtToken(user.getRoleId(), "refreshToken"),
                     "refreshToken", JWTProvider.refreshTokenExpirationInSec, resp);
 
             req.getSession().setAttribute("email", email);

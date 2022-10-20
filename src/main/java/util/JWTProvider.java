@@ -3,6 +3,7 @@ package util;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import util.enums.RoleName;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;

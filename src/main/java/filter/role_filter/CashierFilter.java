@@ -1,7 +1,7 @@
 package filter.role_filter;
 
 import util.JWTProvider;
-import util.RoleName;
+import util.enums.RoleName;
 
 import javax.servlet.*;
 import javax.servlet.annotation.*;

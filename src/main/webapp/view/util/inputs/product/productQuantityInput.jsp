@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page isELIgnored="false" %>
@@ -8,7 +9,7 @@
         <label for="prodQuantity" class="form-label"><fmt:message key="label.productQuantity"/></label>
         <input type="text" name="${param.name}" required pattern="([1-9]{1}[0-9]{0,3})|([0-9]{1,4}(.){1}[0-9]{1,3})"
                class="form-control" placeholder="<fmt:message key="placeHolder.productQuantity"/>" id="prodQuantity"
-               value="${param.presetValue}"/>
+               value="<c:out value="${param.presetValue}"/>"/>
         <div class="invalid-feedback"><fmt:message key="msg.invalidInput.productQuantity"/></div>
     </div>
 </fmt:bundle>

@@ -18,7 +18,8 @@ public class ReportDAOImpl implements ReportDAO {
     private final ConnectionFactory connectionFactory = ConnectionFactory.getInstance();
     private final Logger logger = LogManager.getLogger(ReportDAOImpl.class);
 
-    private ReportDAOImpl() {}
+    private ReportDAOImpl() {
+    }
 
     public static ReportDAOImpl getInstance() {
         if (instance == null)
@@ -32,14 +33,14 @@ public class ReportDAOImpl implements ReportDAO {
 
         try (Connection con = connectionFactory.getConnection();
              PreparedStatement ps = con.prepareStatement(REPORT_INSERT_QUERY)) {
-            ps.setString(1, reportEntity.getCreatedBy());
+            ps.setInt(1, reportEntity.getUserId());
             ps.setTimestamp(2, reportEntity.getClosed_at());
             ps.setInt(3, reportEntity.getItems_quantity());
             ps.setDouble(4, reportEntity.getTotal_price());
             ps.execute();
-            logger.info("Report element created by " + reportEntity.getCreatedBy() + " was successfully added");
+            logger.info("Report element created by " + reportEntity.getUserId() + " was successfully added");
         } catch (SQLException e) {
-            logger.error("Cannot insert report element");
+            logger.error("Cannot insert report element", e.getCause());
             result = false;
         }
 
@@ -56,13 +57,13 @@ public class ReportDAOImpl implements ReportDAO {
             ps.setInt(2, offset);
             try (ResultSet resultSet = ps.executeQuery()) {
                 while (resultSet.next()) {
-                    resultList.add(new ReportEntity(resultSet.getInt(REPORT_ID), resultSet.getString(REPORT_CREATED_BY), resultSet.getTimestamp(REPORT_CLOSED_AT),
+                    resultList.add(new ReportEntity(resultSet.getInt(REPORT_ID), resultSet.getInt(REPORT_USER_ID), resultSet.getTimestamp(REPORT_CLOSED_AT),
                             resultSet.getInt(REPORT_ITEMS_QUANTITY), resultSet.getDouble(REPORT_TOTAL_PRICE)));
                 }
                 logger.info(resultList.size() + " report elements were successfully retrieved");
             }
         } catch (SQLException e) {
-            logger.error("Cannot get segment of report from " + offset + " to " + limit);
+            logger.error("Cannot get segment of report from " + offset + " to " + limit, e.getCause());
         }
 
         return resultList;
@@ -75,12 +76,11 @@ public class ReportDAOImpl implements ReportDAO {
         try (Connection con = connectionFactory.getConnection();
              PreparedStatement ps = con.prepareStatement(REPORT_GET_NUMBER_OF_ROWS);
              ResultSet resultSet = ps.executeQuery()) {
-                if (resultSet.next()) {
-                    result = resultSet.getInt("count(*)");
-                    logger.info("Number of rows in report were successfully retrieved");
-                }
+            resultSet.next();
+            result = resultSet.getInt("count(*)");
+            logger.info("Number of rows in report were successfully retrieved");
         } catch (SQLException e) {
-            logger.error("Cannot get number of rows in report");
+            logger.error("Cannot get number of rows in report", e.getCause());
         }
 
         return result;
@@ -93,14 +93,14 @@ public class ReportDAOImpl implements ReportDAO {
         try (Connection con = connectionFactory.getConnection();
              PreparedStatement ps = con.prepareStatement(REPORT_GET_ALL_QUERY);
              ResultSet resultSet = ps.executeQuery()) {
-                while (resultSet.next()) {
-                    resultList.add(new ReportEntity(resultSet.getInt(REPORT_ID),
-                            resultSet.getString(REPORT_CREATED_BY), resultSet.getTimestamp(REPORT_CLOSED_AT),
-                            resultSet.getInt(REPORT_ITEMS_QUANTITY), resultSet.getDouble(REPORT_TOTAL_PRICE)));
-                }
-                logger.info(resultList.size() + " report elements were successfully retrieved");
+            while (resultSet.next()) {
+                resultList.add(new ReportEntity(resultSet.getInt(REPORT_ID),
+                        resultSet.getInt(REPORT_USER_ID), resultSet.getTimestamp(REPORT_CLOSED_AT),
+                        resultSet.getInt(REPORT_ITEMS_QUANTITY), resultSet.getDouble(REPORT_TOTAL_PRICE)));
+            }
+            logger.info(resultList.size() + " report elements were successfully retrieved");
         } catch (SQLException e) {
-            logger.error("Cannot get report");
+            logger.error("Cannot get report", e.getCause());
         }
 
         return resultList;
@@ -115,7 +115,7 @@ public class ReportDAOImpl implements ReportDAO {
             ps.execute();
             logger.info("All report elements were successfully deleted");
         } catch (SQLException e) {
-            logger.error("Cannot delete report");
+            logger.error("Cannot delete report", e.getCause());
             result = false;
         }
 

@@ -1,8 +1,7 @@
 package service;
 
-import entity.Role;
 import entity.User;
-import util.RoleName;
+import util.enums.RoleName;
 
 /**
  * Service layer for {@link dao.UserDAO}
@@ -10,6 +9,6 @@ import util.RoleName;
 public interface UserService {
     User getUser(String email);
     boolean addUser(String email, String password, String firstName, String secondName, RoleName role);
-    boolean updateUserRole(int id, Role role);
+    boolean updateUserRole(int id, RoleName role);
     boolean authenticate(String email, String password);
 }
