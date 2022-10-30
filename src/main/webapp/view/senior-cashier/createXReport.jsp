@@ -1,5 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="e" tagdir="/WEB-INF/tags" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page isELIgnored="false" %>
 
@@ -17,15 +18,17 @@
 
         <link rel="stylesheet" href="<c:url value="/css?file=bootstrap.min.css"/>"/>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
         <script src="<c:url value="/js?file=formValidation.js"/>"></script>
         <script src="<c:url value="/js?file=tableParams.js"/>"></script>
         <script>addTableParamListener("/senior-cashier/create-x-report")</script>
     </head>
     <body>
     <div class="container p-3 px-5 bg-dark text-white" style="min-height: 100%">
-        <jsp:include page="/view/menu/menu.jsp">
-            <jsp:param name="mainUrl" value="/senior-cashier"/>
-        </jsp:include>
+<%--        <jsp:include page="/view/garbage/menu.jsp">--%>
+<%--            <jsp:param name="mainUrl" value="/senior-cashier"/>--%>
+<%--        </jsp:include>--%>
+        <e:menu url="/senior-cashier"/>
 
         <div class="m-3">
             <a class="dropdown-toggle" style="text-decoration: none" href="#" data-bs-toggle="dropdown" role="button">
@@ -64,16 +67,17 @@
         <div>
             <jsp:include page="reportTable.jsp"/>
 
-            <jsp:include page="pagination.jsp"/>
+            <e:pagination url="/senior-cashier/create-x-report"/>
+<%--            <jsp:include page="../../WEB-INF/tags/pagination.tag">--%>
+<%--                <jsp:param name="url" value="/senior-cashier/create-x-report"/>--%>
+<%--            </jsp:include>--%>
 
             <jsp:include page="../util/showPerPageSelect.jsp">
                 <jsp:param name="perPage" value="${perPage}"/>
             </jsp:include>
         </div>
 
-        <c:if test="${param.error == 'true'}">
-            <p class="text-danger pl-3"><fmt:message key="msg.error.senior-cashier.createXReport"/></p>
-        </c:if>
+    <p class="text-danger"><c:out value="${requestScope.error}"/></p>
     </div>
     </body>
 </fmt:bundle>

@@ -66,11 +66,11 @@ public class DownloadPdfReport extends HttpServlet {
             PdfPCell header = new PdfPCell();
             header.setPhrase(new Phrase(r.getUserId()));
             table.addCell(header);
-            header.setPhrase(new Phrase(r.getClosed_at().toString()));
+            header.setPhrase(new Phrase(r.getClosedAt().toString()));
             table.addCell(header);
-            header.setPhrase(new Phrase(String.valueOf(r.getItems_quantity())));
+            header.setPhrase(new Phrase(String.valueOf(r.getItemsQuantity())));
             table.addCell(header);
-            header.setPhrase(new Phrase(String.valueOf(r.getTotal_price())));
+            header.setPhrase(new Phrase(String.valueOf(r.getTotalPrice())));
             table.addCell(header);
         });
     }

@@ -23,9 +23,8 @@ import java.util.Objects;
 
 public class UserServiceImpl implements UserService {
     private static UserServiceImpl instance = null;
-    private final UserDAO userDAO = UserDAOImpl.getInstance();
-    private final RoleDAO roleDAO = RoleDAOImpl.getInstance();
-    private final KeyDAO keyDAO = KeyDAOImpl.getInstance();
+    private UserDAO userDAO = UserDAOImpl.getInstance();
+    private KeyDAO keyDAO = KeyDAOImpl.getInstance();
 
     private UserServiceImpl() {
     }
@@ -50,15 +49,18 @@ public class UserServiceImpl implements UserService {
         SecretKey secretKey = AESUtil.generateSecretKey();
         String encodedPassword = encryptPassword(secretKey, password);
         User user = new User(0, email, encodedPassword, firstName, secondName, role);
-        if (!userDAO.insertEntity(user))
+        user = userDAO.insertEntity(user);
+        if (user == null)
             return false;
 
-        return keyDAO.insertEntity(new Key(userDAO.getEntityByEmail(email).getId(), new Base64().encodeToString(secretKey.getEncoded())));
+        return keyDAO.insertEntity(new Key(user.getId(), new Base64().encodeToString(secretKey.getEncoded())));
     }
 
     @Override
     public boolean updateUserRole(int id, RoleName role) {
-        return userDAO.updateEntity(id, role);
+        User user = userDAO.getEntityById(id);
+        user.setRoleId(role);
+        return userDAO.updateEntity(user);
     }
 
     @Override
@@ -72,7 +74,20 @@ public class UserServiceImpl implements UserService {
         return password.equals(decryptPassword(secretKey, user.getPassword()));
     }
 
-    protected String encryptPassword(SecretKey secretKey, String input) {
+    @Override
+    public boolean resetPassword(String email, String newPassword) {
+        User user = userDAO.getEntityByEmail(email);
+        if (user == null)
+            return false;
+
+        SecretKey secretKey = AESUtil.generateSecretKey();
+        keyDAO.updateEntity(new Key(user.getId(), new Base64().encodeToString(secretKey.getEncoded())));
+        user.setPassword(encryptPassword(secretKey, newPassword));
+
+        return userDAO.updateEntity(user);
+    }
+
+    public String encryptPassword(SecretKey secretKey, String input) {
         byte[] cipherText = null;
 
         try {
@@ -87,7 +102,7 @@ public class UserServiceImpl implements UserService {
         return new String(Objects.requireNonNull(new Base64().encode(cipherText)), StandardCharsets.UTF_8);
     }
 
-    private String decryptPassword(SecretKeySpec secretKey, String input) {
+    public String decryptPassword(SecretKeySpec secretKey, String input) {
         byte[] plainText = null;
 
         try {
@@ -100,5 +115,13 @@ public class UserServiceImpl implements UserService {
         }
 
         return new String(Objects.requireNonNull(plainText), StandardCharsets.UTF_8);
+    }
+
+    public void setUserDAO(UserDAO userDAO) {
+        this.userDAO = userDAO;
+    }
+
+    public void setKeyDAO(KeyDAO keyDAO) {
+        this.keyDAO = keyDAO;
     }
 }

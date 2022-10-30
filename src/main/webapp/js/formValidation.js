@@ -1,16 +1,14 @@
-window.addEventListener("load", () => {
-    const forms = document.getElementsByClassName("needs-validation");
+$(document).ready(() => {
+    const forms = $(".needs-validation");
 
-    Array.prototype.filter.call(forms, form => {
-        form.addEventListener("submit", event => {
-            if (form.checkValidity() === false) {
-                event.preventDefault();
-                event.stopPropagation();
-                form.classList.add("was-validated");
+    for (let i = 0; i < forms.length; i++) {
+        const form = forms.eq(i);
+        form.submit(e => {
+            if (!form[0].checkValidity()) {
+                e.preventDefault();
+                // event.stopPropagation();
+                form.addClass("was-validated");
             }
-            // else if (document.getElementById("password") !== document.getElementById("passwordConfirm")) {
-            //     document.getElementById("password").chil
-            // }
-        }, false);
-    });
-});
+        });
+    }
+})

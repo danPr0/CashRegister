@@ -7,7 +7,7 @@
 
     <tlib-version>1.0</tlib-version>
     <short-name>get-param</short-name>
-    <uri>http://tomcat.apache.org/my-taglib</uri>
+    <uri>http://my-taglib/get-param-value</uri>
 
     <tag>
         <name>param</name>

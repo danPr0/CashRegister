@@ -1,13 +1,9 @@
 package garbage;
 
-import entity.CheckEntity;
 import service_impl.CheckServiceImpl;
 
-import javax.servlet.*;
 import javax.servlet.http.*;
 import javax.servlet.annotation.*;
-import java.io.IOException;
-import java.util.List;
 
 @WebServlet("/cashier/update-product-in-check")
 public class UpdateProductInCheckServlet extends HttpServlet {

@@ -28,15 +28,15 @@ public class CheckDAOImpl implements CheckDAO {
         return instance;
     }
 
-    public CheckEntity getEntityByProduct(Product product) {
+    public CheckEntity getEntityByProductId(int productId) {
         CheckEntity result = null;
 
         try (Connection con = connectionFactory.getConnection();
              PreparedStatement ps = con.prepareStatement(CHECK_GET_BY_PRODUCT_QUERY)) {
-            ps.setInt(1, product.getId());
+            ps.setInt(1, productId);
             try (ResultSet resultSet = ps.executeQuery()) {
                 resultSet.next();
-                result = new CheckEntity(resultSet.getInt(CHECK_ID), product.getId(), resultSet.getDouble(CHECK_PRODUCT_QUANTITY));
+                result = new CheckEntity(resultSet.getInt(CHECK_ID), productId, resultSet.getDouble(CHECK_PRODUCT_QUANTITY));
                 logger.info("Check element was successfully retrieved");
             }
         } catch (SQLException e) {
@@ -73,6 +73,11 @@ public class CheckDAOImpl implements CheckDAO {
             ps.setDouble(1, checkEntity.getQuantity());
             ps.setInt(2, checkEntity.getId());
             ps.execute();
+
+            int affectedRows = ps.executeUpdate();
+            if (affectedRows == 0)
+                throw new SQLException("Updating check failed, no rows affected");
+
             logger.info("Check element with productId=" + checkEntity.getProductId() + " was successfully updated");
         } catch (SQLException e) {
             logger.error("Cannot update check element with productId=" + checkEntity.getProductId(), e.getCause());
@@ -83,16 +88,16 @@ public class CheckDAOImpl implements CheckDAO {
     }
 
     @Override
-    public boolean deleteEntityById(int id) {
+    public boolean deleteEntityByProductId(int productId) {
         boolean result = true;
 
         try (Connection con = connectionFactory.getConnection();
-             PreparedStatement ps = con.prepareStatement(CHECK_DELETE_BY_ID_QUERY)) {
-            ps.setInt(1, id);
+             PreparedStatement ps = con.prepareStatement(CHECK_DELETE_BY_PRODUCT_ID_QUERY)) {
+            ps.setInt(1, productId);
             ps.execute();
-            logger.info("Check element with id = " + id + " was successfully deleted");
+            logger.info("Check element with id = " + productId + " was successfully deleted");
         } catch (SQLException e) {
-            logger.error("Cannot delete check element by id=" + id, e.getCause());
+            logger.error("Cannot delete check element by id=" + productId, e.getCause());
             result = false;
         }
 

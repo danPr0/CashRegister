@@ -8,6 +8,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * Close db connection resources
+ */
 public class DBUtil {
     private static final Logger logger = LogManager.getLogger(DBUtil.class);
 

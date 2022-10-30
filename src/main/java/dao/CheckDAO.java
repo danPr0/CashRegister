@@ -9,10 +9,10 @@ import java.util.List;
  * DAO layer for "check" table
  */
 public interface CheckDAO {
-    CheckEntity getEntityByProduct(Product product);
+    CheckEntity getEntityByProductId(int productId);
     boolean insertEntity(CheckEntity checkEntity);
     boolean updateEntity(CheckEntity checkEntity);
-    boolean deleteEntityById(int id);
+    boolean deleteEntityByProductId(int productId);
     /**
      * Get sorted and ordered segment of entities
      * @param order (ASC/DESC)

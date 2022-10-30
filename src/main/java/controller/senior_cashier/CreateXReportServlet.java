@@ -3,6 +3,8 @@ package controller.senior_cashier;
 import dto.ReportDTO;
 import service.ReportService;
 import service_impl.ReportServiceImpl;
+import util.GetProperties;
+import util.enums.Language;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -54,14 +56,14 @@ public class CreateXReportServlet extends HttpServlet {
         else orderBy = req.getSession().getAttribute("reportOrderBy").toString();
 
         List<ReportDTO> report = reportService.convertToDTO(reportService.getPerPage(page, total,
-                wrapSortParam(sortBy), orderBy.equals("asc")));
+                wrapSortParam(sortBy), orderBy.equals("asc")), Language.getLanguage(req));
         int nOfPages = (reportService.getNoOfRows() + total - 1) / total;
 
         if (!report.isEmpty()) {
             req.setAttribute("report", report);
             req.setAttribute("nOfPages", nOfPages);
         }
-        else req.setAttribute("error", "true");
+        else req.setAttribute("error", GetProperties.getMessageByLang("error.senior-cashier.createXReport", Language.getLanguage(req)));
 
         req.getRequestDispatcher("/view/senior-cashier/createXReport.jsp").forward(req, resp);
     }

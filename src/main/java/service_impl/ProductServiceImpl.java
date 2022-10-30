@@ -1,31 +1,24 @@
 package service_impl;
 
 import dao.ProductDAO;
-import dao.ProductLangDAO;
-import dao_impl.CheckDAOImpl;
-import dao_impl.ProductLangDAOImpl;
+import dao.ProductTranslationDAO;
+import dao_impl.ProductTranslationDAOImpl;
 import dto.ProductDTO;
 import entity.Product;
 import dao_impl.ProductDAOImpl;
-import entity.ProductLang;
+import entity.ProductTranslation;
 import exception.ProductTranslationException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import service.ProductService;
 import util.enums.Language;
 import util.enums.ProductMeasure;
 import util.Validator;
-import util.db.ConnectionFactory;
 
 import java.util.Map;
 
 public class ProductServiceImpl implements ProductService {
     private static ProductServiceImpl instance = null;
-    private final ProductDAO productDAO = ProductDAOImpl.getInstance();
-    private final ProductLangDAO productLangDAO = ProductLangDAOImpl.getInstance();
-    //    private final LangDAO langDAO = LangDAOImpl.getInstance();
-    private final ConnectionFactory connectionFactory = ConnectionFactory.getInstance();
-    private final Logger logger = LogManager.getLogger(CheckDAOImpl.class);
+    private ProductDAO productDAO = ProductDAOImpl.getInstance();
+    private ProductTranslationDAO productTranslationDAO = ProductTranslationDAOImpl.getInstance();
 
     private ProductServiceImpl() {
     }
@@ -43,17 +36,17 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Product getProduct(String name, Language lang) {
-        ProductLang productLang = productLangDAO.getEntityByProductName(name, lang);
+        ProductTranslation productTranslation = productTranslationDAO.getEntityByProductName(name, lang);
         Product product = null;
-        if (productLang != null) {
-            product = productDAO.getEntityById(productLang.getProductId());
+        if (productTranslation != null) {
+            product = productDAO.getEntityById(productTranslation.getProductId());
         }
 
         return product;
     }
 
     @Override
-    public boolean addProduct(Language lang, Map<Language, String> productNames, ProductMeasure measure, double quantity, double price) throws ProductTranslationException {
+    public boolean addProduct(Map<Language, String> productNames, ProductMeasure measure, double quantity, double price) throws ProductTranslationException {
         if (!(Validator.validateProductName(productNames.get(Language.ua)) && Validator.validateProductName(productNames.get(Language.en))
                 && Validator.validateQuantity(measure, quantity) && Validator.validatePrice(price)))
             return false;
@@ -95,7 +88,8 @@ public class ProductServiceImpl implements ProductService {
 //        } catch (SQLException e) {
 //            logger.error("Cannot add product", e);
 //        }
-        return productDAO.insertEntity(new Product(0, productNames, measure, quantity, price), Language.en);
+        productDAO.insertEntity(new Product(0, productNames, measure, quantity, price), Language.en);
+        return true;
 //        String error = null;
 //        try {
 //            if (langError != null)
@@ -123,5 +117,13 @@ public class ProductServiceImpl implements ProductService {
     public ProductDTO convertToDTO(Product product, Language lang) {
         String quantity = String.format(product.getMeasure().equals(ProductMeasure.weight) ? "%.3f" : "%.0f", product.getQuantity());
         return new ProductDTO(product.getId(), product.getProductTranslations().get(lang), quantity, String.format("%.2f", product.getPrice()));
+    }
+
+    public void setProductDAO(ProductDAO productDAO) {
+        this.productDAO = productDAO;
+    }
+
+    public void setProductTranslationDAO(ProductTranslationDAO productTranslationDAO) {
+        this.productTranslationDAO = productTranslationDAO;
     }
 }

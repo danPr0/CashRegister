@@ -1,19 +1,19 @@
 function addTableParamListener(url) {
-    window.addEventListener("load", () => {
-        const sort = document.getElementById("sortSelect");
-        const order = document.getElementById("orderSelect");
-        const perPage = document.getElementById("perPageSelect")
+    $(document).ready(() => {
+        const sort = $("#sortSelect");
+        const order = $("#orderSelect");
+        const perPage = $("#perPageSelect");
 
-        sort.addEventListener("change", () => {
-            window.location = "http://localhost:8080" + url + "?sortBy=" + sort.value;
+        sort.change(() => {
+            window.location = "http://localhost:8080" + url + "?sortBy=" + sort.val();
         })
 
-        order.addEventListener("change", () => {
-            window.location = "http://localhost:8080" + url + "?orderBy=" + order.value;
+        order.change(() => {
+            window.location = "http://localhost:8080" + url + "?orderBy=" + order.val();
         })
 
-        perPage.addEventListener("change", () => {
-            window.location = "http://localhost:8080" + url + "?total=" + perPage.value;
+        perPage.change(() => {
+            window.location = "http://localhost:8080" + url + "?total=" + perPage.val();
         })
     });
 }

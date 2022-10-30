@@ -1,16 +1,15 @@
 package entity;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 /**
  * Entity for "user_key" table
  */
+@NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Getter @Setter
 public class Key {
-    private int user_id;
+    private int userId;
     private String key;
 }

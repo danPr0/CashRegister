@@ -33,7 +33,7 @@ public class ProductDAOImpl implements ProductDAO {
 
     @Override
     public Product getEntityById(int id) {
-        Product result = null;
+        Product result;
 
         PreparedStatement ps = null;
         ResultSet resultSet = null;
@@ -50,11 +50,11 @@ public class ProductDAOImpl implements ProductDAO {
             result.setMeasure(ProductMeasure.valueOf(resultSet.getString(PRODUCT_MEASURE)));
             result.setQuantity(resultSet.getDouble(PRODUCT_QUANTITY));
             result.setPrice(resultSet.getDouble(PRODUCT_PRICE));
-            logger.info("Product with id = " + id + " was successfully retrieved");
 
             ps = con.prepareStatement(PRODUCTS_TRANSLATIONS_GET_BY_PRODUCT_ID);
             ps.setInt(1, id);
             resultSet = ps.executeQuery();
+
             Map<Language, String> productNames = new HashMap<>();
             while (resultSet.next()) {
                 productNames.put(Language.valueOf(resultSet.getString(PRODUCT_TRANSLATION_LANG_ID)), resultSet.getString(PRODUCT_TRANSLATION_PRODUCT_TRANSLATION));
@@ -62,7 +62,9 @@ public class ProductDAOImpl implements ProductDAO {
             result.setProductTranslations(productNames);
 
             con.commit();
+            logger.info("Product with id = " + id + " was successfully retrieved");
         } catch (SQLException e) {
+            result = null;
             logger.error("Cannot get product by id=" + id, e.getCause());
         }
         finally {
@@ -95,9 +97,7 @@ public class ProductDAOImpl implements ProductDAO {
 //    }
 
     @Override
-    public boolean insertEntity(Product product, Language originalLang) throws ProductTranslationException {
-        boolean result = true;
-
+    public void insertEntity(Product product, Language originalLang) throws ProductTranslationException {
         PreparedStatement ps = null;
         ResultSet resultSet = null;
 
@@ -105,8 +105,8 @@ public class ProductDAOImpl implements ProductDAO {
             connection.setAutoCommit(false);
             ps = connection.prepareStatement(PRODUCTS_INSERT_QUERY, Statement.RETURN_GENERATED_KEYS);
             ps.setString(1, product.getProductTranslations().get(originalLang));
-            ps.setString(2, originalLang.toString());
-            ps.setString(3, product.getMeasure().toString());
+            ps.setString(2, originalLang.name());
+            ps.setString(3, product.getMeasure().name());
             ps.setDouble(4, product.getQuantity());
             ps.setDouble(5, product.getPrice());
             ps.execute();
@@ -116,7 +116,7 @@ public class ProductDAOImpl implements ProductDAO {
             int productId = resultSet.getInt(1);
             for (Map.Entry<Language, String> entry : product.getProductTranslations().entrySet()) {
                 ps = connection.prepareStatement(PRODUCTS_TRANSLATIONS_GET_BY_PRODUCT_TRANSLATION);
-                ps.setString(1, entry.getKey().toString());
+                ps.setString(1, entry.getKey().name());
                 ps.setString(2, entry.getValue());
                 resultSet = ps.executeQuery();
                 if (resultSet.next()) {
@@ -126,21 +126,19 @@ public class ProductDAOImpl implements ProductDAO {
 
                 ps = connection.prepareStatement(PRODUCTS_TRANSLATIONS_INSERT);
                 ps.setInt(1, productId);
-                ps.setString(2, entry.getKey().toString());
+                ps.setString(2, entry.getKey().name());
                 ps.setString(3, entry.getValue());
                 ps.execute();
             }
             connection.commit();
             logger.info("Product " + product.getProductTranslations().get(originalLang) + " was successfully added");
         } catch (SQLException e) {
-            result = false;
             logger.error("Cannot insert product with name=" + product.getProductTranslations().get(originalLang), e.getCause());
+            throw new ProductTranslationException("Product translation already exists", originalLang);
         }
         finally {
             DBUtil.close(ps, resultSet);
         }
-
-        return result;
     }
 
     @Override
@@ -152,27 +150,14 @@ public class ProductDAOImpl implements ProductDAO {
             ps.setDouble(1, product.getQuantity());
             ps.setDouble(2, product.getPrice());
             ps.setInt(3, product.getId());
-            ps.execute();
+
+            int affectedRows = ps.executeUpdate();
+            if (affectedRows == 0)
+                throw new SQLException("Updating product failed, no rows affected");
+
             logger.info("Product was successfully updated");
         } catch (SQLException e) {
             logger.error("Cannot update product", e.getCause());
-            result = false;
-        }
-
-        return result;
-    }
-
-    @Override
-    public boolean deleteEntity(int id) {
-        boolean result = true;
-
-        try (Connection con = connectionFactory.getConnection();
-             PreparedStatement ps = con.prepareStatement(PRODUCTS_DELETE_QUERY)) {
-            ps.setInt(1, id);
-            ps.execute();
-            logger.info("Product with id = " + id + " was successfully added");
-        } catch (SQLException e) {
-            logger.error("Cannot update product with id=" + id, e.getCause());
             result = false;
         }
 

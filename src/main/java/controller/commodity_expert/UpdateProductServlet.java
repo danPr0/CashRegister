@@ -4,6 +4,7 @@ package controller.commodity_expert;
 import entity.Product;
 import service.ProductService;
 import service_impl.ProductServiceImpl;
+import util.GetProperties;
 import util.enums.Language;
 
 import javax.servlet.ServletException;
@@ -33,12 +34,12 @@ public class UpdateProductServlet extends HttpServlet {
             try {
                 productToUpdate = productService.getProduct(Integer.parseInt(product));
             } catch (NumberFormatException e1) {
-                productToUpdate = productService.getProduct(product, Language.valueOf(req.getSession().getAttribute("lang").toString()));
+                productToUpdate = productService.getProduct(product, Language.getLanguage(req));
             }
 
             if (productToUpdate == null)
-                req.setAttribute("error", "true");
-            else req.setAttribute("product", productService.convertToDTO(productToUpdate, Language.valueOf(req.getSession().getAttribute("lang").toString())));
+                req.setAttribute("error", GetProperties.getMessageByLang("error.commodity-expert.findProduct", Language.getLanguage(req)));
+            else req.setAttribute("product", productService.convertToDTO(productToUpdate, Language.getLanguage(req)));
         }
 
         req.getRequestDispatcher("/view/commodity-expert/updateProduct.jsp").forward(req, resp);
@@ -51,11 +52,11 @@ public class UpdateProductServlet extends HttpServlet {
         String newPrice = String.format(req.getParameter("newPrice"), "%.2f");
 
         String url = "/commodity-expert/update-product?product=" + productId;
-        if (!productService.updateProduct(Integer.parseInt(productId),
+        if (productService.updateProduct(Integer.parseInt(productId),
                 new BigDecimal(newQuantity).setScale(3, RoundingMode.UP).doubleValue(),
                 new BigDecimal(newPrice).setScale(2, RoundingMode.UP).doubleValue()))
-            url += "&error=true";
-        else url += "&success=true";
+            url += "&success=true";
+        else url += "&error=" + GetProperties.getMessageByLang("error.commodity-expert.updateProduct", Language.getLanguage(req));
 
         resp.sendRedirect(url);
     }

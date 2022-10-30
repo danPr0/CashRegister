@@ -34,9 +34,9 @@ public class ReportDAOImpl implements ReportDAO {
         try (Connection con = connectionFactory.getConnection();
              PreparedStatement ps = con.prepareStatement(REPORT_INSERT_QUERY)) {
             ps.setInt(1, reportEntity.getUserId());
-            ps.setTimestamp(2, reportEntity.getClosed_at());
-            ps.setInt(3, reportEntity.getItems_quantity());
-            ps.setDouble(4, reportEntity.getTotal_price());
+            ps.setTimestamp(2, reportEntity.getClosedAt());
+            ps.setInt(3, reportEntity.getItemsQuantity());
+            ps.setDouble(4, reportEntity.getTotalPrice());
             ps.execute();
             logger.info("Report element created by " + reportEntity.getUserId() + " was successfully added");
         } catch (SQLException e) {

@@ -8,4 +8,5 @@ import entity.Key;
 public interface KeyDAO {
     boolean insertEntity(Key key);
     Key getEntityByUserId(int userId);
+    boolean updateEntity(Key key);
 }

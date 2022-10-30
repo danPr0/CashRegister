@@ -4,6 +4,8 @@ import dto.UserDTO;
 import entity.User;
 import garbage.RoleServiceImpl;
 import service_impl.UserServiceImpl;
+import util.GetProperties;
+import util.enums.Language;
 import util.enums.RoleName;
 
 import javax.servlet.ServletException;
@@ -27,10 +29,10 @@ public class AuthorizeUser extends HttpServlet {
         User user = userService.getUser(email);
 
         if (user == null) {
-            req.setAttribute("error", "true");
+            req.setAttribute("error", GetProperties.getMessageByLang("error.admin.badEmail", Language.getLanguage(req)));
         }
         else {
-            UserDTO result = new UserDTO(user.getEmail(), user.getFirstName(), user.getSecondName(), user.getRoleId().toString());
+            UserDTO result = new UserDTO(user.getEmail(), user.getFirstName(), user.getSecondName(), user.getRoleId().name());
             req.setAttribute("user", result);
             req.setAttribute("roles", RoleName.values());
         }
@@ -48,7 +50,7 @@ public class AuthorizeUser extends HttpServlet {
         String url = "/admin/authorize-user?email=" + email;
         if (user != null && userService.updateUserRole(user.getId(), RoleName.valueOf(role)))
             url += "&success=true";
-        else url += "&error=true";
+        else url += "&error=" + GetProperties.getMessageByLang("error.general", Language.getLanguage(req));
 
         resp.sendRedirect(url);
     }

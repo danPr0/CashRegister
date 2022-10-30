@@ -1,13 +1,13 @@
 package entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 /**
  * Entity for "check" table
  */
+@NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Getter @Setter
 public class CheckEntity {
     private int id;

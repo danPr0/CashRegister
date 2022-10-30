@@ -1,5 +1,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="e" tagdir="/WEB-INF/tags" %>
+<%@ taglib prefix="input" tagdir="/WEB-INF/tags/input/product" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page isELIgnored="false" %>
 
@@ -15,27 +17,31 @@
 
         <link rel="stylesheet" href="<c:url value="/css?file=bootstrap.min.css"/>"/>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-        <script src="https://code.jquery.com/jquery-1.10.2.js"
-                type="text/javascript"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
         <script src="<c:url value="/js?file=formValidation.js"/>"></script>
         <script src="<c:url value="/js?file=tableParams.js"/>"></script>
         <script>addTableParamListener("/cashier/add-product-to-check")</script>
     </head>
     <body>
     <div class="container p-3 px-5 bg-dark text-white" style="min-height: 100%">
-        <jsp:include page="../menu/menu.jsp">
-            <jsp:param name="mainUrl" value="/cashier"/>
-        </jsp:include>
+<%--        <jsp:include page="../menu/menu.jsp">--%>
+<%--            <jsp:param name="mainUrl" value="/cashier"/>--%>
+<%--        </jsp:include>--%>
+
+        <e:menu url="/cashier"/>
+
 
         <div class="mb-5">
             <form action="<c:url value="/cashier/add-product-to-check"/>" method="post"
                   class="needs-validation col-4" novalidate>
-                <jsp:include page="../util/inputs/product/productInput.jsp"/>
+                <input:productInput/>
+                <input:productQuantityInput name="quantity" presetValue="${param.quantity}"/>
+<%--                <jsp:include page="../../WEB-INF/tags/input/product/productInput.tag"/>--%>
 
-                <jsp:include page="../util/inputs/product/productQuantityInput.jsp">
-                    <jsp:param name="name" value="quantity"/>
-                    <jsp:param name="presetValue" value="${param.quantity}"/>
-                </jsp:include>
+<%--                <jsp:include page="../../WEB-INF/tags/input/product/productQuantityInput.tag">--%>
+<%--                    <jsp:param name="name" value="quantity"/>--%>
+<%--                    <jsp:param name="presetValue" value="${param.quantity}"/>--%>
+<%--                </jsp:include>--%>
 
                 <input type="submit" value="<fmt:message key="submit.add"/>" class="btn btn-primary"/>
             </form>
@@ -66,7 +72,10 @@
             <div>
                 <jsp:include page="checkTable.jsp"/>
 
-                <jsp:include page="pagination.jsp"/>
+                <e:pagination url="/cashier/add-product-to-check"/>
+<%--                <jsp:include page="../../WEB-INF/tags/pagination.tag">--%>
+<%--                    <jsp:param name="url" value="/cashier/add-product-to-check"/>--%>
+<%--                </jsp:include>--%>
 
                 <jsp:include page="../util/showPerPageSelect.jsp">
                     <jsp:param name="perPage" value="${perPage}"/>

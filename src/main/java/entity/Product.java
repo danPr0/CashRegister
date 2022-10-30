@@ -1,9 +1,6 @@
 package entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import util.enums.Language;
 import util.enums.ProductMeasure;
 
@@ -14,6 +11,7 @@ import java.util.Map;
  */
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Getter @Setter
 public class Product {
     private int id;

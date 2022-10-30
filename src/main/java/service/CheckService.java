@@ -11,7 +11,7 @@ import java.util.List;
  * Service layer for {@link dao.CheckDAO}
  */
 public interface CheckService {
-    CheckEntity getCheckElement(int id);
+    CheckEntity getCheckElement(int productId);
     CheckEntity getCheckElement(String productName, Language lang);
     boolean addToCheck(Product product, double quantity);
     boolean closeCheck();

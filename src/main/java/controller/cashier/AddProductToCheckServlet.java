@@ -63,7 +63,7 @@ public class AddProductToCheckServlet extends HttpServlet {
         else orderBy = req.getSession().getAttribute("checkOrderBy").toString();
 
         List<CheckDTO> check = checkService.convertToDTO(checkService.getPerPage(page, total,
-                wrapSortParam(sortBy), orderBy.equals("asc")), Language.valueOf(req.getSession().getAttribute("lang").toString()));
+                wrapSortParam(sortBy), orderBy.equals("asc")), Language.getLanguage(req));
         int nOfPages = (checkService.getNumberOfRows() + total - 1) / total;
 
         if (!check.isEmpty()) {
@@ -81,7 +81,7 @@ public class AddProductToCheckServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String productParam = req.getParameter("product");
         String quantityParam = req.getParameter("quantity");
-        Language lang = Language.valueOf(req.getSession().getAttribute("lang").toString());
+        Language lang = Language.getLanguage(req);
 
         Product product;
         try {
@@ -95,11 +95,11 @@ public class AddProductToCheckServlet extends HttpServlet {
 
         if (product == null)
             url += String.format("?error=%s&product=%s&quantity=%s",
-                    encode(getMessageByLang("msg.error.cashier.noSuchProduct", lang), UTF_8),
+                    encode(getMessageByLang("error.cashier.noSuchProduct", lang), UTF_8),
                     encode(productParam, UTF_8), quantityParam);
         else if (!checkService.addToCheck(product,  new BigDecimal(quantityParam).setScale(3, RoundingMode.UP).doubleValue()))
             url += String.format("?error=%S&product=%s&quantity=%s",
-                    encode(getMessageByLang("msg.error.cashier.overExceededQuantity", lang), UTF_8),
+                    encode(getMessageByLang("error.cashier.overExceededQuantity", lang), UTF_8),
                     encode(productParam, UTF_8), quantityParam);
         else url += "?success=true";
 

@@ -2,6 +2,7 @@ package service;
 
 import dto.ReportDTO;
 import entity.ReportEntity;
+import util.enums.Language;
 
 import java.util.List;
 
@@ -17,5 +18,5 @@ public interface ReportService {
     int getNoOfRows();
     List<ReportEntity> getAll();
     boolean deleteAll();
-    List<ReportDTO> convertToDTO(List<ReportEntity> report);
+    List<ReportDTO> convertToDTO(List<ReportEntity> report, Language lang);
 }

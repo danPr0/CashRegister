@@ -1,14 +1,15 @@
 package entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import util.enums.RoleName;
+
 
 /**
  * Entity for "users" table
  */
+@NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Getter @Setter
 public class User {
     private int id;

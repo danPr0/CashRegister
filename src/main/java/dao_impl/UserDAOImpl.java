@@ -76,38 +76,48 @@ public class UserDAOImpl implements UserDAO {
     }
 
     @Override
-    public boolean insertEntity(User user) {
-        boolean result = true;
+    public User insertEntity(User user) {
+        User result = user;
 
         try (Connection con = connectionFactory.getConnection();
-             PreparedStatement ps = con.prepareStatement(USERS_INSERT_QUERY)) {
+             PreparedStatement ps = con.prepareStatement(USERS_INSERT_QUERY, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, user.getEmail());
             ps.setString(2, user.getPassword());
             ps.setString(3, user.getFirstName());
             ps.setString(4, user.getSecondName());
-            ps.setString(5, user.getRoleId().toString());
-            ps.execute();
+            ps.setString(5, user.getRoleId().name());
+            ps.executeUpdate();
+
+            try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
+                generatedKeys.next();
+                result.setId(generatedKeys.getInt(1));
+            }
+
             logger.info("User " + user.getEmail() + " was successfully added");
         } catch (SQLException e) {
-            logger.error("Cannot insert user with email=" + user.getEmail(), e.getCause());
-            result = false;
+            logger.error("Cannot insert user with email=" + user.getEmail(), e);
+            result = null;
         }
 
         return result;
     }
 
     @Override
-    public boolean updateEntity(int userId, RoleName role) {
+    public boolean updateEntity(User user) {
         boolean result = true;
 
         try (Connection con = connectionFactory.getConnection();
-             PreparedStatement ps = con.prepareStatement(USERS_UPDATE_ROLE_BY_ID)) {
-            ps.setString(1, role.toString());
-            ps.setInt(2, userId);
-            ps.execute();
-            logger.info("User with id=" + userId + " was successfully added");
+             PreparedStatement ps = con.prepareStatement(USERS_UPDATE_QUERY)) {
+            ps.setString(1, user.getPassword());
+            ps.setString(2, user.getRoleId().name());
+            ps.setInt(3, user.getId());
+            int affectedRows = ps.executeUpdate();
+            if (affectedRows == 0)
+                throw new SQLException("Updating user failed, no rows affected");
+
+            logger.info("User with id=" + user.getId() + " was successfully updated");
         } catch (SQLException e) {
-            logger.error("Cannot insert user with id=" + userId, e.getCause());
+            logger.error("Cannot insert user with id=" + user.getId(), e);
             result = false;
         }
 

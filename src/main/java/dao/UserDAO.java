@@ -8,7 +8,7 @@ import util.enums.RoleName;
  */
 public interface UserDAO {
     User getEntityById(int id);
-    User getEntityByEmail(String username);
-    boolean insertEntity(User user);
-    boolean updateEntity(int userId, RoleName role);
+    User getEntityByEmail(String email);
+    User insertEntity(User user);
+    boolean updateEntity(User user);
 }

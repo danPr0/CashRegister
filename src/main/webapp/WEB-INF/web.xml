@@ -22,7 +22,7 @@
   </filter-mapping>
 
   <taglib>
-    <taglib-uri>http://tomcat.apache.org/my-taglib</taglib-uri>
+    <taglib-uri>http://my-taglib/get-param-value</taglib-uri>
     <taglib-location>/WEB-INF/tags/getParameterValue.tld</taglib-location>
   </taglib>
 </web-app>

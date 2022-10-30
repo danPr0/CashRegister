@@ -32,7 +32,7 @@ public class CancelProductInCheckServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String productParam = req.getParameter("product");
         String quantityParam = req.getParameter("quantity");
-        Language lang = Language.valueOf(req.getSession().getAttribute("lang").toString());
+        Language lang = Language.getLanguage(req);
 
         CheckEntity checkEntity;
         try {
@@ -45,11 +45,11 @@ public class CancelProductInCheckServlet extends HttpServlet {
         String url = "/senior-cashier/cancel-product-in-check";
         if (checkEntity == null)
             url += String.format("?error=%s&product=%s&quantity=%s",
-                    encode(getMessageByLang("msg.error.senior-cashier.cancelProduct.noSuchProduct", lang), UTF_8),
+                    encode(getMessageByLang("error.senior-cashier.cancelProduct.noSuchProduct", lang), UTF_8),
                     encode(productParam, UTF_8), quantityParam);
         else if (!checkService.cancelCheckElement(checkEntity,  new BigDecimal(quantityParam).setScale(3, RoundingMode.UP).doubleValue()))
             url += String.format("?error=%s&product=%s&quantity=%s",
-                    encode(getMessageByLang("msg.error.senior-cashier.cancelProduct.overExceededQuantity", lang), UTF_8),
+                    encode(getMessageByLang("error.senior-cashier.cancelProduct.overExceededQuantity", lang), UTF_8),
                     encode(productParam, UTF_8), quantityParam);
         else url += "?success=true";
 

@@ -1,5 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="e" tagdir="/WEB-INF/tags" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page isELIgnored="false" %>
 
@@ -15,7 +16,8 @@
     </head>
     <body>
     <div class="container p-3 px-5 bg-dark text-white" style="min-height: 100%">
-        <jsp:include page="../menu/menu.jsp"/>
+<%--        <jsp:include page="../garbage/menu.jsp"/>--%>
+        <e:menu/>
 
         <div>
             <a href="<c:url value="/commodity-expert/add-product"/>" class="btn btn-primary mb-2">

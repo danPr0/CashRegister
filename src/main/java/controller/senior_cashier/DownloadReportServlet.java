@@ -1,6 +1,6 @@
 package controller.senior_cashier;
 
-import util.ReportFileCreator;
+import util.report.ReportEnumFactory;
 import util.enums.Language;
 
 import javax.servlet.ServletException;
@@ -8,9 +8,11 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
+import java.time.Instant;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
 
 /**
  * Download X or Z reports
@@ -23,30 +25,23 @@ public class DownloadReportServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String reportType = req.getParameter("reportType");
-        String format = req.getParameter("format");
+        ReportEnumFactory reportEnumFactory = ReportEnumFactory.valueOf(req.getParameter("format"));
         Language lang = Language.valueOf(req.getSession().getAttribute("lang").toString());
-        String fileName;
 
-        if (!(format.equals("csv") || format.equals("pdf") || format.equals("xls"))) {
-            resp.sendError(401);
-            return;
-        }
+        String userDir = req.getServletContext().getAttribute("FILES_DIR") + File.separator + req.getSession().getAttribute("email");
+//        File userFolder = new File(userDir);
+//        if (!userFolder.exists())
+//            userFolder.mkdirs();
 
-        if (reportType.equals("z")) {
-            fileName = "z-report." + format;
-        }
-        else {
-            fileName = "x-report." + format;
-            if (format.equals("csv"))
-                ReportFileCreator.createCsv(fileName, req.getServletContext(), lang);
-            else if (format.equals("pdf"))
-                ReportFileCreator.createPdf(fileName, req.getServletContext(), lang);
-            else
-                ReportFileCreator.createXls(fileName, req.getServletContext(), lang);
-        }
+        String filename = reportType.equals("z") ? "z-report" : "x-report";
+        String filepath = userDir + File.separator + filename + "." + reportEnumFactory.name();
+        reportEnumFactory.getInstance().createReport(filepath, lang);
 
-        resp.setHeader("Content-disposition", "attachment; filename=" + fileName);
-        try (InputStream in = req.getServletContext().getResourceAsStream("/WEB-INF/reports/" + fileName);
+        Calendar cal = Calendar.getInstance(TimeZone.getDefault());
+        cal.setTime(Date.from(Instant.now()));
+        resp.setHeader("Content-disposition", "attachment; filename=" + filename + "_" + cal.get(Calendar.DAY_OF_MONTH) +
+                "-" + cal.get(Calendar.MONTH) + "-" + cal.get(Calendar.YEAR) + "." + reportEnumFactory);
+        try (InputStream in = new FileInputStream(filepath);
              OutputStream out = resp.getOutputStream()) {
             out.write(in.readAllBytes());
         }

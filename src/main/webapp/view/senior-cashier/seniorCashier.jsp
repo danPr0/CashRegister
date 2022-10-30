@@ -1,5 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="e" tagdir="/WEB-INF/tags" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page isELIgnored="false" %>
 
@@ -15,7 +16,8 @@
     </head>
     <body>
     <div class="container p-3 px-5 bg-dark text-white" style="min-height: 100%">
-        <jsp:include page="/view/menu/menu.jsp"/>
+<%--        <jsp:include page="/view/garbage/menu.jsp"/>--%>
+        <e:menu/>
 
         <div class="row">
             <div class="col">
@@ -45,9 +47,7 @@
         </div>
 
         <div>
-            <c:if test="${param.error == 'true'}">
-                <p class="text-danger"><fmt:message key="msg.error.senior-cashier.cancelCheck"/></p>
-            </c:if>
+            <p class="text-danger"><c:out value="${param.error}"/></p>
             <c:if test="${param.success == 'true'}">
                 <p class="text-success"><fmt:message key="msg.success.senior-cashier.cancelCheck"/></p>
             </c:if>

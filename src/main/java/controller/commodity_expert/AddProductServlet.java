@@ -1,6 +1,5 @@
 package controller.commodity_expert;
 
-import dao_impl.ProductDAOImpl;
 import exception.ProductTranslationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -42,22 +41,22 @@ public class AddProductServlet extends HttpServlet {
         String quantity = req.getParameter("quantity");
         String price = req.getParameter("price");
 
-        Language lang = Language.valueOf(req.getSession().getAttribute("lang").toString());
+        Language lang = Language.getLanguage(req);
         Map<Language, String> productNames = new HashMap<>();
         Arrays.stream(Language.values()).toList().forEach(e -> productNames.put(e, req.getParameter("productName_" + e.toString())));
 
         String url = "/commodity-expert/add-product";
         String errorParam = null;
         try {
-            if (productService.addProduct(lang, productNames, ProductMeasure.valueOf(measure),
+            if (productService.addProduct(productNames, ProductMeasure.valueOf(measure),
                     new BigDecimal(quantity).setScale(3, RoundingMode.UP).doubleValue(),
                     new BigDecimal(price).setScale(2, RoundingMode.UP).doubleValue()))
                 url += "?success=true";
-            else errorParam = GetProperties.getMessageByLang("msg.error.commodity-expert.addProduct", lang);
+            else errorParam = GetProperties.getMessageByLang("error.general", lang);
         }
         catch (ProductTranslationException e) {
             logger.error(e.getMessage());
-            errorParam = GetProperties.getMessageByLang("msg.error.commodity-expert.addProduct_" + e.getErrorTranslationLang(), lang);
+            errorParam = GetProperties.getMessageByLang("error.commodity-expert.addProduct_" + e.getErrorTranslationLang(), lang);
         }
         if (errorParam != null) {
             url += String.format("?error=%s&productName_ua=%s&productName_en=%s&measure=%s&quantity=%s&price=%s",

@@ -21,6 +21,7 @@ public class ConnectionFactory {
         dataSource = new BasicDataSource();
         dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
         dataSource.setUrl(getConnectionUrl());
+        dataSource.setDefaultTransactionIsolation(Connection.TRANSACTION_READ_UNCOMMITTED);
         dataSource.setMaxTotal(150);
     }
 

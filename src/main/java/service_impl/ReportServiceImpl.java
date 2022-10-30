@@ -15,23 +15,23 @@ import dao_impl.ReportDAOImpl;
 import entity.User;
 import service.ReportService;
 import util.enums.Language;
+import util.price.PriceAdapter;
+import util.price.PriceAdapterFactory;
 
 import java.sql.Timestamp;
-import java.text.NumberFormat;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
 
 import static util.db.DBFields.*;
 
 public class ReportServiceImpl implements ReportService {
     private static ReportServiceImpl instance = null;
-    private final ReportDAO reportDAO = ReportDAOImpl.getInstance();
-    private final CheckDAO checkDAO = CheckDAOImpl.getInstance();
-    private final ProductDAO productDAO = ProductDAOImpl.getInstance();
-    private final UserDAO userDAO = UserDAOImpl.getInstance();
+    private ReportDAO reportDAO = ReportDAOImpl.getInstance();
+    private CheckDAO checkDAO = CheckDAOImpl.getInstance();
+    private ProductDAO productDAO = ProductDAOImpl.getInstance();
+    private UserDAO userDAO = UserDAOImpl.getInstance();
 
     private ReportServiceImpl() {}
 
@@ -87,17 +87,33 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
-    public List<ReportDTO> convertToDTO(List<ReportEntity> report) {
+    public List<ReportDTO> convertToDTO(List<ReportEntity> report, Language lang) {
         List<ReportDTO> result = new ArrayList<>();
+        PriceAdapter priceAdapter = new PriceAdapterFactory().getAdapter(lang);
 
         report.forEach(el ->  {
             User user = userDAO.getEntityById(el.getUserId());
             result.add(new ReportDTO(report.indexOf(el) + 1, user.getFirstName() + " " + user.getSecondName(),
-                    el.getClosed_at().toLocalDateTime().toString().replace("T", " "),
-                    el.getItems_quantity(), NumberFormat.getCurrencyInstance(new Locale("uk", "UA"))
-                    .format(el.getTotal_price())));
+                    el.getClosedAt().toLocalDateTime().toString().replace("T", " "),
+                    el.getItemsQuantity(), lang.getLocalPrice(priceAdapter.convertPrice(el.getTotalPrice()))));
         });
 //        String.format("%.2f", el.getTotal_price())
         return result;
+    }
+
+    public void setProductDAO(ProductDAO productDAO) {
+        this.productDAO = productDAO;
+    }
+
+    public void setCheckDAO(CheckDAO checkDAO) {
+        this.checkDAO = checkDAO;
+    }
+
+    public void setUserDAO(UserDAO userDAO) {
+        this.userDAO = userDAO;
+    }
+
+    public void setReportDAO(ReportDAO reportDAO) {
+        this.reportDAO = reportDAO;
     }
 }

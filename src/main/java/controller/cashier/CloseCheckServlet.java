@@ -4,6 +4,8 @@ import service.CheckService;
 import service.ReportService;
 import service_impl.CheckServiceImpl;
 import service_impl.ReportServiceImpl;
+import util.GetProperties;
+import util.enums.Language;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -25,7 +27,7 @@ public class CloseCheckServlet extends HttpServlet {
             checkService.closeCheck();
             url += "?success=true";
         }
-        else url += "?error=true";
+        else url += "?error=" + GetProperties.getMessageByLang("error.cashier.closeCheck", Language.getLanguage(req));
 
         resp.sendRedirect(url);
     }

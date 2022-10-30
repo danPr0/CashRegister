@@ -1,9 +1,10 @@
 function togglePassword (toggleId, passwordId) {
-    const toggle = document.getElementById(toggleId);
-    const passwordInput = document.getElementById(passwordId);
+    $(document).ready(() => {
+        const passwordInput = $(`#${passwordId}`);
 
-    toggle.addEventListener("click", () => {
-        const type = (passwordInput.getAttribute("type") === "password" ? "text" : "password");
-        passwordInput.setAttribute("type", type);
+        $(`#${toggleId}`).click(() => {
+            const type = (passwordInput.attr("type") === "password" ? "text" : "password");
+            passwordInput.attr("type", type);
+        })
     })
 }

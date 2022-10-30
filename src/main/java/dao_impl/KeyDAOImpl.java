@@ -34,12 +34,12 @@ public class KeyDAOImpl implements KeyDAO {
 
         try (Connection con = connectionFactory.getConnection();
              PreparedStatement ps = con.prepareStatement(KEY_INSERT_QUERY)) {
-            ps.setInt(1, key.getUser_id());
+            ps.setInt(1, key.getUserId());
             ps.setString(2, key.getKey());
             ps.execute();
-            logger.info("Key was added to user with id=" + key.getUser_id());
+            logger.info("Key was added to user with id=" + key.getUserId());
         } catch (SQLException e) {
-            logger.error("Cannot insert secret key with userId=" + key.getUser_id(), e.getCause());
+            logger.error("Cannot insert secret key with userId=" + key.getUserId(), e.getCause());
             result = false;
         }
 
@@ -64,4 +64,26 @@ public class KeyDAOImpl implements KeyDAO {
 
         return result;
     }
+
+    @Override
+    public boolean updateEntity(Key key) {
+        boolean result = true;
+
+        try (Connection con = connectionFactory.getConnection();
+             PreparedStatement ps = con.prepareStatement(KEY_UPDATE_QUERY)) {
+            ps.setString(1, key.getKey());
+            ps.setInt(2, key.getUserId());
+            int affectedRows = ps.executeUpdate();
+            if (affectedRows == 0)
+                throw new SQLException("Updating key failed, no rows affected");
+
+            logger.info("Key to user with id=" + key.getUserId() + "was retrieved");
+        } catch (SQLException e) {
+            logger.error("Cannot get secret key for user with id=" + key.getUserId(), e.getCause());
+        }
+
+        return result;
+    }
+
+
 }
