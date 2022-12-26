@@ -55,13 +55,12 @@ public class ReportDAOImpl implements ReportDAO {
              PreparedStatement ps = con.prepareStatement(String.format(REPORT_GET_SEGMENT_QUERY, sortColumn, order))) {
             ps.setInt(1, limit);
             ps.setInt(2, offset);
-            try (ResultSet resultSet = ps.executeQuery()) {
-                while (resultSet.next()) {
-                    resultList.add(new ReportEntity(resultSet.getInt(REPORT_ID), resultSet.getInt(REPORT_USER_ID), resultSet.getTimestamp(REPORT_CLOSED_AT),
-                            resultSet.getInt(REPORT_ITEMS_QUANTITY), resultSet.getDouble(REPORT_TOTAL_PRICE)));
-                }
-                logger.info(resultList.size() + " report elements were successfully retrieved");
+            ResultSet resultSet = ps.executeQuery();
+            while (resultSet.next()) {
+                resultList.add(new ReportEntity(resultSet.getInt(REPORT_ID), resultSet.getInt(REPORT_USER_ID), resultSet.getTimestamp(REPORT_CLOSED_AT),
+                        resultSet.getInt(REPORT_ITEMS_QUANTITY), resultSet.getDouble(REPORT_TOTAL_PRICE)));
             }
+            logger.info(resultList.size() + " report elements were successfully retrieved");
         } catch (SQLException e) {
             logger.error("Cannot get segment of report from " + offset + " to " + limit, e.getCause());
         }

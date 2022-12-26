@@ -6,6 +6,7 @@ import dao.UserDAO;
 import dao_impl.KeyDAOImpl;
 import dao_impl.ReportDAOImpl;
 import dao_impl.UserDAOImpl;
+import entity.CheckEntity;
 import entity.ReportEntity;
 import entity.User;
 import org.junit.jupiter.api.AfterEach;
@@ -37,8 +38,8 @@ public class ReportDAOTest {
     public void insertRows() {
         PreparedStatement ps = null;
         try (Connection con = connectionFactory.getConnection()) {
-            ps = con.prepareStatement("INSERT INTO users (%s, %s, %s, %s, %s) VALUES (?, 'xxxxxxxx', 'dan', 'pro', ?)"
-                    .formatted(USER_EMAIL, USER_PASSWORD, USER_FIRST_NAME, USER_SECOND_NAME, USER_ROLE_ID), Statement.RETURN_GENERATED_KEYS);
+            ps = con.prepareStatement("INSERT INTO users (%s, %s, %s, %s, %s, %s) VALUES (?, 'xxxxxxxx', 'dan', 'pro', ?, true)"
+                    .formatted(USER_EMAIL, USER_PASSWORD, USER_FIRST_NAME, USER_SECOND_NAME, USER_ROLE_ID, USER_ENABLED), Statement.RETURN_GENERATED_KEYS);
             ps.setString(1, "1@mail.com");
             ps.setString(2, RoleName.admin.name());
             ps.executeUpdate();
@@ -53,8 +54,8 @@ public class ReportDAOTest {
             ps.setTimestamp(2, Timestamp.from(Instant.now()));
             ps.executeUpdate();
 
-            ps = con.prepareStatement("INSERT INTO users (%s, %s, %s, %s, %s) VALUES (?, 'xxxxxxxx', 'dan', 'pro', ?)"
-                    .formatted(USER_EMAIL, USER_PASSWORD, USER_FIRST_NAME, USER_SECOND_NAME, USER_ROLE_ID), Statement.RETURN_GENERATED_KEYS);
+            ps = con.prepareStatement("INSERT INTO users (%s, %s, %s, %s, %s, %s) VALUES (?, 'xxxxxxxx', 'dan', 'pro', ?, true)"
+                    .formatted(USER_EMAIL, USER_PASSWORD, USER_FIRST_NAME, USER_SECOND_NAME, USER_ROLE_ID, USER_ENABLED), Statement.RETURN_GENERATED_KEYS);
             ps.setString(1, "2@mail.com");
             ps.setString(2, RoleName.admin.name());
             ps.executeUpdate();
@@ -72,7 +73,7 @@ public class ReportDAOTest {
             e.printStackTrace();
         }
         finally {
-            DBUtil.close(ps, null);
+            DBUtil.close(null, ps);
         }
     }
 
@@ -89,13 +90,13 @@ public class ReportDAOTest {
             e.printStackTrace();
         }
         finally {
-            DBUtil.close(ps, null);
+            DBUtil.close(null, ps);
         }
     }
 
     @Test
     public void TestInsertEntity() {
-        User user = userDAO.insertEntity(new User(0, "3gmail.com", "xxxxxxxx", "dan", "pro", RoleName.guest));
+        User user = userDAO.insertEntity(new User(0, "3gmail.com", "xxxxxxxx", "dan", "pro", RoleName.guest, true));
         ReportEntity reportEntity = new ReportEntity(0, user.getId(), Timestamp.from(Instant.now()), 1, 1);
         assertTrue(reportDAO.insertEntity(reportEntity));
     }
@@ -104,6 +105,24 @@ public class ReportDAOTest {
     public void TestInsertEntityByNonExistingUser() {
         ReportEntity reportEntity = new ReportEntity(0, 0, Timestamp.from(Instant.now()), 1, 1);
         assertFalse(reportDAO.insertEntity(reportEntity));
+    }
+
+    @Test
+    public void testGetSegment() {
+        List<ReportEntity> segment = reportDAO.getSegment(1, 1, REPORT_USER_ID, "ASC");
+        assertEquals(1, segment.size());
+        assertEquals(REPORT_2_USER_ID, segment.get(0).getUserId());
+
+        segment = reportDAO.getSegment(1, 1, REPORT_USER_ID, "DESC");
+        assertEquals(1, segment.size());
+        assertEquals(REPORT_1_USER_ID, segment.get(0).getUserId());
+
+        segment = reportDAO.getSegment(0, 1, REPORT_USER_ID, "ASC");
+        assertEquals(1, segment.size());
+        assertEquals(REPORT_1_USER_ID, segment.get(0).getUserId());
+
+        segment = reportDAO.getSegment(0, 2, REPORT_USER_ID, "DESC");
+        assertEquals(2, segment.size());
     }
 
     @Test

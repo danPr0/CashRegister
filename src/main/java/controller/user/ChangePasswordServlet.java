@@ -1,5 +1,7 @@
 package controller.user;
 
+import lombok.SneakyThrows;
+import org.apache.hc.core5.net.URIBuilder;
 import service.UserService;
 import service_impl.UserServiceImpl;
 import util.GetProperties;
@@ -15,7 +17,7 @@ import java.nio.charset.StandardCharsets;
 import static java.net.URLEncoder.encode;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-@WebServlet("/change-password")
+@WebServlet(name = "ChangePasswordServlet", value = "/user/change-password")
 public class ChangePasswordServlet extends HttpServlet {
     private final UserService userService = UserServiceImpl.getInstance();
 
@@ -24,6 +26,7 @@ public class ChangePasswordServlet extends HttpServlet {
         req.getRequestDispatcher("/view/user/changePassword.jsp").forward(req, resp);
     }
 
+    @SneakyThrows
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String oldPassword = req.getParameter("oldPassword");
@@ -31,13 +34,16 @@ public class ChangePasswordServlet extends HttpServlet {
         String newPasswordConfirm = req.getParameter("newPasswordConfirm");
         String email = req.getSession().getAttribute("email").toString();
 
-        String url = "/change-password";
+        URIBuilder uriBuilder = new URIBuilder("/change-password", UTF_8);
         if (userService.authenticate(email, oldPassword) && userService.resetPassword(email, newPassword))
-            url += "?success=true";
-        else url += String.format("?error=%s&oldPassword=%s&newPassword=%s&newPasswordConfirm=%s",
-                encode(GetProperties.getMessageByLang("error.user.changePassword", Language.getLanguage(req)), UTF_8),
-                encode(oldPassword, UTF_8), encode(newPassword, UTF_8), encode(newPasswordConfirm, UTF_8));
+            uriBuilder.addParameter("success", "true");
+        else {
+            uriBuilder.addParameter("error", GetProperties.getMessageByLang("error.user.changePassword", Language.getLanguage(req)));
+            uriBuilder.addParameter("oldPassword", oldPassword);
+            uriBuilder.addParameter("newPassword", newPassword);
+            uriBuilder.addParameter("newPasswordConfirm", newPasswordConfirm);
+        }
 
-        resp.sendRedirect(url);
+        resp.sendRedirect(uriBuilder.build().toString());
     }
 }

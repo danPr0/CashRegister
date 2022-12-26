@@ -53,11 +53,12 @@ public class KeyDAOImpl implements KeyDAO {
         try (Connection con = connectionFactory.getConnection();
              PreparedStatement ps = con.prepareStatement(KEY_GET_BY_USER_ID)) {
             ps.setInt(1, userId);
-            try (ResultSet resultSet = ps.executeQuery()) {
-                resultSet.next();
-                result = new Key(userId, resultSet.getString(KEY_KEY));
-                logger.info("Key to user with id=" + userId + "was retrieved");
-            }
+
+            ResultSet resultSet = ps.executeQuery();
+            resultSet.next();
+
+            result = new Key(userId, resultSet.getString(KEY_KEY));
+            logger.info("Key to user with id=" + userId + "was retrieved");
         } catch (SQLException e) {
             logger.error("Cannot get secret key for user with id=" + userId, e.getCause());
         }
@@ -73,12 +74,14 @@ public class KeyDAOImpl implements KeyDAO {
              PreparedStatement ps = con.prepareStatement(KEY_UPDATE_QUERY)) {
             ps.setString(1, key.getKey());
             ps.setInt(2, key.getUserId());
+
             int affectedRows = ps.executeUpdate();
             if (affectedRows == 0)
                 throw new SQLException("Updating key failed, no rows affected");
 
             logger.info("Key to user with id=" + key.getUserId() + "was retrieved");
         } catch (SQLException e) {
+            result = false;
             logger.error("Cannot get secret key for user with id=" + key.getUserId(), e.getCause());
         }
 

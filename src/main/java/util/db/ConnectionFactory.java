@@ -45,7 +45,7 @@ public class ConnectionFactory {
 
     private String getConnectionUrl() {
         Properties properties = new Properties();
-        String connection_url = null;
+        String connection_url;
 
         try {
             properties.load(getClass().getClassLoader().getResourceAsStream("application.properties"));
@@ -53,6 +53,7 @@ public class ConnectionFactory {
         }
         catch (IOException e) {
             logger.error(e.getMessage());
+            connection_url = null;
         }
 
         return connection_url;

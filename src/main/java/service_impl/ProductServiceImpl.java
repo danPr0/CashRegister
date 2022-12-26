@@ -51,53 +51,8 @@ public class ProductServiceImpl implements ProductService {
                 && Validator.validateQuantity(measure, quantity) && Validator.validatePrice(price)))
             return false;
 
-//        String error = null;
-//        try (Connection connection = connectionFactory.getConnection()) {
-//            connection.setAutoCommit(false);
-//            int productId = productDAO.insertEntity(new Product(0, productNames.get("en"), measure, quantity, price), connection);
-//            if (productId == 0) {
-//                connection.close();
-//                return "msg.error.commodity-expert.addProductEN";
-//            }
-//
-//            Map<String, String> incorrectNames = new HashMap<>();
-//            productNames.forEach((k, v) -> {
-//                int langId = langDAO.getEntityByVar(k).getId();
-//                if (productLangDAO.getProductName(productId, langDAO.getEntityByVar(k).getId()) != null ||
-//                        !productLangDAO.insertEntity(new ProductLang(productId, langId, v), connection)) {
-//                    if (k.equals("ua"))
-//                        incorrectNames.put(k, "msg.error.commodity-expert.addProductUA");
-//                    else incorrectNames.put(k, "msg.error.commodity-expert.addProductEN");
-//                }
-//            });
-//
-//            if (incorrectNames.isEmpty())
-//                connection.commit();
-//            else {
-//                connection.rollback();
-//                StringBuilder result = new StringBuilder();
-//                incorrectNames.values().forEach(v -> {
-//                    try {
-//                        result.append(GetProperties.getMessageByLang(v, lang)).append("\n");
-//                    } catch (IOException e) {
-//                        logger.error("Cannot read error in properties", e);
-//                    }
-//                });
-//                error = result.toString();
-//            }
-//        } catch (SQLException e) {
-//            logger.error("Cannot add product", e);
-//        }
         productDAO.insertEntity(new Product(0, productNames, measure, quantity, price), Language.en);
         return true;
-//        String error = null;
-//        try {
-//            if (langError != null)
-//                error = GetProperties.getMessageByLang("msg.error.commodity-expert.addProduct_" + langError, lang.toString());
-//        } catch (IOException e) {
-//            logger.error("Cannot read error in properties", e);
-//        }
-//        return error;
     }
 
     @Override

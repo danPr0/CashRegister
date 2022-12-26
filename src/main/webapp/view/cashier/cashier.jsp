@@ -43,9 +43,9 @@
         </div>
 
         <div>
-            <p class="text-danger pl-3"><c:out value="${param.error}"/></p>
+            <p class="text-danger"><c:out value="${param.error}"/></p>
             <c:if test="${param.success == 'true'}">
-                <p class="text-success pl-3"><fmt:message key="msg.success.cashier.closeCheck"/></p>
+                <p class="text-success"><fmt:message key="msg.success.cashier.closeCheck"/></p>
             </c:if>
         </div>
     </div>

@@ -77,7 +77,7 @@ public class ProductDAOTest {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            DBUtil.close(ps, resultSet);
+            DBUtil.close(null, ps);
         }
     }
 
@@ -93,7 +93,7 @@ public class ProductDAOTest {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            DBUtil.close(ps, null);
+            DBUtil.close(null, ps);
         }
     }
 

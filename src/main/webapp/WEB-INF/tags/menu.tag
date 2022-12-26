@@ -60,7 +60,7 @@
                         <c:out value="${sessionScope.firstName}"/>
                     </a>
                     <div class="dropdown-menu py-1" style="min-width: auto">
-                        <a href="<c:url value="/change-password"/>" class="dropdown-item">
+                        <a href="<c:url value="/user/change-password"/>" class="dropdown-item">
                             <fmt:message key="button.changePassword"/>
                         </a>
                         <a href="<c:url value="/logout"/>" class="dropdown-item">

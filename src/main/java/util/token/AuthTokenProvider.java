@@ -1,4 +1,4 @@
-package util;
+package util.token;
 
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
@@ -10,11 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 
-/**
- * Utility for creating, resolving and validation access and refresh tokens
- */
-public class JWTProvider {
-    private static final String secretKey = "cash_register";
+public class AuthTokenProvider extends TokenProvider {
     public static final int accessTokenExpirationInSec = 900;
     public static final int refreshTokenExpirationInSec = 86_400;
 
@@ -46,20 +42,6 @@ public class JWTProvider {
                     break;
                 }
             }
-
-        return result;
-    }
-
-    public static boolean validateToken(String token) throws JwtException {
-        if (token == null || token.isEmpty())
-            return false;
-
-        boolean result = true;
-        try {
-            Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
-        } catch (JwtException e) {
-            result = false;
-        }
 
         return result;
     }

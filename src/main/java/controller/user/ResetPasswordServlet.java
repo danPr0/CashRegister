@@ -3,14 +3,17 @@ package controller.user;
 import dao.KeyDAO;
 import dao_impl.KeyDAOImpl;
 import entity.User;
+import lombok.SneakyThrows;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.hc.core5.net.URIBuilder;
 import service.UserService;
 import service_impl.UserServiceImpl;
-import util.AESUtil;
 import util.GetProperties;
 import util.SendingEmailService;
+import util.captcha.RecaptchaValidation;
 import util.enums.Language;
+import util.token.PasswordTokenProvider;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
@@ -28,54 +31,53 @@ import static java.net.URLDecoder.decode;
 import static java.net.URLEncoder.encode;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-@WebServlet("/reset-password")
+@WebServlet("/user/reset-password")
 public class ResetPasswordServlet extends HttpServlet {
     private final UserService userService = UserServiceImpl.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String email = req.getParameter("email");
-        String passwordInUrl = req.getParameter("newPassword");
-        String secretKeyInUrl = req.getParameter("secretKey");
+        String token = req.getParameter("token");
 
-        if (passwordInUrl != null) {
+        if (PasswordTokenProvider.validateToken(token)) {
             try {
-                SecretKeySpec secretKey = new SecretKeySpec(Base64.decodeBase64(secretKeyInUrl), "AES");
-                userService.resetPassword(email, userService.decryptPassword(secretKey, passwordInUrl));
+                userService.resetPassword(PasswordTokenProvider.getEmail(token), PasswordTokenProvider.getPassword(token));
                 resp.sendRedirect("/logout");
             }
             catch (Exception e) {
-                resp.sendError(400, "Dont play with me :)");
-            }
-        } else req.getRequestDispatcher("/view/user/resetPassword.jsp").forward(req, resp);
-    }
-
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-//        String email = req.getParameter("email") == null ? req.getSession().getAttribute("email").toString() : req.getParameter("email");
-        String email = req.getParameter("email");
-        User user = userService.getUser(email);
-
-        String redirectUrl;
-        if (user == null)
-            redirectUrl = String.format("/reset-password?error=%s&email=%s",
-                    encode(GetProperties.getMessageByLang("error.user.resetPassword", Language.getLanguage(req)), UTF_8),
-                    encode(email, UTF_8));
-        else {
-            try {
-                SecretKey secretKey = AESUtil.generateSecretKey();
-                String newPassword = RandomStringUtils.randomAlphanumeric(20);
-
-                SendingEmailService.sendResetPasswordEmail(email, newPassword,
-                        "http://localhost:8080/reset-password?email=" + email + "&newPassword=" +
-                                userService.encryptPassword(secretKey, newPassword) + "&secretKey=" + Base64.encodeBase64URLSafeString(secretKey.getEncoded()));
-                redirectUrl = "/reset-password?success=true";
-            } catch (MessagingException e) {
-                redirectUrl = String.format("/reset-password?error=%s&email=%s",
-                        encode(GetProperties.getMessageByLang("error.general", Language.getLanguage(req)), UTF_8),
-                        encode(email, UTF_8));
+                resp.sendError(400, "Invalid token");
             }
         }
-        resp.sendRedirect(redirectUrl);
+        else req.getRequestDispatcher("/view/user/resetPassword.jsp").forward(req, resp);
+    }
+
+    @SneakyThrows
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String email = req.getParameter("email");
+
+        if (!RecaptchaValidation.verify(req.getParameter("g-recaptcha-response"))) {
+            resp.sendError(400, "Strange behavior was noticed");
+            return;
+        }
+
+        URIBuilder uriBuilder = new URIBuilder("/reset-password", UTF_8);
+        User user = userService.getUser(email);
+        if (user == null || !user.isEnabled()) {
+            uriBuilder.addParameter("error", GetProperties.getMessageByLang("error.user.resetPassword", Language.getLanguage(req)));
+            uriBuilder.addParameter("email", email);
+        }
+        else {
+            try {
+                String newPassword = RandomStringUtils.randomAlphanumeric(20);
+                SendingEmailService.sendResetPasswordEmail(email, newPassword, "http://localhost:8080/reset-password?token=" +
+                                PasswordTokenProvider.generateJwtToken(email, newPassword), Language.getLanguage(req));
+                uriBuilder.addParameter("success", "true");
+            } catch (MessagingException e) {
+                uriBuilder.addParameter("error", GetProperties.getMessageByLang("error.general", Language.getLanguage(req)));
+                uriBuilder.addParameter("email", email);
+            }
+        }
+        resp.sendRedirect(uriBuilder.build().toString());
     }
 }

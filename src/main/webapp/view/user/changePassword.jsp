@@ -23,7 +23,7 @@
         <e:menu url="/"/>
 
         <div class="mb-4">
-            <form action="<c:url value="/change-password"/>" method="post" class="needs-validation col-4" novalidate>
+            <form action="<c:url value="/user/change-password"/>" method="post" class="needs-validation col-4" novalidate>
                 <input:passwordInput passwordType="oldPassword"/>
                 <input:passwordInput passwordType="newPassword"/>
                 <input:passwordInput passwordType="newPasswordConfirm"/>
@@ -40,11 +40,10 @@
 
         <div>
             <p>
-                Forgot your password? Click
-                <a href="<c:url value="/reset-password"/>" class="card-link">
-                    here
+                <fmt:message key="msg.info.askToResetPassword"/>
+                <a href="<c:url value="/user/reset-password"/>" class="card-link">
+                    <fmt:message key="button.resetPassword"/>
                 </a>
-                to reset it
             </p>
         </div>
     </div>

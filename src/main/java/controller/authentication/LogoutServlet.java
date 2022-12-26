@@ -1,6 +1,6 @@
 package controller.authentication;
 
-import util.JWTProvider;
+import util.token.AuthTokenProvider;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -19,8 +19,8 @@ public class LogoutServlet extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        JWTProvider.setTokenCookie("", "accessToken", 0, resp);
-        JWTProvider.setTokenCookie("", "refreshToken", 0, resp);
+        AuthTokenProvider.setTokenCookie("", "accessToken", 0, resp);
+        AuthTokenProvider.setTokenCookie("", "refreshToken", 0, resp);
 
         req.getSession().removeAttribute("email");
         req.getSession().removeAttribute("firstName");

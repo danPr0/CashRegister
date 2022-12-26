@@ -16,6 +16,8 @@
         <link rel="stylesheet" href="<c:url value="/css?file=bootstrap.min.css"/>"/>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script src="https://www.google.com/recaptcha/api.js?render=6Lcn7NwiAAAAAAwYtAsRIMOAyuRz4lXz20JGzqVO"></script>
+        <script src="<c:url value="/js?file=getRecaptchaToken.js"/>"></script>
         <script src="<c:url value="/js?file=formValidation.js"/>"></script>
         <script src="<c:url value="/js?file=checkPasswordsMatch.js"/>"></script>
     </head>
@@ -24,39 +26,42 @@
             <%--        <jsp:include page="/view/menu/menu.jsp"/>--%>
         <e:menu/>
 
-        <div class="mb-4">
-            <form action="<c:url value="/auth/signup"/>" method="post" class="needs-validation col-4" novalidate>
-                <input:emailInput/>
-                <input:firstNameInput/>
-                <input:secondNameInput/>
-                <input:passwordInput passwordType="password"/>
-                <input:passwordInput passwordType="passwordConfirm"/>
-                <input:captchaInput/>
-                <script>checkPasswordsMatch("password", "passwordConfirm")</script>
+        <c:choose>
+            <c:when test="${param.success == 'true'}">
+                <div>
+                    <p><fmt:message key="msg.success.auth.signup"/></p>
+                </div>
+            </c:when>
+            <c:otherwise>
+                <div class="mb-4">
+                    <form action="<c:url value="/auth/signup"/>" method="post" class="needs-validation col-4"
+                          novalidate>
+                        <input:emailInput/>
+                        <input:firstNameInput/>
+                        <input:secondNameInput/>
+                        <input:passwordInput passwordType="password"/>
+                        <input:passwordInput passwordType="passwordConfirm"/>
+                        <input:captchaInput/>
+                        <input type="hidden" id="g-recaptcha-response" name="g-recaptcha-response"/>
 
-                <input type="submit" value="<fmt:message key="submit.signup"/>" class="btn btn-primary"/>
-            </form>
+                        <script>checkPasswordsMatch("password", "passwordConfirm")</script>
 
-            <p class="text-danger pl-3"><c:out value="${param.error}"/></p>
-        </div>
+                        <input type="submit" value="<fmt:message key="submit.signup"/>" class="btn btn-primary"/>
+                    </form>
 
-        <div>
-            <p>
-                <fmt:message key="msg.info.askToLogin"/>
-                <a href="<c:url value="/auth/login"/>" class="card-link">
-                    <fmt:message key="button.login"/>
-                </a>
-            </p>
-        </div>
-        <div>
-            <p>
-                Forgot your password? Click
-                <a href="<c:url value="/reset-password"/>" class="card-link">
-                    here
-                </a>
-                to reset it
-            </p>
-        </div>
+                    <p class="text-danger"><c:out value="${param.error}"/></p>
+                </div>
+
+                <div>
+                    <p>
+                        <fmt:message key="msg.info.askToLogin"/>
+                        <a href="<c:url value="/auth/login"/>" class="card-link">
+                            <fmt:message key="button.login"/>
+                        </a>
+                    </p>
+                </div>
+            </c:otherwise>
+        </c:choose>
     </div>
     </body>
 </fmt:bundle>

@@ -25,6 +25,8 @@ public class ProductServiceTest extends Mockito {
     private ProductDAO productDAO;
     private ProductTranslationDAO productTranslationDAO;
 
+    private Product product;
+
     @BeforeEach
     public void init() {
         productService = ProductServiceImpl.getInstance();
@@ -34,6 +36,11 @@ public class ProductServiceTest extends Mockito {
         productService.setProductDAO(productDAO);
         productService.setProductTranslationDAO(productTranslationDAO);
 
+        Map<Language, String> productTranslations = new HashMap<>();
+        productTranslations.put(Language.en, "sugar");
+        productTranslations.put(Language.ua, "цукор");
+        product = new Product(0, productTranslations, ProductMeasure.weight, 1, 1);
+
 //        try (MockedStatic<ProductDAOImpl> productDAOMocked = mockStatic(ProductDAOImpl.class)) {
 //            productDAOMocked.when(ProductDAOImpl::getInstance).thenReturn(productDAO);
 //        }
@@ -41,14 +48,10 @@ public class ProductServiceTest extends Mockito {
 
     @Test
     public void testFindProductById() {
-        Map<Language, String> productTranslations = new HashMap<>();
-        productTranslations.put(Language.en, "sugar");
-        productTranslations.put(Language.ua, "цукор");
-        Product product = new Product(0, productTranslations, ProductMeasure.weight, 1, 1);
-        ProductTranslation translation =new ProductTranslation(0, Language.en, productTranslations.get(Language.en));
+        ProductTranslation translation = new ProductTranslation(product.getId(), Language.en, product.getProductTranslations().get(Language.en));
 
         when(productTranslationDAO.getEntityByProductName(translation.getTranslation(), translation.getLangId())).thenReturn(translation);
-        when(productDAO.getEntityById(0)).thenReturn(product);
+        when(productDAO.getEntityById(product.getId())).thenReturn(product);
         Product foundProduct = productService.getProduct(translation.getTranslation(), translation.getLangId());
 
         assertNotNull(foundProduct);
@@ -58,11 +61,8 @@ public class ProductServiceTest extends Mockito {
 
     @Test
     public void testFindProductByName() {
-        Product product = new Product(0, new HashMap<>(), ProductMeasure.weight, 1, 1);
-
-        when(productDAO.getEntityById(0)).thenReturn(product);
-        Product foundProduct = productService.getProduct(0);
-        verify(productDAO).getEntityById(anyInt());
+        when(productDAO.getEntityById(product.getId())).thenReturn(product);
+        Product foundProduct = productService.getProduct(product.getId());
 
         assertNotNull(foundProduct);
         assertEquals(product.getId(), foundProduct.getId());
@@ -70,31 +70,19 @@ public class ProductServiceTest extends Mockito {
 
     @Test
     public void testAddNonExistingProduct() throws ProductTranslationException {
-        Map<Language, String> productTranslations = new HashMap<>();
-        productTranslations.put(Language.en, "sugar");
-        productTranslations.put(Language.ua, "цукор");
-        Product product = new Product(0, productTranslations, ProductMeasure.weight, 1, 1);
-
         doNothing().when(productDAO).insertEntity(product, Language.en);
-        assertDoesNotThrow(() -> productService.addProduct(productTranslations, product.getMeasure(), product.getQuantity(), product.getPrice()));
+        assertDoesNotThrow(() -> productService.addProduct(product.getProductTranslations(), product.getMeasure(), product.getQuantity(), product.getPrice()));
     }
 
     @Test
     public void testAddExistingProduct() throws ProductTranslationException {
-        Map<Language, String> productTranslations = new HashMap<>();
-        productTranslations.put(Language.en, "sugar");
-        productTranslations.put(Language.ua, "цукор");
-        Product product = new Product(0, productTranslations, ProductMeasure.weight, 1, 1);
-
         doThrow(ProductTranslationException.class).when(productDAO).insertEntity(any(Product.class), eq(Language.en));
-        assertThrows(ProductTranslationException.class, () -> productService.addProduct(productTranslations, product.getMeasure(), product.getQuantity(), product.getPrice()));
+        assertThrows(ProductTranslationException.class, () -> productService.addProduct(product.getProductTranslations(), product.getMeasure(), product.getQuantity(), product.getPrice()));
     }
 
     @Test
     public void testUpdateProduct() {
-        Product product = new Product(0, new HashMap<>(), ProductMeasure.weight, 1, 1);
-
-        when(productDAO.getEntityById(0)).thenReturn(product);
+        when(productDAO.getEntityById(product.getId())).thenReturn(product);
         product.setQuantity(2);
         product.setPrice(2);
 

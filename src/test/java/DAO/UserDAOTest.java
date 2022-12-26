@@ -34,8 +34,8 @@ public class UserDAOTest {
     public void insertRows() {
         PreparedStatement ps = null;
         try (Connection con = connectionFactory.getConnection()) {
-            ps = con.prepareStatement("INSERT INTO users (%s, %s, %s, %s, %s) VALUES (?, 'xxxxxxxx', 'dan', 'pro', ?)"
-                    .formatted(USER_EMAIL, USER_PASSWORD, USER_FIRST_NAME, USER_SECOND_NAME, USER_ROLE_ID), Statement.RETURN_GENERATED_KEYS);
+            ps = con.prepareStatement("INSERT INTO users (%s, %s, %s, %s, %s, %s) VALUES (?, 'xxxxxxxx', 'dan', 'pro', ?, true)"
+                    .formatted(USER_EMAIL, USER_PASSWORD, USER_FIRST_NAME, USER_SECOND_NAME, USER_ROLE_ID, USER_ENABLED), Statement.RETURN_GENERATED_KEYS);
             ps.setString(1, USER_1_EMAIL);
             ps.setString(2, USER_1_ROLE.name());
             ps.executeUpdate();
@@ -44,8 +44,8 @@ public class UserDAOTest {
                 USER_1_ID = generatedKeys.getInt(1);
             }
 
-            ps = con.prepareStatement("INSERT INTO users (%s, %s, %s, %s, %s) VALUES (?, 'xxxxxxxx', 'dan', 'pro', ?)"
-                    .formatted(USER_EMAIL, USER_PASSWORD, USER_FIRST_NAME, USER_SECOND_NAME, USER_ROLE_ID), Statement.RETURN_GENERATED_KEYS);
+            ps = con.prepareStatement("INSERT INTO users (%s, %s, %s, %s, %s, %s) VALUES (?, 'xxxxxxxx', 'dan', 'pro', ?, true)"
+                    .formatted(USER_EMAIL, USER_PASSWORD, USER_FIRST_NAME, USER_SECOND_NAME, USER_ROLE_ID, USER_ENABLED), Statement.RETURN_GENERATED_KEYS);
             ps.setString(1, USER_2_EMAIL);
             ps.setString(2, USER_2_ROLE.name());
             ps.executeUpdate();
@@ -57,7 +57,7 @@ public class UserDAOTest {
             e.printStackTrace();
         }
         finally {
-            DBUtil.close(ps, null);
+            DBUtil.close(null, ps);
         }
     }
 
@@ -71,7 +71,7 @@ public class UserDAOTest {
             e.printStackTrace();
         }
         finally {
-            DBUtil.close(ps, null);
+            DBUtil.close(null, ps);
         }
     }
 
@@ -106,7 +106,7 @@ public class UserDAOTest {
 
     @Test
     public void TestInsertNonExistingUser() {
-        User user = new User(USER_3_ID, USER_3_EMAIL, "p", "d", "p", USER_3_ROLE);
+        User user = new User(USER_3_ID, USER_3_EMAIL, "p", "d", "p", USER_3_ROLE, true);
         assertNotNull(userDAO.insertEntity(user));
         User insertedUser = userDAO.getEntityByEmail(USER_3_EMAIL);
 
@@ -117,7 +117,7 @@ public class UserDAOTest {
 
     @Test
     public void TestInsertExistingUser() {
-        User user = new User(USER_2_ID, USER_2_EMAIL, "p", "d", "p", USER_2_ROLE);
+        User user = new User(USER_2_ID, USER_2_EMAIL, "p", "d", "p", USER_2_ROLE, true);
         assertNull(userDAO.insertEntity(user));
     }
 
@@ -133,6 +133,6 @@ public class UserDAOTest {
 
     @Test
     public void TestUpdateNonExistingUser() {
-        assertFalse(userDAO.updateEntity(User.builder().id(0).build()));
+        assertFalse(userDAO.updateEntity(User.builder().id(0).roleId(RoleName.guest).enabled(true).build()));
     }
 }

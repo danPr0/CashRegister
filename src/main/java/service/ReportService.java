@@ -3,6 +3,7 @@ package service;
 import dto.ReportDTO;
 import entity.ReportEntity;
 import util.enums.Language;
+import util.table.ReportColumnName;
 
 import java.util.List;
 
@@ -14,7 +15,7 @@ public interface ReportService {
     /**
      * Implement pagination
      */
-    List<ReportEntity> getPerPage(int nOfPage, int total, String sortParameter, boolean ifAscending);
+    List<ReportEntity> getPerPage(int nOfPage, int total, ReportColumnName sortBy, boolean ifAscending);
     int getNoOfRows();
     List<ReportEntity> getAll();
     boolean deleteAll();

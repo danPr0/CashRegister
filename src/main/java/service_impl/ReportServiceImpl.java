@@ -15,14 +15,14 @@ import dao_impl.ReportDAOImpl;
 import entity.User;
 import service.ReportService;
 import util.enums.Language;
-import util.price.PriceAdapter;
-import util.price.PriceAdapterFactory;
+import util.price_adapter.PriceAdapter;
+import util.price_adapter.PriceAdapterFactory;
+import util.table.ReportColumnName;
 
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import static util.db.DBFields.*;
 
@@ -59,13 +59,13 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
-    public List<ReportEntity> getPerPage(int nOfPage, int total, String sortBy, boolean ifAscending) {
+    public List<ReportEntity> getPerPage(int nOfPage, int total, ReportColumnName sortBy, boolean ifAscending) {
         String sortColumn = REPORT_ID;
-        if (Objects.equals(sortBy, "createdBy"))
+        if (sortBy.equals(ReportColumnName.createdBy))
             sortColumn = REPORT_USER_ID;
-        else if (Objects.equals(sortBy, "quantity"))
+        else if (sortBy.equals(ReportColumnName.quantity))
             sortColumn = REPORT_ITEMS_QUANTITY;
-        else if (Objects.equals(sortBy, "price"))
+        else if (sortBy.equals(ReportColumnName.price))
             sortColumn = REPORT_TOTAL_PRICE;
 
         return reportDAO.getSegment(total * (nOfPage - 1), total, sortColumn, ifAscending ? "ASC" : "DESC");
@@ -97,7 +97,7 @@ public class ReportServiceImpl implements ReportService {
                     el.getClosedAt().toLocalDateTime().toString().replace("T", " "),
                     el.getItemsQuantity(), lang.getLocalPrice(priceAdapter.convertPrice(el.getTotalPrice()))));
         });
-//        String.format("%.2f", el.getTotal_price())
+
         return result;
     }
 

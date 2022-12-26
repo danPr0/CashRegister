@@ -15,6 +15,8 @@
         <link rel="stylesheet" href="<c:url value="/css?file=bootstrap.min.css"/>"/>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script src="https://www.google.com/recaptcha/api.js?render=6Lcn7NwiAAAAAAwYtAsRIMOAyuRz4lXz20JGzqVO"></script>
+        <script src="<c:url value="/js?file=getRecaptchaToken.js"/>"></script>
         <script src="<c:url value="/js?file=formValidation.js"/>"></script>
     </head>
     <body>
@@ -27,12 +29,14 @@
             </c:when>
             <c:otherwise>
                 <div class="mb-4">
-                    <form action="<c:url value="/reset-password"/>" method="post" class="needs-validation col-4" novalidate>
+                    <form action="<c:url value="/user/reset-password"/>" method="post" class="needs-validation col-4" novalidate>
                         <input:emailInput/>
+                        <input type="hidden" id="g-recaptcha-response" name="g-recaptcha-response"/>
+
                         <input type="submit" value="<fmt:message key="submit.reset"/>" class="btn btn-primary"/>
                     </form>
 
-                    <p class="text-danger pl-3"><c:out value="${param.error}"/></p>
+                    <p class="text-danger"><c:out value="${param.error}"/></p>
                 </div>
             </c:otherwise>
         </c:choose>

@@ -1,8 +1,8 @@
 package controller;
 
 
-import util.JWTProvider;
 import util.enums.RoleName;
+import util.token.AuthTokenProvider;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -14,23 +14,20 @@ import java.io.IOException;
 /**
  * Distribute user to the specific page according to his role
  */
-@WebServlet("/")
+@WebServlet(name = "MainServlet", value = "/")
 public class MainServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String accessToken = JWTProvider.resolveToken(req, "accessToken");
-        RoleName role = JWTProvider.getRole(accessToken);
+        String accessToken = AuthTokenProvider.resolveToken(req, "accessToken");
+        RoleName role = AuthTokenProvider.getRole(accessToken);
 
-        if (role.equals(RoleName.guest))
-            req.getRequestDispatcher("/view/guest/guestPage.jsp").forward(req, resp);
-        else if (role.equals(RoleName.admin))
-            req.getRequestDispatcher("/view/admin/authorizeUser.jsp").forward(req, resp);
-        else if (role.equals(RoleName.cashier))
-            resp.sendRedirect("/cashier");
-        else if (role.equals(RoleName.commodity_expert))
-            resp.sendRedirect("/commodity-expert");
-        else if (role.equals(RoleName.senior_cashier))
-            resp.sendRedirect("/senior-cashier");
+        switch (role) {
+            case guest -> req.getRequestDispatcher("/view/guest/guestPage.jsp").forward(req, resp);
+            case admin -> req.getRequestDispatcher("/view/admin/authorizeUser.jsp").forward(req, resp);
+            case cashier -> resp.sendRedirect("/cashier");
+            case commodity_expert -> resp.sendRedirect("/commodity-expert");
+            case senior_cashier ->  resp.sendRedirect("/senior-cashier");
+        }
     }
 }

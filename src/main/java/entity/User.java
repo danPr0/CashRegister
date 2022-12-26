@@ -18,4 +18,5 @@ public class User {
     private String firstName;
     private String secondName;
     private RoleName roleId;
+    private boolean enabled;
 }

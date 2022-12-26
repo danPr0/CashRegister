@@ -1,6 +1,6 @@
 package filter;
 
-import util.JWTProvider;
+import util.token.AuthTokenProvider;
 
 import javax.servlet.*;
 import javax.servlet.annotation.*;
@@ -9,10 +9,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * Filter requests to main page
+ * Filter requests to protected resources
  */
-@WebFilter("/")
-public class MainFilter implements Filter {
+@WebFilter(servletNames = {"MainServlet", "ChangePasswordServlet"})
+public class ProtectedResourcesFilter implements Filter {
     /**
      * If not authenticated, user is redirected to login page
      */
@@ -21,8 +21,8 @@ public class MainFilter implements Filter {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
 
-        String accessToken = JWTProvider.resolveToken(httpRequest, "accessToken");
-        if (!JWTProvider.validateToken(accessToken))
+        String accessToken = AuthTokenProvider.resolveToken(httpRequest, "accessToken");
+        if (!AuthTokenProvider.validateToken(accessToken))
             httpResponse.sendRedirect("/auth/login");
         else chain.doFilter(request, response);
     }

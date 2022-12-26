@@ -10,6 +10,7 @@ public class DBFields {
     public static final String USER_FIRST_NAME = "first_name";
     public static final String USER_SECOND_NAME = "second_name";
     public static final String USER_ROLE_ID = "role_id";
+    public static final String USER_ENABLED = "enabled";
 
     public static final String KEY_USER_ID = "user_id";
     public static final String KEY_KEY = "secret_key";

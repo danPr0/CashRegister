@@ -16,7 +16,7 @@ public class GetParameterValueTag extends SimpleTagSupport {
     }
 
     @Override
-    public void doTag() throws JspException, IOException {
+    public void doTag() throws IOException {
         PageContext pageContext = (PageContext) getJspContext();
         String paramValue = pageContext.getRequest().getParameter(paramName);
         if (paramValue != null)

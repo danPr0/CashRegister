@@ -34,11 +34,12 @@ public class CheckDAOImpl implements CheckDAO {
         try (Connection con = connectionFactory.getConnection();
              PreparedStatement ps = con.prepareStatement(CHECK_GET_BY_PRODUCT_QUERY)) {
             ps.setInt(1, productId);
-            try (ResultSet resultSet = ps.executeQuery()) {
-                resultSet.next();
-                result = new CheckEntity(resultSet.getInt(CHECK_ID), productId, resultSet.getDouble(CHECK_PRODUCT_QUANTITY));
-                logger.info("Check element was successfully retrieved");
-            }
+
+            ResultSet resultSet = ps.executeQuery();
+            resultSet.next();
+
+            result = new CheckEntity(resultSet.getInt(CHECK_ID), productId, resultSet.getDouble(CHECK_PRODUCT_QUANTITY));
+            logger.info("Check element was successfully retrieved");
         } catch (SQLException e) {
             logger.error("Cannot get check element", e.getCause());
         }
@@ -112,14 +113,14 @@ public class CheckDAOImpl implements CheckDAO {
              PreparedStatement ps = con.prepareStatement(String.format(CHECK_GET_SEGMENT_QUERY, sortColumn, order))) {
             ps.setInt(1, limit);
             ps.setInt(2, offset);
-            try (ResultSet resultSet = ps.executeQuery()) {
-                while (resultSet.next()) {
-                    resultList.add(new CheckEntity(resultSet.getInt(CHECK_ID),
-                            resultSet.getInt(CHECK_PRODUCT_ID),
-                            resultSet.getDouble(CHECK_PRODUCT_QUANTITY)));
-                }
-                logger.info(resultList.size() + " check elements were successfully retrieved");
+
+            ResultSet resultSet = ps.executeQuery();
+            while (resultSet.next()) {
+                resultList.add(new CheckEntity(resultSet.getInt(CHECK_ID),
+                        resultSet.getInt(CHECK_PRODUCT_ID),
+                        resultSet.getDouble(CHECK_PRODUCT_QUANTITY)));
             }
+            logger.info(resultList.size() + " check elements were successfully retrieved");
         } catch (SQLException e) {
             logger.error("Cannot get segment of check from " + offset + " to " + limit, e.getCause());
         }

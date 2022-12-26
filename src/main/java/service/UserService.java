@@ -11,8 +11,8 @@ import javax.crypto.spec.SecretKeySpec;
  */
 public interface UserService {
     User getUser(String email);
-    boolean addUser(String email, String password, String firstName, String secondName, RoleName role);
-    boolean updateUserRole(int id, RoleName role);
+    boolean addUser(String email, String password, String firstName, String secondName, RoleName role, boolean enabled);
+    boolean updateUser(User user);
     boolean authenticate(String email, String password);
     boolean resetPassword(String email, String newPassword);
     String encryptPassword(SecretKey secretKey, String input);

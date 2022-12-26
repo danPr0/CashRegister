@@ -39,9 +39,9 @@ public class DBQueryConstants {
 
     public static final String USERS_GET_BY_ID_QUERY = "SELECT * FROM users WHERE %s = ?".formatted(USER_ID);
     public static final String USERS_GET_BY_EMAIL_QUERY = "SELECT * FROM users WHERE %s = ?".formatted(USER_EMAIL);
-    public static final String USERS_INSERT_QUERY = "INSERT INTO users (%s, %s, %s, %s, %s) VALUES (?, ?, ?, ?, ?)"
-            .formatted(USER_EMAIL, USER_PASSWORD, USER_FIRST_NAME, USER_SECOND_NAME, USER_ROLE_ID);
-    public static final String USERS_UPDATE_QUERY = "UPDATE users SET %s = ?, %s = ? WHERE %s = ?".formatted(USER_PASSWORD, USER_ROLE_ID, USER_ID);
+    public static final String USERS_INSERT_QUERY = "INSERT INTO users (%s, %s, %s, %s, %s, %s) VALUES (?, ?, ?, ?, ?, ?)"
+            .formatted(USER_EMAIL, USER_PASSWORD, USER_FIRST_NAME, USER_SECOND_NAME, USER_ROLE_ID, USER_ENABLED);
+    public static final String USERS_UPDATE_QUERY = "UPDATE users SET %s = ?, %s = ?, %s = ? WHERE %s = ?".formatted(USER_PASSWORD, USER_ROLE_ID, USER_ENABLED, USER_ID);
 
 //    public static final String LANG_GET_BY_VAR = "SELECT * FROM language WHERE %s = ?".formatted(LANG_VAR);
 

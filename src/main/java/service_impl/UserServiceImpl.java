@@ -10,15 +10,16 @@ import entity.Key;
 import entity.User;
 import org.apache.commons.codec.binary.Base64;
 import service.UserService;
-import util.AESUtil;
 import util.enums.RoleName;
 import util.Validator;
 
 import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Objects;
 
 public class UserServiceImpl implements UserService {
@@ -41,14 +42,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean addUser(String email, String password, String firstName, String secondName, RoleName role) {
+    public boolean addUser(String email, String password, String firstName, String secondName, RoleName role, boolean enabled) {
         if (!(Validator.validateEmail(email) && Validator.validatePassword(password)
                 && Validator.validateFirstName(firstName) && Validator.validateSecondName(secondName)))
             return false;
 
         SecretKey secretKey = AESUtil.generateSecretKey();
         String encodedPassword = encryptPassword(secretKey, password);
-        User user = new User(0, email, encodedPassword, firstName, secondName, role);
+        User user = new User(0, email, encodedPassword, firstName, secondName, role, enabled);
         user = userDAO.insertEntity(user);
         if (user == null)
             return false;
@@ -57,9 +58,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean updateUserRole(int id, RoleName role) {
-        User user = userDAO.getEntityById(id);
-        user.setRoleId(role);
+    public boolean updateUser(User user) {
         return userDAO.updateEntity(user);
     }
 
@@ -91,7 +90,7 @@ public class UserServiceImpl implements UserService {
         byte[] cipherText = null;
 
         try {
-            Cipher cipher = Cipher.getInstance(AESUtil.algorithm);
+            Cipher cipher = Cipher.getInstance(AESUtil.ALGORITHM);
             cipher.init(Cipher.ENCRYPT_MODE, secretKey, cipher.getParameters());
             cipherText = cipher.doFinal(input.getBytes(StandardCharsets.UTF_8));
         }
@@ -106,7 +105,7 @@ public class UserServiceImpl implements UserService {
         byte[] plainText = null;
 
         try {
-            Cipher cipher = Cipher.getInstance(AESUtil.algorithm);
+            Cipher cipher = Cipher.getInstance(AESUtil.ALGORITHM);
             cipher.init(Cipher.DECRYPT_MODE, secretKey);
             plainText = cipher.doFinal(new Base64().decode(input));
         }
@@ -115,6 +114,24 @@ public class UserServiceImpl implements UserService {
         }
 
         return new String(Objects.requireNonNull(plainText), StandardCharsets.UTF_8);
+    }
+
+    public static class AESUtil {
+        private static final String ALGORITHM = "AES";
+        private static final int KEY_SIZE = 128;
+
+        public static SecretKey generateSecretKey() {
+            SecretKey key;
+            try {
+                KeyGenerator keyGenerator = KeyGenerator.getInstance(ALGORITHM);
+                keyGenerator.init(KEY_SIZE);
+                key = keyGenerator.generateKey();
+            }
+            catch (NoSuchAlgorithmException | NullPointerException e) {
+                key = null;
+            }
+            return key;
+        }
     }
 
     public void setUserDAO(UserDAO userDAO) {

@@ -14,12 +14,12 @@ import service.CheckService;
 import util.enums.Language;
 import util.enums.ProductMeasure;
 import util.Validator;
-import util.price.PriceAdapter;
-import util.price.PriceAdapterFactory;
+import util.price_adapter.PriceAdapter;
+import util.price_adapter.PriceAdapterFactory;
+import util.table.CheckColumnName;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import static util.db.DBFields.*;
 
@@ -109,11 +109,11 @@ public class CheckServiceImpl implements CheckService {
     }
 
     @Override
-    public List<CheckEntity> getPerPage(int nOfPage, int total, String sortBy, boolean ifAscending) {
+    public List<CheckEntity> getPerPage(int nOfPage, int total, CheckColumnName sortBy, boolean ifAscending) {
         String sortColumn = CHECK_ID;
-        if (Objects.equals(sortBy, "product"))
+        if (sortBy.equals(CheckColumnName.productId))
             sortColumn = CHECK_PRODUCT_ID;
-        else if (Objects.equals(sortBy, "quantity"))
+        else if (sortBy.equals(CheckColumnName.quantity))
             sortColumn = CHECK_PRODUCT_QUANTITY;
 
         return checkDAO.getSegment(total * (nOfPage - 1), total, sortColumn, ifAscending ? "ASC" : "DESC");
@@ -130,7 +130,6 @@ public class CheckServiceImpl implements CheckService {
 
         check.forEach(el -> {
             Product product = productDAO.getEntityById(el.getProductId());
-//            product.setName(productLangDAO.getProductName(product.getId(), langDAO.getEntityByVar(lang).getId()));
             PriceAdapter priceAdapter = new PriceAdapterFactory().getAdapter(lang);
 
             String quantity = String.format(product.getMeasure().equals(ProductMeasure.weight) ? "%.3f" : "%.0f", el.getQuantity());

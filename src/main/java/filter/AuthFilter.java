@@ -1,6 +1,6 @@
 package filter;
 
-import util.JWTProvider;
+import util.token.AuthTokenProvider;
 
 import javax.servlet.*;
 import javax.servlet.annotation.*;
@@ -21,8 +21,8 @@ public class AuthFilter implements Filter {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
 
-        String accessToken = JWTProvider.resolveToken(httpRequest, "accessToken");
-        if (JWTProvider.validateToken(accessToken))
+        String accessToken = AuthTokenProvider.resolveToken(httpRequest, "accessToken");
+        if (AuthTokenProvider.validateToken(accessToken))
             httpResponse.sendRedirect("/");
         else {
             httpRequest.getSession().removeAttribute("email");

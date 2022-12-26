@@ -4,6 +4,7 @@ import dto.CheckDTO;
 import entity.CheckEntity;
 import entity.Product;
 import util.enums.Language;
+import util.table.CheckColumnName;
 
 import java.util.List;
 
@@ -20,7 +21,7 @@ public interface CheckService {
     /**
      * Implement pagination
      */
-    List<CheckEntity> getPerPage(int nOfPage, int total, String sortBy, boolean ifAscending);
+    List<CheckEntity> getPerPage(int nOfPage, int total, CheckColumnName sortBy, boolean ifAscending);
     int getNumberOfRows();
     List<CheckDTO> convertToDTO(List<CheckEntity> check, Language lang);
 }

@@ -1,4 +1,4 @@
-package util.price;
+package util.price_adapter;
 
 import util.enums.Language;
 

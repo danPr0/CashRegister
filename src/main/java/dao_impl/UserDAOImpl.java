@@ -38,14 +38,15 @@ public class UserDAOImpl implements UserDAO {
         try (Connection con = connectionFactory.getConnection();
              PreparedStatement ps = con.prepareStatement(USERS_GET_BY_ID_QUERY)) {
             ps.setInt(1, id);
-            try (ResultSet resultSet = ps.executeQuery()) {
-                resultSet.next();
-                result = new User(id, resultSet.getString(USER_EMAIL),
-                        resultSet.getString(USER_PASSWORD), resultSet.getString(USER_FIRST_NAME),
-                        resultSet.getString(USER_SECOND_NAME),
-                        RoleName.valueOf(resultSet.getString(USER_ROLE_ID)));
-                logger.info("User with id=" + id + " was successfully retrieved");
-            }
+
+            ResultSet resultSet = ps.executeQuery();
+            resultSet.next();
+
+            result = new User(id, resultSet.getString(USER_EMAIL),
+                    resultSet.getString(USER_PASSWORD), resultSet.getString(USER_FIRST_NAME),
+                    resultSet.getString(USER_SECOND_NAME),
+                    RoleName.valueOf(resultSet.getString(USER_ROLE_ID)), resultSet.getBoolean(USER_ENABLED));
+            logger.info("User with id=" + id + " was successfully retrieved");
         } catch (SQLException e) {
             logger.error("Cannot get user by id=" + id, e.getCause());
         }
@@ -60,14 +61,15 @@ public class UserDAOImpl implements UserDAO {
         try (Connection con = connectionFactory.getConnection();
              PreparedStatement ps = con.prepareStatement(USERS_GET_BY_EMAIL_QUERY)) {
             ps.setString(1, email);
-            try (ResultSet resultSet = ps.executeQuery()) {
-                resultSet.next();
-                result = new User(resultSet.getInt(USER_ID), email,
-                        resultSet.getString(USER_PASSWORD), resultSet.getString(USER_FIRST_NAME),
-                        resultSet.getString(USER_SECOND_NAME),
-                        RoleName.valueOf(resultSet.getString(USER_ROLE_ID)));
-                logger.info("User with email=" + email + " was successfully retrieved");
-            }
+
+            ResultSet resultSet = ps.executeQuery();
+            resultSet.next();
+
+            result = new User(resultSet.getInt(USER_ID), email,
+                    resultSet.getString(USER_PASSWORD), resultSet.getString(USER_FIRST_NAME),
+                    resultSet.getString(USER_SECOND_NAME),
+                    RoleName.valueOf(resultSet.getString(USER_ROLE_ID)), resultSet.getBoolean(USER_ENABLED));
+            logger.info("User with email=" + email + " was successfully retrieved");
         } catch (SQLException e) {
             logger.error("Cannot get user by email=" + email, e.getCause());
         }
@@ -86,16 +88,16 @@ public class UserDAOImpl implements UserDAO {
             ps.setString(3, user.getFirstName());
             ps.setString(4, user.getSecondName());
             ps.setString(5, user.getRoleId().name());
+            ps.setBoolean(6, user.isEnabled());
             ps.executeUpdate();
 
-            try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
-                generatedKeys.next();
-                result.setId(generatedKeys.getInt(1));
-            }
+            ResultSet generatedKeys = ps.getGeneratedKeys();
+            generatedKeys.next();
+            result.setId(generatedKeys.getInt(1));
 
             logger.info("User " + user.getEmail() + " was successfully added");
         } catch (SQLException e) {
-            logger.error("Cannot insert user with email=" + user.getEmail(), e);
+            logger.error("Cannot insert user with email=" + user.getEmail(), e.getCause());
             result = null;
         }
 
@@ -110,14 +112,16 @@ public class UserDAOImpl implements UserDAO {
              PreparedStatement ps = con.prepareStatement(USERS_UPDATE_QUERY)) {
             ps.setString(1, user.getPassword());
             ps.setString(2, user.getRoleId().name());
-            ps.setInt(3, user.getId());
+            ps.setBoolean(3, user.isEnabled());
+            ps.setInt(4, user.getId());
+
             int affectedRows = ps.executeUpdate();
             if (affectedRows == 0)
                 throw new SQLException("Updating user failed, no rows affected");
 
             logger.info("User with id=" + user.getId() + " was successfully updated");
         } catch (SQLException e) {
-            logger.error("Cannot insert user with id=" + user.getId(), e);
+            logger.error("Cannot insert user with id=" + user.getId(), e.getCause());
             result = false;
         }
 

@@ -36,8 +36,9 @@ public class KeyDAOTest {
     public void insertRows() {
         PreparedStatement ps = null;
         try (Connection con = connectionFactory.getConnection()) {
-            ps = con.prepareStatement("INSERT INTO users (%s, %s, %s, %s, %s) VALUES (?, 'xxxxxxxx', 'dan', 'pro', ?)"
-                    .formatted(USER_EMAIL, USER_PASSWORD, USER_FIRST_NAME, USER_SECOND_NAME, USER_ROLE_ID), Statement.RETURN_GENERATED_KEYS);
+            ps = con.prepareStatement("INSERT INTO users (%s, %s, %s, %s, %s, %s) VALUES (?, 'xxxxxxxx', 'dan', 'pro', ?, true)"
+                    .formatted(USER_EMAIL, USER_PASSWORD, USER_FIRST_NAME, USER_SECOND_NAME, USER_ROLE_ID, USER_ENABLED), Statement.RETURN_GENERATED_KEYS);
+
             ps.setString(1, KEY_1_USER_EMAIL);
             ps.setString(2, RoleName.admin.name());
             ps.executeUpdate();
@@ -54,7 +55,7 @@ public class KeyDAOTest {
             e.printStackTrace();
         }
         finally {
-            DBUtil.close(ps, null);
+            DBUtil.close(null, ps);
         }
     }
 
@@ -71,7 +72,7 @@ public class KeyDAOTest {
             e.printStackTrace();
         }
         finally {
-            DBUtil.close(ps, null);
+            DBUtil.close(null, ps);
         }
     }
 
@@ -89,7 +90,7 @@ public class KeyDAOTest {
 
     @Test
     public void testInsertNonExistingKey() {
-        User user = userDAO.insertEntity(new User(KEY_2_USER_ID, KEY_2_USER_EMAIL, "xxxxxxxx", "dan", "pro", RoleName.guest));
+        User user = userDAO.insertEntity(new User(KEY_2_USER_ID, KEY_2_USER_EMAIL, "xxxxxxxx", "dan", "pro", RoleName.guest, true));
         assertTrue(keyDAO.insertEntity(new Key(user.getId(), KEY_2)));
         Key insertedKey = keyDAO.getEntityByUserId(user.getId());
 
@@ -101,5 +102,20 @@ public class KeyDAOTest {
     public void testInsertExistingKey() {
         Key key = new Key(KEY_1_USER_ID, KEY_1);
         assertFalse(keyDAO.insertEntity(key));
+    }
+
+    @Test
+    public void testUpdateExistingKey() {
+        Key key = new Key(KEY_1_USER_ID, KEY_1);
+        key.setKey("hey");
+
+        assertTrue(keyDAO.updateEntity(key));
+        assertEquals(key.getKey(), keyDAO.getEntityByUserId(key.getUserId()).getKey());
+    }
+
+    @Test
+    public void testUpdateNonExistingKey() {
+        Key key = new Key(KEY_2_USER_ID, KEY_2);
+        assertFalse(keyDAO.updateEntity(key));
     }
 }

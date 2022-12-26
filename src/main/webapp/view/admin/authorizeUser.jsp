@@ -40,7 +40,7 @@
                 <input type="submit" value="<fmt:message key="submit.find"/>" class="btn btn-primary"/>
             </form>
 
-            <p class="text-danger pl-3"><c:out value="${requestScope.error}"/></p>
+            <p class="text-danger"><c:out value="${requestScope.error}"/></p>
         </div>
 
         <c:if test="${requestScope.user != null}">
@@ -68,9 +68,9 @@
             </div>
 
             <div>
-                <p class="text-danger pl-3"><c:out value="${param.error}"/></p>
+                <p class="text-danger"><c:out value="${param.error}"/></p>
                 <c:if test="${param.success == 'true'}">
-                    <p class="text-success pl-3"><fmt:message key="msg.success.admin.changeRole"/></p>
+                    <p class="text-success"><fmt:message key="msg.success.admin.changeRole"/></p>
                 </c:if>
             </div>
         </c:if>

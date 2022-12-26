@@ -19,17 +19,13 @@
     </head>
     <body>
     <div class="container p-3 px-5 bg-dark text-white" style="min-height: 100%">
-<%--        <jsp:include page="/view/menu/menu.jsp">--%>
-<%--            <jsp:param name="mainUrl" value="/commodity-expert"/>--%>
-<%--        </jsp:include>--%>
-
         <e:menu url="/commodity-expert"/>
 
         <div class="mb-4">
             <form action="<c:url value="/commodity-expert/update-product"/>" method="get" class="needs-validation col-4"
                   novalidate>
                 <input:productInput/>
-<%--                <jsp:include page="../../WEB-INF/tags/input/product/productInput.tag"/>--%>
+
                 <input type="submit" value="<fmt:message key="submit.find"/>" class="btn btn-secondary"/>
             </form>
 
@@ -49,22 +45,14 @@
                       method="post" class="needs-validation col-4" novalidate>
                     <input:productQuantityInput name="newQuantity" presetValue="${requestScope.product.quantity}"/>
                     <input:productPriceInput name="newPrice"  presetValue="${requestScope.product.price}"/>
-<%--                    <jsp:include page="../../WEB-INF/tags/input/product/productQuantityInput.tag">--%>
-<%--                        <jsp:param name="name" value="newQuantity"/>--%>
-<%--                        <jsp:param name="presetValue" value="${requestScope.product.quantity}"/>--%>
-<%--                    </jsp:include>--%>
 
-<%--                    <jsp:include page="../../WEB-INF/tags/input/product/productPriceInput.tag">--%>
-<%--                        <jsp:param name="name" value="newPrice"/>--%>
-<%--                        <jsp:param name="presetValue" value="${requestScope.product.price}"/>--%>
-<%--                    </jsp:include>--%>
                     <input type="submit" value="<fmt:message key="submit.update"/>" class="btn btn-primary"/>
                 </form>
 
                 <div>
                     <p class="text-danger"><c:out value="${param.error}"/></p>
                     <c:if test="${param.success == 'true'}">
-                        <p class="text-success pl-3"><fmt:message key="msg.success.commodity-expert.updateProduct"/></p>
+                        <p class="text-success"><fmt:message key="msg.success.commodity-expert.updateProduct"/></p>
                     </c:if>
                 </div>
             </div>

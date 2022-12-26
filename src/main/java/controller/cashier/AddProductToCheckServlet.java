@@ -2,11 +2,15 @@ package controller.cashier;
 
 import dto.CheckDTO;
 import entity.Product;
+import lombok.SneakyThrows;
+import org.apache.hc.core5.net.URIBuilder;
 import service.CheckService;
 import service.ProductService;
 import service_impl.CheckServiceImpl;
 import service_impl.ProductServiceImpl;
 import util.enums.Language;
+import util.table.CheckColumnName;
+import util.table.TableService;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -14,6 +18,7 @@ import javax.servlet.annotation.*;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Objects;
 
@@ -34,36 +39,16 @@ public class AddProductToCheckServlet extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        int page;
+        int page = 1;
         if (req.getParameter("page") != null)
             page = Integer.parseInt(req.getParameter("page"));
-        else page = 1;
 
-        int total;
-        try {
-            total = Integer.parseInt(req.getParameter("total"));
-            req.getSession().setAttribute("checkTotalPerPage", total);
-        }
-        catch (NumberFormatException e) {
-            total = Integer.parseInt(req.getSession().getAttribute("checkTotalPerPage").toString());
-        }
-
-        String sortBy;
-        if (req.getParameter("sortBy") != null) {
-            sortBy = req.getParameter("sortBy");
-            req.getSession().setAttribute("checkSortBy", sortBy);
-        }
-        else sortBy = req.getSession().getAttribute("checkSortBy").toString();
-
-        String orderBy;
-        if (req.getParameter("orderBy") != null) {
-            orderBy = req.getParameter("orderBy");
-            req.getSession().setAttribute("checkOrderBy", orderBy);
-        }
-        else orderBy = req.getSession().getAttribute("checkOrderBy").toString();
+        int total = TableService.getTotalPerPage(req, "total", "checkTotalPerPage");
+        CheckColumnName sortBy = CheckColumnName.valueOf(TableService.getTableSortParam(req, "sortBy", "checkSortBy"));
+        String orderBy = TableService.getTableSortParam(req, "orderBy", "checkOrderBy");
 
         List<CheckDTO> check = checkService.convertToDTO(checkService.getPerPage(page, total,
-                wrapSortParam(sortBy), orderBy.equals("asc")), Language.getLanguage(req));
+                sortBy, orderBy.equals("asc")), Language.getLanguage(req));
         int nOfPages = (checkService.getNumberOfRows() + total - 1) / total;
 
         if (!check.isEmpty()) {
@@ -77,6 +62,7 @@ public class AddProductToCheckServlet extends HttpServlet {
      * Receive product's details and add it to the check
      * There can be 2 errors : "No such product" and "Over exceeded quantity"
      */
+    @SneakyThrows
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String productParam = req.getParameter("product");
@@ -91,29 +77,20 @@ public class AddProductToCheckServlet extends HttpServlet {
             product = productService.getProduct(productParam, lang);
         }
 
-        String url = "/cashier/add-product-to-check";
+        URIBuilder uriBuilder = new URIBuilder("/cashier/add-product-to-check", UTF_8);
 
-        if (product == null)
-            url += String.format("?error=%s&product=%s&quantity=%s",
-                    encode(getMessageByLang("error.cashier.noSuchProduct", lang), UTF_8),
-                    encode(productParam, UTF_8), quantityParam);
-        else if (!checkService.addToCheck(product,  new BigDecimal(quantityParam).setScale(3, RoundingMode.UP).doubleValue()))
-            url += String.format("?error=%S&product=%s&quantity=%s",
-                    encode(getMessageByLang("error.cashier.overExceededQuantity", lang), UTF_8),
-                    encode(productParam, UTF_8), quantityParam);
-        else url += "?success=true";
+        if (product == null) {
+            uriBuilder.addParameter("error", getMessageByLang("error.cashier.noSuchProduct", lang));
+            uriBuilder.addParameter("product", productParam);
+            uriBuilder.addParameter("quantity", quantityParam);
+        }
+        else if (!checkService.addToCheck(product,  new BigDecimal(quantityParam).setScale(3, RoundingMode.UP).doubleValue())) {
+            uriBuilder.addParameter("error", getMessageByLang("error.cashier.overExceededQuantity", lang));
+            uriBuilder.addParameter("product", productParam);
+            uriBuilder.addParameter("quantity", quantityParam);
+        }
+        else uriBuilder.addParameter("success", "true");
 
-        resp.sendRedirect(url);
-    }
-
-    private String wrapSortParam(String sortParam) {
-        String result;
-        if (Objects.equals(sortParam, "productId"))
-            result = "product";
-        else if (Objects.equals(sortParam, "quantity"))
-            result = "quantity";
-        else result = "checkId";
-
-        return result;
+        resp.sendRedirect(uriBuilder.build().toString());
     }
 }

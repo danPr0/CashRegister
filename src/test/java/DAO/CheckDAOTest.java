@@ -21,11 +21,11 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static util.db.DBFields.CHECK_PRODUCT_ID;
-import static util.db.DBFields.CHECK_PRODUCT_QUANTITY;
+import static util.db.DBFields.*;
 
 public class CheckDAOTest {
     private final ConnectionFactory connectionFactory = ConnectionFactory.getInstance();
@@ -62,7 +62,7 @@ public class CheckDAOTest {
             e.printStackTrace();
         }
         finally {
-            DBUtil.close(ps, null);
+            DBUtil.close(null, ps);
         }
     }
 
@@ -89,7 +89,7 @@ public class CheckDAOTest {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            DBUtil.close(ps, null);
+            DBUtil.close(null, ps);
         }
     }
 
@@ -145,6 +145,24 @@ public class CheckDAOTest {
     public void testDeleteEntityById() {
         assertTrue(checkDAO.deleteEntityByProductId(PRODUCT_1_ID));
         assertEquals(1, checkDAO.getNoOfRows());
+    }
+
+    @Test
+    public void testGetSegment() {
+        List<CheckEntity> segment = checkDAO.getSegment(1, 1, PRODUCT_ID, "ASC");
+        assertEquals(1, segment.size());
+        assertEquals(PRODUCT_2_ID, segment.get(0).getProductId());
+
+        segment = checkDAO.getSegment(1, 1, PRODUCT_ID, "DESC");
+        assertEquals(1, segment.size());
+        assertEquals(PRODUCT_1_ID, segment.get(0).getProductId());
+
+        segment = checkDAO.getSegment(0, 1, PRODUCT_ID, "ASC");
+        assertEquals(1, segment.size());
+        assertEquals(PRODUCT_1_ID, segment.get(0).getProductId());
+
+        segment = checkDAO.getSegment(0, 2, PRODUCT_ID, "DESC");
+        assertEquals(2, segment.size());
     }
 
     @Test

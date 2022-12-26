@@ -29,9 +29,6 @@ public class DownloadReportServlet extends HttpServlet {
         Language lang = Language.valueOf(req.getSession().getAttribute("lang").toString());
 
         String userDir = req.getServletContext().getAttribute("FILES_DIR") + File.separator + req.getSession().getAttribute("email");
-//        File userFolder = new File(userDir);
-//        if (!userFolder.exists())
-//            userFolder.mkdirs();
 
         String filename = reportType.equals("z") ? "z-report" : "x-report";
         String filepath = userDir + File.separator + filename + "." + reportEnumFactory.name();

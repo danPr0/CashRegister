@@ -1,13 +1,13 @@
 package controller.authentication;
 
 import entity.User;
-import garbage.RoleService;
+import lombok.SneakyThrows;
+import org.apache.hc.core5.net.URIBuilder;
 import service.UserService;
-import garbage.RoleServiceImpl;
 import service_impl.UserServiceImpl;
 import util.GetProperties;
-import util.JWTProvider;
 import util.enums.Language;
+import util.token.AuthTokenProvider;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -25,7 +25,6 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 @WebServlet("/auth/login")
 public class LoginServlet extends HttpServlet {
     private final UserService userService = UserServiceImpl.getInstance();
-    private final RoleService roleService = RoleServiceImpl.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -36,27 +35,37 @@ public class LoginServlet extends HttpServlet {
      *  If user is authenticated, access and refresh tokens are added to cookies and user's redirected to main page.
      *  There can be 2 errors : "Bad email" and "Incorrect password"
      */
+    @SneakyThrows
     @Override
-    public void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String email = req.getParameter("email");
         String password = req.getParameter("password");
         Language lang = Language.getLanguage(req);
 
-        User user;
-        if ((user = userService.getUser(email)) == null)
-            resp.sendRedirect(String.format("/auth/login?error=%s&email=%s&password=%s",
-                    encode(GetProperties.getMessageByLang("error.auth.login.badEmail", lang), UTF_8), email, encode(password, UTF_8)));
+        User user = userService.getUser(email);
+        URIBuilder uriBuilder = new URIBuilder("/auth/login", UTF_8);
+
+        if (user == null || !user.isEnabled()) {
+            uriBuilder.addParameter("error", GetProperties.getMessageByLang("error.auth.login.badEmail", lang));
+            uriBuilder.addParameter("email", email);
+            uriBuilder.addParameter("password", password);
+        }
         else if (userService.authenticate(email, password)) {
-            JWTProvider.setTokenCookie(JWTProvider.generateJwtToken(user.getRoleId(), "accessToken"),
-                    "accessToken", JWTProvider.accessTokenExpirationInSec, resp);
-            JWTProvider.setTokenCookie(JWTProvider.generateJwtToken(user.getRoleId(), "refreshToken"),
-                    "refreshToken", JWTProvider.refreshTokenExpirationInSec, resp);
+            AuthTokenProvider.setTokenCookie(AuthTokenProvider.generateJwtToken(user.getRoleId(), "accessToken"),
+                    "accessToken", AuthTokenProvider.accessTokenExpirationInSec, resp);
+            AuthTokenProvider.setTokenCookie(AuthTokenProvider.generateJwtToken(user.getRoleId(), "refreshToken"),
+                    "refreshToken", AuthTokenProvider.refreshTokenExpirationInSec, resp);
 
             req.getSession().setAttribute("email", email);
             req.getSession().setAttribute("firstName", user.getFirstName());
-            resp.sendRedirect("/");
+            uriBuilder.setPath("/");
         }
-        else resp.sendRedirect(String.format("/auth/login?error=%s&email=%s&password=%s",
-                    encode(GetProperties.getMessageByLang("error.auth.login.incorrectPassword", lang), UTF_8), email, encode(password, UTF_8)));
+        else {
+            uriBuilder.addParameter("error", GetProperties.getMessageByLang("error.auth.login.incorrectPassword", lang));
+            uriBuilder.addParameter("email", email);
+            uriBuilder.addParameter("password", password);
+        }
+
+        resp.sendRedirect(uriBuilder.build().toString());
     }
 }

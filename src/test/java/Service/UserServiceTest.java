@@ -18,7 +18,6 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import service.UserService;
 import service_impl.UserServiceImpl;
-import util.AESUtil;
 import util.enums.RoleName;
 
 import javax.crypto.SecretKey;
@@ -30,6 +29,8 @@ public class UserServiceTest extends Mockito {
     private UserDAO userDAO;
     private KeyDAO keyDAO;
 
+    private User user;
+
     @BeforeEach
     public void init() {
         userService = UserServiceImpl.getInstance();
@@ -39,6 +40,8 @@ public class UserServiceTest extends Mockito {
         userService.setUserDAO(userDAO);
         userService.setKeyDAO(keyDAO);
 
+        user = new User(0, "danichTest@gmail.com", "xxxxxxxx", "dan", "pro", RoleName.guest, true);
+
 //        try (MockedStatic<UserDAOImpl> userDAOMocked = mockStatic(UserDAOImpl.class)) {
 //            userDAOMocked.when(UserDAOImpl::getInstance).thenReturn(userDAO);
 //        }
@@ -46,18 +49,17 @@ public class UserServiceTest extends Mockito {
 
     @Test
     public void testUserInsertion() {
-        User user = new User(0, "danichTest@gmail.com", "xxxxxxxx", "dan", "pro", RoleName.guest);
-
-        when(userDAO.insertEntity(any(User.class))).thenReturn(user);
+        when(userDAO.insertEntity(any(User.class))).then(invocationOnMock -> {
+            assertEquals(user.getEmail(), ((User) invocationOnMock.getArgument(0)).getEmail());
+            return user;
+        });
         when(keyDAO.insertEntity(any(Key.class))).thenReturn(true);
 
-        assertTrue(userService.addUser("danichTest@gmail.com", "xxxxxxxx", "dan", "pro", RoleName.guest));
+        assertTrue(userService.addUser("danichTest@gmail.com", "xxxxxxxx", "dan", "pro", RoleName.guest, true));
     }
 
     @Test
     public void testFindUser() {
-        User user = new User(0, "danichTest@gmail.com", "xxxxxxxx", "dan", "pro", RoleName.guest);
-
         when(userDAO.getEntityByEmail("danichTest@gmail.com")).thenReturn(user);
         User foundUser = userService.getUser("danichTest@gmail.com");
 
@@ -67,29 +69,29 @@ public class UserServiceTest extends Mockito {
 
     @Test
     public void testAuthentication() {
-        SecretKey secretKey = AESUtil.generateSecretKey();
-        User user = new User(0, "danichTest@gmail.com", userService.encryptPassword(secretKey, "xxxxxxxx"), "dan", "pro", RoleName.guest);
+        SecretKey secretKey = UserServiceImpl.AESUtil.generateSecretKey();
+        user.setPassword(userService.encryptPassword(secretKey, "xxxxxxxx"));
 
         when(userDAO.getEntityByEmail("danichTest@gmail.com")).thenReturn(user);
-        when(keyDAO.getEntityByUserId(anyInt())).thenReturn(new Key(0, new Base64().encodeToString(secretKey.getEncoded())));
+        when(keyDAO.getEntityByUserId(user.getId())).thenReturn(new Key(0, new Base64().encodeToString(secretKey.getEncoded())));
 
         assertTrue(userService.authenticate("danichTest@gmail.com", "xxxxxxxx"));
     }
 
     @Test
     public void testFailAuthentication() {
-        SecretKey secretKey = AESUtil.generateSecretKey();
-        User user = new User(0, "danichTest@gmail.com", userService.encryptPassword(secretKey, "xxxxxxxx"), "dan", "pro", RoleName.guest);
+        SecretKey secretKey = UserServiceImpl.AESUtil.generateSecretKey();
+        user.setPassword(userService.encryptPassword(secretKey, "xxxxxxxx"));
 
         when(userDAO.getEntityByEmail("danichTest@gmail.com")).thenReturn(user);
-        when(keyDAO.getEntityByUserId(anyInt())).thenReturn(new Key(0, new Base64().encodeToString(secretKey.getEncoded())));
+        when(keyDAO.getEntityByUserId(user.getId())).thenReturn(new Key(0, new Base64().encodeToString(secretKey.getEncoded())));
 
         assertFalse(userService.authenticate("danichTest@gmail.com", "zzzzzzzz"));
     }
 
     @Test
     public void testUpdateUser() {
-        when(userDAO.updateEntity(any(User.class))).thenReturn(true);
-        assertTrue(userDAO.updateEntity(any(User.class)));
+        when(userDAO.updateEntity(user)).thenReturn(true);
+        assertTrue(userService.updateUser(user));
     }
 }

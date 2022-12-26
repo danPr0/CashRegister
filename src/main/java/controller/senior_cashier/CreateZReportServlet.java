@@ -1,5 +1,8 @@
 package controller.senior_cashier;
 
+import lombok.SneakyThrows;
+import org.apache.hc.core5.net.URIBuilder;
+import service.ReportService;
 import service_impl.ReportServiceImpl;
 import util.GetProperties;
 import util.SendingEmailService;
@@ -20,27 +23,24 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 @WebServlet("/senior-cashier/create-z-report")
 public class CreateZReportServlet extends HttpServlet {
-    private final ReportServiceImpl reportServiceImpl = ReportServiceImpl.getInstance();
+    private final ReportService reportService = ReportServiceImpl.getInstance();
 
+    @SneakyThrows
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String userDir = req.getServletContext().getAttribute("FILES_DIR") + File.separator + req.getSession().getAttribute("email");
-//        File userFolder = new File(userDir);
-//        if (!userFolder.exists())
-//            userFolder.mkdirs();
 
         String filepath = userDir + File.separator + "z-report." + ReportEnumFactory.pdf;
         ReportEnumFactory.pdf.getInstance().createReport(filepath, Language.getLanguage(req));
 
-        String redirectUrl = "/senior-cashier";
+        URIBuilder uriBuilder = new URIBuilder("/senior-cashier");
         try {
-            SendingEmailService.sendZReport(req.getSession().getAttribute("email").toString(), filepath);
+            SendingEmailService.sendZReport(req.getSession().getAttribute("email").toString(), Language.getLanguage(req), filepath);
         } catch (MessagingException e) {
-            redirectUrl += String.format("/reset-password?error=%s",
-                    encode(GetProperties.getMessageByLang("error.general", Language.getLanguage(req)), UTF_8));
+            uriBuilder.addParameter("error", GetProperties.getMessageByLang("error.general", Language.getLanguage(req)));
         }
 
-        reportServiceImpl.deleteAll();
-        resp.sendRedirect(redirectUrl);
+        reportService.deleteAll();
+        resp.sendRedirect(uriBuilder.build().toString());
     }
 }

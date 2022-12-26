@@ -20,7 +20,7 @@
         <e:menu/>
 
         <div>
-            <p class="ml-3">
+            <p>
                 <fmt:message key="msg.info.welcomeGuest"/>
             </p>
         </div>

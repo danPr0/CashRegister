@@ -5,6 +5,9 @@ import service.ReportService;
 import service_impl.ReportServiceImpl;
 import util.GetProperties;
 import util.enums.Language;
+import util.table.CheckColumnName;
+import util.table.ReportColumnName;
+import util.table.TableService;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -27,36 +30,16 @@ public class CreateXReportServlet extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        int page;
+        int page = 1;
         if (req.getParameter("page") != null)
             page = Integer.parseInt(req.getParameter("page"));
-        else page = 1;
 
-        int total;
-        try {
-            total = Integer.parseInt(req.getParameter("total"));
-            req.getSession().setAttribute("reportTotalPerPage", total);
-        }
-        catch (NumberFormatException e) {
-            total = Integer.parseInt(req.getSession().getAttribute("reportTotalPerPage").toString());
-        }
-
-        String sortBy;
-        if (req.getParameter("sortBy") != null) {
-            sortBy = req.getParameter("sortBy");
-            req.getSession().setAttribute("reportSortBy", sortBy);
-        }
-        else sortBy = req.getSession().getAttribute("reportSortBy").toString();
-
-        String orderBy;
-        if (req.getParameter("orderBy") != null) {
-            orderBy = req.getParameter("orderBy");
-            req.getSession().setAttribute("reportOrderBy", orderBy);
-        }
-        else orderBy = req.getSession().getAttribute("reportOrderBy").toString();
+        int total = TableService.getTotalPerPage(req, "total", "reportTotalPerPage");
+        ReportColumnName sortBy = ReportColumnName.valueOf(TableService.getTableSortParam(req, "sortBy", "reportSortBy"));
+        String orderBy = TableService.getTableSortParam(req, "orderBy", "reportOrderBy");
 
         List<ReportDTO> report = reportService.convertToDTO(reportService.getPerPage(page, total,
-                wrapSortParam(sortBy), orderBy.equals("asc")), Language.getLanguage(req));
+                sortBy, orderBy.equals("asc")), Language.getLanguage(req));
         int nOfPages = (reportService.getNoOfRows() + total - 1) / total;
 
         if (!report.isEmpty()) {
@@ -66,17 +49,5 @@ public class CreateXReportServlet extends HttpServlet {
         else req.setAttribute("error", GetProperties.getMessageByLang("error.senior-cashier.createXReport", Language.getLanguage(req)));
 
         req.getRequestDispatcher("/view/senior-cashier/createXReport.jsp").forward(req, resp);
-    }
-
-    private String wrapSortParam(String sortParam) {
-        String result = "id";
-        if (Objects.equals(sortParam, "createdBy"))
-            result = "createdBy";
-        else if (Objects.equals(sortParam, "quantity"))
-            result = "quantity";
-        else if (Objects.equals(sortParam, "price"))
-            result = "price";
-
-        return  result;
     }
 }

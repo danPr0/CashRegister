@@ -1,6 +1,9 @@
 #Target directory
 target/
 
+#Useless code
+src/main/java/garbage
+
 # Compiled class file
 *.class
 
