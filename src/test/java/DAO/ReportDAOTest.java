@@ -1,20 +1,15 @@
 package DAO;
 
-import dao.KeyDAO;
 import dao.ReportDAO;
 import dao.UserDAO;
-import dao_impl.KeyDAOImpl;
 import dao_impl.ReportDAOImpl;
 import dao_impl.UserDAOImpl;
-import entity.CheckEntity;
 import entity.ReportEntity;
 import entity.User;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import util.db.ConnectionFactory;
-import util.db.DBUtil;
 import util.enums.RoleName;
 
 import java.sql.*;
@@ -23,7 +18,6 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static util.db.DBFields.*;
-import static util.db.DBFields.REPORT_USER_ID;
 
 public class ReportDAOTest {
     private final ConnectionFactory connectionFactory = ConnectionFactory.getInstance();
@@ -36,61 +30,48 @@ public class ReportDAOTest {
 
     @BeforeEach
     public void insertRows() {
-        PreparedStatement ps = null;
-        try (Connection con = connectionFactory.getConnection()) {
-            ps = con.prepareStatement("INSERT INTO users (%s, %s, %s, %s, %s, %s) VALUES (?, 'xxxxxxxx', 'dan', 'pro', ?, true)"
-                    .formatted(USER_EMAIL, USER_PASSWORD, USER_FIRST_NAME, USER_SECOND_NAME, USER_ROLE_ID, USER_ENABLED), Statement.RETURN_GENERATED_KEYS);
-            ps.setString(1, "1@mail.com");
-            ps.setString(2, RoleName.admin.name());
-            ps.executeUpdate();
-            try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
+        try (Connection con = connectionFactory.getConnection();
+             PreparedStatement psInsertUser = con.prepareStatement("INSERT INTO users (%s, %s, %s, %s, %s, %s) VALUES (?, 'xxxxxxxx', 'dan', 'pro', ?, true)"
+                     .formatted(USER_EMAIL, USER_PASSWORD, USER_FIRST_NAME, USER_SECOND_NAME, USER_ROLE_ID, USER_ENABLED), Statement.RETURN_GENERATED_KEYS);
+             PreparedStatement psInsertReport = con.prepareStatement("INSERT INTO report (%s, %s, %s, %s) VALUES (?, ?, '1', '1')"
+                     .formatted(REPORT_USER_ID, REPORT_CLOSED_AT, REPORT_ITEMS_QUANTITY, REPORT_TOTAL_PRICE))) {
+            psInsertUser.setString(1, "1@mail.com");
+            psInsertUser.setString(2, RoleName.admin.name());
+            psInsertUser.executeUpdate();
+            try (ResultSet generatedKeys = psInsertUser.getGeneratedKeys()) {
                 generatedKeys.next();
                 REPORT_1_USER_ID = generatedKeys.getInt(1);
             }
 
-            ps = con.prepareStatement("INSERT INTO report (%s, %s, %s, %s) VALUES (?, ?, '1', '1')"
-                    .formatted(REPORT_USER_ID, REPORT_CLOSED_AT, REPORT_ITEMS_QUANTITY, REPORT_TOTAL_PRICE));
-            ps.setInt(1, REPORT_1_USER_ID);
-            ps.setTimestamp(2, Timestamp.from(Instant.now()));
-            ps.executeUpdate();
+            psInsertReport.setInt(1, REPORT_1_USER_ID);
+            psInsertReport.setTimestamp(2, Timestamp.from(Instant.now()));
+            psInsertReport.executeUpdate();
 
-            ps = con.prepareStatement("INSERT INTO users (%s, %s, %s, %s, %s, %s) VALUES (?, 'xxxxxxxx', 'dan', 'pro', ?, true)"
-                    .formatted(USER_EMAIL, USER_PASSWORD, USER_FIRST_NAME, USER_SECOND_NAME, USER_ROLE_ID, USER_ENABLED), Statement.RETURN_GENERATED_KEYS);
-            ps.setString(1, "2@mail.com");
-            ps.setString(2, RoleName.admin.name());
-            ps.executeUpdate();
-            try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
+            psInsertUser.setString(1, "2@mail.com");
+            psInsertUser.setString(2, RoleName.admin.name());
+            psInsertUser.executeUpdate();
+            try (ResultSet generatedKeys = psInsertUser.getGeneratedKeys()) {
                 generatedKeys.next();
                 REPORT_2_USER_ID = generatedKeys.getInt(1);
             }
 
-            ps = con.prepareStatement("INSERT INTO report (%s, %s, %s, %s) VALUES (?, ?, '1', '1')"
-                    .formatted(REPORT_USER_ID, REPORT_CLOSED_AT, REPORT_ITEMS_QUANTITY, REPORT_TOTAL_PRICE));
-            ps.setInt(1, REPORT_2_USER_ID);
-            ps.setTimestamp(2, Timestamp.from(Instant.now()));
-            ps.executeUpdate();
+            psInsertReport.setInt(1, REPORT_2_USER_ID);
+            psInsertReport.setTimestamp(2, Timestamp.from(Instant.now()));
+            psInsertReport.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
-        }
-        finally {
-            DBUtil.close(null, ps);
         }
     }
 
     @AfterEach
     public void deleteAllRows() {
-        PreparedStatement ps = null;
-        try (Connection con = connectionFactory.getConnection()) {
-            ps = con.prepareStatement("DELETE FROM report");
-            ps.execute();
-
-            ps = con.prepareStatement("DELETE FROM users");
-            ps.execute();
+        try (Connection con = connectionFactory.getConnection();
+             PreparedStatement psDeleteReport = con.prepareStatement("DELETE FROM report");
+             PreparedStatement psDeleteUsers = con.prepareStatement("DELETE FROM users")) {
+            psDeleteReport.execute();
+            psDeleteUsers.execute();
         } catch (SQLException e) {
             e.printStackTrace();
-        }
-        finally {
-            DBUtil.close(null, ps);
         }
     }
 

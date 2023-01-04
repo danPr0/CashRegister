@@ -2,33 +2,23 @@ package DAO;
 
 import dao.ProductDAO;
 import dao.ProductTranslationDAO;
-import dao.UserDAO;
 import dao_impl.ProductDAOImpl;
 import dao_impl.ProductTranslationDAOImpl;
-import dao_impl.UserDAOImpl;
 import entity.Product;
-import entity.User;
 import exception.ProductTranslationException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import util.db.ConnectionFactory;
-import util.db.DBUtil;
 import util.enums.Language;
 import util.enums.ProductMeasure;
-import util.enums.RoleName;
 
 import java.sql.*;
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static util.db.DBFields.*;
-import static util.db.DBFields.USER_ROLE_ID;
-import static util.db.DBQueryConstants.PRODUCTS_TRANSLATIONS_GET_BY_PRODUCT_TRANSLATION;
-import static util.db.DBQueryConstants.PRODUCTS_TRANSLATIONS_INSERT;
 
 public class ProductDAOTest {
     private final ConnectionFactory connectionFactory = ConnectionFactory.getInstance();
@@ -48,52 +38,43 @@ public class ProductDAOTest {
 
     @BeforeEach
     public void insertRows() {
-        PreparedStatement ps = null;
-        ResultSet resultSet = null;
-        try (Connection con = connectionFactory.getConnection()) {
-            ps = con.prepareStatement("INSERT INTO products (%s, %s, %s, %s, %s) VALUES (?, ?, ?, '1', '1')"
-                    .formatted(PRODUCT_ORIGINAL_NAME, PRODUCT_ORIGINAL_LANG_ID, PRODUCT_MEASURE, PRODUCT_QUANTITY, PRODUCT_PRICE), Statement.RETURN_GENERATED_KEYS);
-            ps.setString(1, PRODUCT_1_NAME);
-            ps.setString(2, ORIGINAL_LANG.name());
-            ps.setString(3, ProductMeasure.weight.name());
-            ps.execute();
-            resultSet = ps.getGeneratedKeys();
-            resultSet.next();
-            PRODUCT_1_ID = resultSet.getInt(1);
+        try (Connection con = connectionFactory.getConnection();
+             PreparedStatement psInsertProduct = con.prepareStatement("INSERT INTO products (%s, %s, %s, %s, %s) VALUES (?, ?, ?, '1', '1')"
+                     .formatted(PRODUCT_ORIGINAL_NAME, PRODUCT_ORIGINAL_LANG_ID, PRODUCT_MEASURE, PRODUCT_QUANTITY, PRODUCT_PRICE), Statement.RETURN_GENERATED_KEYS);
+             PreparedStatement psInsertTranslations = con.prepareStatement("INSERT INTO products_translations (%s, %s, %s) VALUES (?, ?, ?)"
+                     .formatted(PRODUCT_TRANSLATION_PRODUCT_ID, PRODUCT_TRANSLATION_LANG_ID, PRODUCT_TRANSLATION_PRODUCT_TRANSLATION))) {
+            psInsertProduct.setString(1, PRODUCT_1_NAME);
+            psInsertProduct.setString(2, ORIGINAL_LANG.name());
+            psInsertProduct.setString(3, ProductMeasure.weight.name());
+            psInsertProduct.execute();
 
-            ps = con.prepareStatement("INSERT INTO products_translations (%s, %s, %s) VALUES (?, ?, ?)"
-                    .formatted(PRODUCT_TRANSLATION_PRODUCT_ID, PRODUCT_TRANSLATION_LANG_ID, PRODUCT_TRANSLATION_PRODUCT_TRANSLATION));
-            ps.setInt(1, PRODUCT_1_ID);
-            ps.setString(2, ORIGINAL_LANG.name());
-            ps.setString(3, PRODUCT_1_NAME);
-            ps.execute();
+            ResultSet rsInsertProduct = psInsertProduct.getGeneratedKeys();
+            rsInsertProduct.next();
+            PRODUCT_1_ID = rsInsertProduct.getInt(1);
 
-            ps = con.prepareStatement("INSERT INTO products_translations (%s, %s, %s) VALUES (?, ?, ?)"
-                    .formatted(PRODUCT_TRANSLATION_PRODUCT_ID, PRODUCT_TRANSLATION_LANG_ID, PRODUCT_TRANSLATION_PRODUCT_TRANSLATION));
-            ps.setInt(1, PRODUCT_1_ID);
-            ps.setString(2, TRANSLATION_LANG.name());
-            ps.setString(3, PRODUCT_1_TRANSLATION);
-            ps.execute();
+            psInsertTranslations.setInt(1, PRODUCT_1_ID);
+            psInsertTranslations.setString(2, ORIGINAL_LANG.name());
+            psInsertTranslations.setString(3, PRODUCT_1_NAME);
+            psInsertTranslations.execute();
+
+            psInsertTranslations.setInt(1, PRODUCT_1_ID);
+            psInsertTranslations.setString(2, TRANSLATION_LANG.name());
+            psInsertTranslations.setString(3, PRODUCT_1_TRANSLATION);
+            psInsertTranslations.execute();
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            DBUtil.close(null, ps);
         }
     }
 
     @AfterEach
     public void deleteAllRows() {
-        PreparedStatement ps = null;
-        try (Connection con = connectionFactory.getConnection()) {
-            ps = con.prepareStatement("DELETE FROM products_translations");
-            ps.execute();
-
-            ps = con.prepareStatement("DELETE FROM products");
-            ps.execute();
+        try (Connection con = connectionFactory.getConnection();
+             PreparedStatement psDeleteTranslations = con.prepareStatement("DELETE FROM products_translations");
+             PreparedStatement psDeleteProducts = con.prepareStatement("DELETE FROM products")) {
+            psDeleteTranslations.execute();
+            psDeleteProducts.execute();
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            DBUtil.close(null, ps);
         }
     }
 

@@ -3,10 +3,10 @@ package DAO;
 import dao.UserDAO;
 import dao_impl.UserDAOImpl;
 import entity.User;
-import org.junit.jupiter.api.*;
-import org.mockito.Mockito;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import util.db.ConnectionFactory;
-import util.db.DBUtil;
 import util.enums.RoleName;
 
 import java.sql.*;
@@ -32,46 +32,36 @@ public class UserDAOTest {
 
     @BeforeEach
     public void insertRows() {
-        PreparedStatement ps = null;
-        try (Connection con = connectionFactory.getConnection()) {
-            ps = con.prepareStatement("INSERT INTO users (%s, %s, %s, %s, %s, %s) VALUES (?, 'xxxxxxxx', 'dan', 'pro', ?, true)"
-                    .formatted(USER_EMAIL, USER_PASSWORD, USER_FIRST_NAME, USER_SECOND_NAME, USER_ROLE_ID, USER_ENABLED), Statement.RETURN_GENERATED_KEYS);
-            ps.setString(1, USER_1_EMAIL);
-            ps.setString(2, USER_1_ROLE.name());
-            ps.executeUpdate();
-            try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
+        try (Connection con = connectionFactory.getConnection();
+             PreparedStatement psInsertUser = con.prepareStatement("INSERT INTO users (%s, %s, %s, %s, %s, %s) VALUES (?, 'xxxxxxxx', 'dan', 'pro', ?, true)"
+                     .formatted(USER_EMAIL, USER_PASSWORD, USER_FIRST_NAME, USER_SECOND_NAME, USER_ROLE_ID, USER_ENABLED), Statement.RETURN_GENERATED_KEYS)) {
+            psInsertUser.setString(1, USER_1_EMAIL);
+            psInsertUser.setString(2, USER_1_ROLE.name());
+            psInsertUser.executeUpdate();
+            try (ResultSet generatedKeys = psInsertUser.getGeneratedKeys()) {
                 generatedKeys.next();
                 USER_1_ID = generatedKeys.getInt(1);
             }
 
-            ps = con.prepareStatement("INSERT INTO users (%s, %s, %s, %s, %s, %s) VALUES (?, 'xxxxxxxx', 'dan', 'pro', ?, true)"
-                    .formatted(USER_EMAIL, USER_PASSWORD, USER_FIRST_NAME, USER_SECOND_NAME, USER_ROLE_ID, USER_ENABLED), Statement.RETURN_GENERATED_KEYS);
-            ps.setString(1, USER_2_EMAIL);
-            ps.setString(2, USER_2_ROLE.name());
-            ps.executeUpdate();
-            try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
+            psInsertUser.setString(1, USER_2_EMAIL);
+            psInsertUser.setString(2, USER_2_ROLE.name());
+            psInsertUser.executeUpdate();
+            try (ResultSet generatedKeys = psInsertUser.getGeneratedKeys()) {
                 generatedKeys.next();
                 USER_2_ID = generatedKeys.getInt(1);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        finally {
-            DBUtil.close(null, ps);
-        }
     }
 
     @AfterEach
     public void deleteAllRows() {
-        PreparedStatement ps = null;
-        try (Connection con = connectionFactory.getConnection()) {
-            ps = con.prepareStatement("DELETE FROM users");
-            ps.execute();
+        try (Connection con = connectionFactory.getConnection();
+             PreparedStatement psDeleteUsers = con.prepareStatement("DELETE FROM users")) {
+            psDeleteUsers.execute();
         } catch (SQLException e) {
             e.printStackTrace();
-        }
-        finally {
-            DBUtil.close(null, ps);
         }
     }
 

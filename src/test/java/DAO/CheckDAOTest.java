@@ -8,12 +8,10 @@ import dao_impl.ProductDAOImpl;
 import dao_impl.ProductTranslationDAOImpl;
 import entity.CheckEntity;
 import entity.Product;
-import exception.ProductTranslationException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import util.db.ConnectionFactory;
-import util.db.DBUtil;
 import util.enums.Language;
 import util.enums.ProductMeasure;
 
@@ -44,25 +42,18 @@ public class CheckDAOTest {
         insertProduct("water", "вода", ProductMeasure.apiece, 3, 3);
         PRODUCT_2_ID = productTranslationDAO.getEntityByProductName("water", Language.en).getProductId();
 
-        PreparedStatement ps = null;
-        try (Connection connection = connectionFactory.getConnection()) {
-            ps = connection.prepareStatement("INSERT INTO `check` (%s, %s) VALUES (?, ?)"
-                    .formatted(CHECK_PRODUCT_ID, CHECK_PRODUCT_QUANTITY));
+        try (Connection connection = connectionFactory.getConnection();
+             PreparedStatement ps = connection.prepareStatement("INSERT INTO `check` (%s, %s) VALUES (?, ?)"
+                     .formatted(CHECK_PRODUCT_ID, CHECK_PRODUCT_QUANTITY))) {
             ps.setInt(1, PRODUCT_1_ID);
             ps.setDouble(2, 2);
             ps.execute();
 
-            ps = connection.prepareStatement("INSERT INTO `check` (%s, %s) VALUES (?, ?)"
-                    .formatted(CHECK_PRODUCT_ID, CHECK_PRODUCT_QUANTITY));
             ps.setInt(1, PRODUCT_2_ID);
             ps.setDouble(2, 3);
             ps.execute();
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
-        }
-        finally {
-            DBUtil.close(null, ps);
         }
     }
 
@@ -76,20 +67,16 @@ public class CheckDAOTest {
 
     @AfterEach
     public void deleteRows() {
-        PreparedStatement ps = null;
-        try (Connection con = connectionFactory.getConnection()) {
-            ps = con.prepareStatement("DELETE FROM `check`");
-            ps.execute();
+        try (Connection con = connectionFactory.getConnection();
+             PreparedStatement psDeleteCheck = con.prepareStatement("DELETE FROM `check`");
+             PreparedStatement psDeleteTranslations = con.prepareStatement("DELETE FROM products_translations");
+             PreparedStatement psDeleteProducts = con.prepareStatement("DELETE FROM products")) {
 
-            ps = con.prepareStatement("DELETE FROM products_translations");
-            ps.execute();
-
-            ps = con.prepareStatement("DELETE FROM products");
-            ps.execute();
+            psDeleteCheck.execute();
+            psDeleteTranslations.execute();
+            psDeleteProducts.execute();
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            DBUtil.close(null, ps);
         }
     }
 

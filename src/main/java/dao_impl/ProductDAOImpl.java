@@ -6,7 +6,6 @@ import exception.ProductTranslationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import util.db.ConnectionFactory;
-import util.db.DBUtil;
 import util.enums.Language;
 import util.enums.ProductMeasure;
 
@@ -36,11 +35,10 @@ public class ProductDAOImpl implements ProductDAO {
         Product result;
 
         try (Connection connection = connectionFactory.getConnection();
-            PreparedStatement psGetProduct = connection.prepareStatement(PRODUCTS_GET_BY_ID_QUERY);
-            PreparedStatement psGetTranslations = connection.prepareStatement(PRODUCTS_TRANSLATIONS_GET_BY_PRODUCT_ID)) {
+             PreparedStatement psGetProduct = connection.prepareStatement(PRODUCTS_GET_BY_ID_QUERY);
+             PreparedStatement psGetTranslations = connection.prepareStatement(PRODUCTS_TRANSLATIONS_GET_BY_PRODUCT_ID)) {
             connection.setAutoCommit(false);
 
-//            psGetProduct = connection.prepareStatement(PRODUCTS_GET_BY_ID_QUERY);
             psGetProduct.setInt(1, id);
             result = new Product();
             ResultSet rsGetProduct = psGetProduct.executeQuery();
@@ -51,7 +49,6 @@ public class ProductDAOImpl implements ProductDAO {
             result.setQuantity(rsGetProduct.getDouble(PRODUCT_QUANTITY));
             result.setPrice(rsGetProduct.getDouble(PRODUCT_PRICE));
 
-//            psGetTranslations = connection.prepareStatement(PRODUCTS_TRANSLATIONS_GET_BY_PRODUCT_ID);
             psGetTranslations.setInt(1, id);
             ResultSet rsGetTranslations = psGetTranslations.executeQuery();
 
@@ -68,49 +65,42 @@ public class ProductDAOImpl implements ProductDAO {
             result = null;
             logger.error("Cannot get product by id=" + id, e.getCause());
         }
-//        finally {
-//            DBUtil.close(connection, ps);
-//        }
 
         return result;
     }
 
     @Override
     public void insertEntity(Product product, Language originalLang) throws ProductTranslationException {
-        Connection connection = connectionFactory.getConnection();
-        PreparedStatement ps = null;
-        ResultSet resultSet;
-
-        try {
+        try (Connection connection = connectionFactory.getConnection();
+             PreparedStatement psInsertProduct = connection.prepareStatement(PRODUCTS_INSERT_QUERY, Statement.RETURN_GENERATED_KEYS);
+             PreparedStatement psGetTranslation = connection.prepareStatement(PRODUCTS_TRANSLATIONS_GET_BY_PRODUCT_TRANSLATION);
+             PreparedStatement psInsertTranslations = connection.prepareStatement(PRODUCTS_TRANSLATIONS_INSERT)) {
             connection.setAutoCommit(false);
 
-            ps = connection.prepareStatement(PRODUCTS_INSERT_QUERY, Statement.RETURN_GENERATED_KEYS);
-            ps.setString(1, product.getProductTranslations().get(originalLang));
-            ps.setString(2, originalLang.name());
-            ps.setString(3, product.getMeasure().name());
-            ps.setDouble(4, product.getQuantity());
-            ps.setDouble(5, product.getPrice());
-            ps.execute();
+            psInsertProduct.setString(1, product.getProductTranslations().get(originalLang));
+            psInsertProduct.setString(2, originalLang.name());
+            psInsertProduct.setString(3, product.getMeasure().name());
+            psInsertProduct.setDouble(4, product.getQuantity());
+            psInsertProduct.setDouble(5, product.getPrice());
+            psInsertProduct.execute();
 
-            resultSet = ps.getGeneratedKeys();
-            resultSet.next();
-            int productId = resultSet.getInt(1);
+            ResultSet rsInsertProduct = psInsertProduct.getGeneratedKeys();
+            rsInsertProduct.next();
+            int productId = rsInsertProduct.getInt(1);
 
             for (Map.Entry<Language, String> entry : product.getProductTranslations().entrySet()) {
-                ps = connection.prepareStatement(PRODUCTS_TRANSLATIONS_GET_BY_PRODUCT_TRANSLATION);
-                ps.setString(1, entry.getKey().name());
-                ps.setString(2, entry.getValue());
-                resultSet = ps.executeQuery();
-                if (resultSet.next()) {
+                psGetTranslation.setString(1, entry.getKey().name());
+                psGetTranslation.setString(2, entry.getValue());
+                ResultSet rsGetTranslation = psGetTranslation.executeQuery();
+                if (rsGetTranslation.next()) {
                     connection.rollback();
                     throw new ProductTranslationException("Product translation already exists", entry.getKey());
                 }
 
-                ps = connection.prepareStatement(PRODUCTS_TRANSLATIONS_INSERT);
-                ps.setInt(1, productId);
-                ps.setString(2, entry.getKey().name());
-                ps.setString(3, entry.getValue());
-                ps.execute();
+                psInsertTranslations.setInt(1, productId);
+                psInsertTranslations.setString(2, entry.getKey().name());
+                psInsertTranslations.setString(3, entry.getValue());
+                psInsertTranslations.execute();
             }
 
             connection.commit();
@@ -118,9 +108,6 @@ public class ProductDAOImpl implements ProductDAO {
         } catch (SQLException e) {
             logger.error("Cannot insert product with name=" + product.getProductTranslations().get(originalLang), e.getCause());
             throw new ProductTranslationException("Product translation already exists", originalLang);
-        }
-        finally {
-            DBUtil.close(connection, ps);
         }
     }
 

@@ -10,14 +10,12 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import util.db.ConnectionFactory;
-import util.db.DBUtil;
 import util.enums.RoleName;
 
 import java.sql.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static util.db.DBFields.*;
-import static util.db.DBFields.USER_ROLE_ID;
 
 public class KeyDAOTest {
     private final ConnectionFactory connectionFactory = ConnectionFactory.getInstance();
@@ -34,45 +32,36 @@ public class KeyDAOTest {
 
     @BeforeEach
     public void insertRows() {
-        PreparedStatement ps = null;
-        try (Connection con = connectionFactory.getConnection()) {
-            ps = con.prepareStatement("INSERT INTO users (%s, %s, %s, %s, %s, %s) VALUES (?, 'xxxxxxxx', 'dan', 'pro', ?, true)"
-                    .formatted(USER_EMAIL, USER_PASSWORD, USER_FIRST_NAME, USER_SECOND_NAME, USER_ROLE_ID, USER_ENABLED), Statement.RETURN_GENERATED_KEYS);
+        try (Connection con = connectionFactory.getConnection();
+             PreparedStatement psInsertUser = con.prepareStatement("INSERT INTO users (%s, %s, %s, %s, %s, %s) VALUES (?, 'xxxxxxxx', 'dan', 'pro', ?, true)"
+                     .formatted(USER_EMAIL, USER_PASSWORD, USER_FIRST_NAME, USER_SECOND_NAME, USER_ROLE_ID, USER_ENABLED), Statement.RETURN_GENERATED_KEYS);
+             PreparedStatement psInsertKey = con.prepareStatement("INSERT INTO user_key (%s, %s) VALUES (?, ?)".formatted(KEY_USER_ID, KEY_KEY))) {
 
-            ps.setString(1, KEY_1_USER_EMAIL);
-            ps.setString(2, RoleName.admin.name());
-            ps.executeUpdate();
-            try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
+            psInsertUser.setString(1, KEY_1_USER_EMAIL);
+            psInsertUser.setString(2, RoleName.admin.name());
+            psInsertUser.executeUpdate();
+            try (ResultSet generatedKeys = psInsertUser.getGeneratedKeys()) {
                 generatedKeys.next();
                 KEY_1_USER_ID = generatedKeys.getInt(1);
             }
 
-            ps = con.prepareStatement("INSERT INTO user_key (%s, %s) VALUES (?, ?)".formatted(KEY_USER_ID, KEY_KEY));
-            ps.setInt(1, KEY_1_USER_ID);
-            ps.setString(2, KEY_1);
-            ps.executeUpdate();
+            psInsertKey.setInt(1, KEY_1_USER_ID);
+            psInsertKey.setString(2, KEY_1);
+            psInsertKey.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
-        }
-        finally {
-            DBUtil.close(null, ps);
         }
     }
 
     @AfterEach
     public void deleteAllRows() {
-        PreparedStatement ps = null;
-        try (Connection con = connectionFactory.getConnection()) {
-            ps = con.prepareStatement("DELETE FROM user_key");
-            ps.execute();
-
-            ps = con.prepareStatement("DELETE FROM users");
-            ps.execute();
+        try (Connection con = connectionFactory.getConnection();
+             PreparedStatement psDeleteKeys = con.prepareStatement("DELETE FROM user_key");
+             PreparedStatement psDeleteUsers = con.prepareStatement("DELETE FROM users")) {
+            psDeleteKeys.execute();
+            psDeleteUsers.execute();
         } catch (SQLException e) {
             e.printStackTrace();
-        }
-        finally {
-            DBUtil.close(null, ps);
         }
     }
 
