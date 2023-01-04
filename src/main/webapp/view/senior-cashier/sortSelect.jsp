@@ -21,7 +21,5 @@
                 <fmt:message key="table.report.sort.price"/>
             </option>
         </select>
-
-<%--        <script>sort("/senior-cashier/create-x-report?sortBy=")</script>--%>
     </div>
 </fmt:bundle>

@@ -19,18 +19,13 @@
     </head>
     <body>
     <div class="container p-3 px-5 bg-dark text-white" style="min-height: 100%">
-            <%--        <jsp:include page="/view/menu/menu.jsp"/>--%>
         <e:menu/>
 
         <div class="mb-4">
             <form action="<c:url value="/auth/login"/>" method="post" class="needs-validation col-4" novalidate>
-                    <%--                <jsp:include page="../util/inputs/user/emailInput.jsp"/>--%>
                 <input:emailInput/>
                 <input:passwordInput passwordType="password"/>
-                    <%--                <jsp:include page="../util/inputs/user/passwordInput.jsp">--%>
-                    <%--                    <jsp:param name="passwordType" value="password"/>--%>
-                    <%--                    <jsp:param name="inputValue" value="${param.password}"/>--%>
-                    <%--                </jsp:include>--%>
+
                 <input type="submit" value="<fmt:message key="submit.login"/>" class="btn btn-primary"/>
             </form>
 

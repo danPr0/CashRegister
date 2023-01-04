@@ -1,7 +1,6 @@
 package dao;
 
 import entity.CheckEntity;
-import entity.Product;
 
 import java.util.List;
 

@@ -1,6 +1,5 @@
 package filter.role_filter;
 
-import garbage.Role;
 import util.enums.RoleName;
 import util.token.AuthTokenProvider;
 

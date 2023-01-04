@@ -3,7 +3,7 @@
 <%@ tag pageEncoding="UTF-8" isELIgnored="false"%>
 
 <fmt:setLocale value="${sessionScope.lang}"/>
-<%--pattern="([A-Za-zА-Яа-яЁёЇїІіЄєҐґ'0-9_]+)"--%>
+
 <fmt:bundle basename="messages">
     <div class="mb-2">
         <label for="email"  class="form-label"><fmt:message key="label.email"/></label>

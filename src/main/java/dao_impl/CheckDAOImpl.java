@@ -9,6 +9,7 @@ import util.db.ConnectionFactory;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 import static util.db.DBFields.*;

@@ -1,10 +1,7 @@
 package controller.user;
 
-import dao.KeyDAO;
-import dao_impl.KeyDAOImpl;
 import entity.User;
 import lombok.SneakyThrows;
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.hc.core5.net.URIBuilder;
 import service.UserService;
@@ -15,20 +12,14 @@ import util.captcha.RecaptchaValidation;
 import util.enums.Language;
 import util.token.PasswordTokenProvider;
 
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
 import javax.mail.MessagingException;
-import javax.servlet.*;
-import javax.servlet.http.*;
-import javax.servlet.annotation.*;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 
-import static java.net.URLDecoder.decode;
-import static java.net.URLEncoder.encode;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 @WebServlet("/user/reset-password")

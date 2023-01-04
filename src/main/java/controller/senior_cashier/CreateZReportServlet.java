@@ -18,9 +18,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 
-import static java.net.URLEncoder.encode;
-import static java.nio.charset.StandardCharsets.UTF_8;
-
 @WebServlet("/senior-cashier/create-z-report")
 public class CreateZReportServlet extends HttpServlet {
     private final ReportService reportService = ReportServiceImpl.getInstance();

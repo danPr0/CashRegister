@@ -19,10 +19,6 @@
     </head>
     <body>
     <div class="container p-3 px-5 bg-dark text-white" style="min-height: 100%">
-<%--        <jsp:include page="/view/menu/menu.jsp">--%>
-<%--            <jsp:param name="mainUrl" value="/commodity-expert"/>--%>
-<%--        </jsp:include>--%>
-
         <e:menu url="/commodity-expert"/>
 
         <div>
@@ -30,26 +26,13 @@
                   novalidate>
                 <c:forEach var="i" items="${sessionScope.languages}">
                     <input:productNameInput name="productName_${i}"/>
-<%--                    <jsp:include page="../../WEB-INF/tags/input/product/productNameInput.tag">--%>
-<%--                        <jsp:param name="name" value="productName_${i}"/>--%>
-<%--                    </jsp:include>--%>
+
                 </c:forEach>
 
                 <input:productMeasureInput/>
                 <input:productQuantityInput name="quantity" presetValue="${param.quantity}"/>
                 <input:productPriceInput name="price" presetValue="${param.price}"/>
 
-<%--                <jsp:include page="../../WEB-INF/tags/input/product/productMeasureInput.tag"/>--%>
-
-<%--                <jsp:include page="../../WEB-INF/tags/input/product/productQuantityInput.tag">--%>
-<%--                    <jsp:param name="name" value="quantity"/>--%>
-<%--                    <jsp:param name="presetValue" value="${param.quantity}"/>--%>
-<%--                </jsp:include>--%>
-
-<%--                <jsp:include page="../../WEB-INF/tags/input/product/productPriceInput.tag">--%>
-<%--                    <jsp:param name="name" value="price"/>--%>
-<%--                    <jsp:param name="presetValue" value="${param.price}"/>--%>
-<%--                </jsp:include>--%>
                 <input type="submit" value="<fmt:message key="submit.add"/>" class="btn btn-primary"/>
             </form>
 

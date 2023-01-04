@@ -5,7 +5,6 @@ import service.ReportService;
 import service_impl.ReportServiceImpl;
 import util.GetProperties;
 import util.enums.Language;
-import util.table.CheckColumnName;
 import util.table.ReportColumnName;
 import util.table.TableService;
 
@@ -16,7 +15,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Create X report

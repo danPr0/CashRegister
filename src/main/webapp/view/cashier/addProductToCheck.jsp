@@ -24,24 +24,13 @@
     </head>
     <body>
     <div class="container p-3 px-5 bg-dark text-white" style="min-height: 100%">
-<%--        <jsp:include page="../menu/menu.jsp">--%>
-<%--            <jsp:param name="mainUrl" value="/cashier"/>--%>
-<%--        </jsp:include>--%>
-
         <e:menu url="/cashier"/>
-
 
         <div class="mb-5">
             <form action="<c:url value="/cashier/add-product-to-check"/>" method="post"
                   class="needs-validation col-4" novalidate>
                 <input:productInput/>
                 <input:productQuantityInput name="quantity" presetValue="${param.quantity}"/>
-<%--                <jsp:include page="../../WEB-INF/tags/input/product/productInput.tag"/>--%>
-
-<%--                <jsp:include page="../../WEB-INF/tags/input/product/productQuantityInput.tag">--%>
-<%--                    <jsp:param name="name" value="quantity"/>--%>
-<%--                    <jsp:param name="presetValue" value="${param.quantity}"/>--%>
-<%--                </jsp:include>--%>
 
                 <input type="submit" value="<fmt:message key="submit.add"/>" class="btn btn-primary"/>
             </form>
@@ -73,9 +62,6 @@
                 <jsp:include page="checkTable.jsp"/>
 
                 <e:pagination url="/cashier/add-product-to-check"/>
-<%--                <jsp:include page="../../WEB-INF/tags/pagination.tag">--%>
-<%--                    <jsp:param name="url" value="/cashier/add-product-to-check"/>--%>
-<%--                </jsp:include>--%>
 
                 <jsp:include page="../util/showPerPageSelect.jsp">
                     <jsp:param name="perPage" value="${perPage}"/>

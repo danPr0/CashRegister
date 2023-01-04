@@ -6,7 +6,6 @@
 <fmt:setLocale value="${sessionScope.lang}"/>
 
 <fmt:bundle basename="messages">
-    <%--        <label for="orderSelect" class="form-label"><fmt:message key="label.orderBy"/></label>--%>
     <select id="orderSelect" class="form-select form-select-sm w-auto">
         <option value="asc" <c:if test="${param.order == 'asc'}">selected disabled</c:if>>
             <fmt:message key="select.orderBy.asc"/>

@@ -23,7 +23,6 @@
     </head>
     <body>
     <div class="container p-3 px-5 bg-dark text-white" style="min-height: 100%">
-            <%--        <jsp:include page="/view/menu/menu.jsp"/>--%>
         <e:menu/>
 
         <c:choose>

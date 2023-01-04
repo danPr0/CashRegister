@@ -19,7 +19,6 @@
     </head>
     <body>
     <div class="container p-3 px-5 bg-dark text-white" style="min-height: 100%">
-<%--        <jsp:include page="/view/menu/menu.jsp"/>--%>
         <e:menu/>
 
         <div class="row">
@@ -36,7 +35,7 @@
             <form action="<c:url value="/admin/authorize-user"/>" method="get" class="needs-validation col-4"
                   novalidate>
                 <input:emailInput/>
-<%--                <jsp:include page="../util/inputs/user/emailInput.jsp"/>--%>
+
                 <input type="submit" value="<fmt:message key="submit.find"/>" class="btn btn-primary"/>
             </form>
 

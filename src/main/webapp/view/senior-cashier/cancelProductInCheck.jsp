@@ -19,9 +19,6 @@
     </head>
     <body>
     <div class="container p-3 px-5 bg-dark text-white" style="min-height: 100%">
-<%--        <jsp:include page="/view/menu/menu.jsp">--%>
-<%--            <jsp:param name="mainUrl" value="/senior-cashier"/>--%>
-<%--        </jsp:include>--%>
         <e:menu url="/senior-cashier"/>
 
         <div>
@@ -29,12 +26,6 @@
                   class="needs-validation col-4" novalidate>
                 <input:productInput/>
                 <input:productQuantityInput name="quantity" presetValue="${param.quantity}"/>
-<%--                <jsp:include page="../../WEB-INF/tags/input/product/productInput.tag"/>--%>
-
-<%--                <jsp:include page="../../WEB-INF/tags/input/product/productQuantityInput.tag">--%>
-<%--                    <jsp:param name="name" value="quantity"/>--%>
-<%--                    <jsp:param name="presetValue" value="${param.quantity}"/>--%>
-<%--                </jsp:include>--%>
 
                 <input type="submit" value="<fmt:message key="submit.cancel"/>" class="btn btn-primary"/>
             </form>

@@ -1,7 +1,6 @@
 package controller.authentication;
 
 import cn.apiclub.captcha.Captcha;
-import dao_impl.CheckDAOImpl;
 import lombok.SneakyThrows;
 import org.apache.hc.core5.net.URIBuilder;
 import org.apache.logging.log4j.LogManager;
@@ -25,16 +24,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
-import static java.net.URLEncoder.encode;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * Process user registration
  */
-@WebServlet("/auth/signup")
+@WebServlet(value = "/auth/signup", loadOnStartup = 1)
 public class SignupServlet extends HttpServlet {
     private final UserService userService = UserServiceImpl.getInstance();
     private final Logger logger = LogManager.getLogger(SignupServlet.class);

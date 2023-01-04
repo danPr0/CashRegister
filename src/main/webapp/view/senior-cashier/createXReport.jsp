@@ -5,8 +5,6 @@
 <%@ page isELIgnored="false" %>
 
 <fmt:setLocale value="${sessionScope.lang}"/>
-<%--<c:set var="sort" value="${requestScope.sort == null ? 'default' : requestScope.sort}"/>--%>
-<%--<c:set var="order" value="${requestScope.order == null ? 'asc' : requestScope.order}"/>--%>
 <c:set var="sort" value="${sessionScope.reportSortBy}"/>
 <c:set var="order" value="${sessionScope.reportOrderBy}"/>
 <c:set var="perPage" value="${sessionScope.reportTotalPerPage}"/>
@@ -25,9 +23,6 @@
     </head>
     <body>
     <div class="container p-3 px-5 bg-dark text-white" style="min-height: 100%">
-<%--        <jsp:include page="/view/garbage/menu.jsp">--%>
-<%--            <jsp:param name="mainUrl" value="/senior-cashier"/>--%>
-<%--        </jsp:include>--%>
         <e:menu url="/senior-cashier"/>
 
         <div class="m-3">
@@ -68,9 +63,6 @@
             <jsp:include page="reportTable.jsp"/>
 
             <e:pagination url="/senior-cashier/create-x-report"/>
-<%--            <jsp:include page="../../WEB-INF/tags/pagination.tag">--%>
-<%--                <jsp:param name="url" value="/senior-cashier/create-x-report"/>--%>
-<%--            </jsp:include>--%>
 
             <jsp:include page="../util/showPerPageSelect.jsp">
                 <jsp:param name="perPage" value="${perPage}"/>

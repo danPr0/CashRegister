@@ -17,7 +17,6 @@
     </head>
     <body>
     <div class="container p-3 px-5 bg-dark text-white" style="min-height: 100%">
-<%--        <jsp:include page="/view/garbage/menu.jsp"/>--%>
         <e:menu/>
 
         <div class="mb-3">

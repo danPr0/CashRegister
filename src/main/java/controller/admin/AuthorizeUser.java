@@ -2,7 +2,6 @@ package controller.admin;
 
 import dto.UserDTO;
 import entity.User;
-import garbage.RoleServiceImpl;
 import lombok.SneakyThrows;
 import org.apache.hc.core5.net.URIBuilder;
 import service.UserService;
@@ -17,9 +16,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -41,7 +37,7 @@ public class AuthorizeUser extends HttpServlet {
         else {
             UserDTO result = new UserDTO(user.getEmail(), user.getFirstName(), user.getSecondName(), user.getRoleId().name());
             req.setAttribute("user", result);
-            req.setAttribute("roles", RoleName.getRoles(Language.getLanguage(req)));
+            req.setAttribute("roles", RoleName.values());
         }
 
         req.getRequestDispatcher("/view/admin/authorizeUser.jsp").forward(req, resp);
